@@ -156,7 +156,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			return this.battle.runEvent('TryTerrain', target) ? this.terrain : '';
 		},
 	},
-	battle: {
+	//battle: {
 		validTargetLoc(targetLoc: number, source: Pokemon, targetType: string) { //Tactician
 			if (targetLoc === 0) return true;
 			const numSlots = source.side.active.length;
@@ -768,7 +768,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				if (this.ended) return;
 			}
 		},
-	},
+	//},
 	//actions: {
 		canMegaEvo(pokemon) { //Magic Room suppression and Mega-Ray change
 			const species = pokemon.baseSpecies;
