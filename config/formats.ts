@@ -1778,6 +1778,44 @@ export const Formats: FormatList = [
 		section: "Solomods",
 		column: 4,
 	},
+		{
+		name: "[Gen 8] Earth & Sky OU",
+		threads: [
+			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
+		],
+		ruleset: [ 'Hidden Move Limit', 'Species Clause', 'Item Clause', 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
+			'Team Preview', 'Cancel Mod', 'Data Mod', 'Mega Data Mod',],
+		mod: 'earthsky',
+		banlist: [
+			'Alakazam-Mega', 'Arceus', 'Blaziken', 'Blastoise-Mega', 'Darkrai', 'Deoxys-Attack', 'Deoxys-Base', 'Deoxys-Speed',
+			'Dialga', 'Eternatus', 'Genesect', 'Gengar-Mega', 'Giratina', 'Groudon', 'Ho-Oh', 'Kangaskhan-Mega', 'Kyogre',
+			'Kyurem-Black', 'Kyurem-White', 'Landorus-Base', 'Lucario-Mega', 'Lugia', 'Lunala', 'Marshadow', 'Mewtwo',
+			'Naganadel', 'Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane', 'Palkia', 'Pheromosa', 'Rayquaza', 'Reshiram',
+			'Salamence-Mega', 'Shaymin-Sky', 'Solgaleo', 'Xerneas', 'Yveltal', 'Zacian', 'Zamazenta', 'Zekrom', 'Zygarde-Base',
+			/*'ES Uber', */'Oceides', 'Hatar', 'Zuros', 'Norphaval', 'Arena Trap', 'Power Construct', 'Shadow Tag', 'Baton Pass',
+		],
+	},
+	{
+		name: "[Gen 8] Earth & Sky Egelas Dex",
+		threads: [
+			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
+			`&bullet; <a href="https://drive.google.com/file/d/1N_kSuPC2XifKplZ9huLVlxmkYv3fCmt2/view?usp=sharing">Egelan Pokedex</a>`,
+		],
+		ruleset: [ 'Egelas Pokedex', 'Hidden Move Limit', 'Species Clause', 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
+			'Team Preview', 'Cancel Mod', 'Data Mod', 'Mega Data Mod'],
+		mod: 'earthsky',
+		banlist: [/*'ES Uber', */'Oceides', 'Hatar', 'Zuros', 'Norphaval', 'Lucario-Mega'],
+	},
+	{
+		name: "[Gen 8] Earth & Sky Ubers",
+		threads: [
+			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
+		],
+		ruleset: [ 'Hidden Move Limit', 'Species Clause', 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
+			'Team Preview', 'Cancel Mod', 'Data Mod', 'Mega Data Mod'],
+		mod: 'earthsky',
+		teambuilderFormat: 'Ubers'
+	},
 	{
 		name: "[Gen 8] GPT2mons",
 	   desc: 'A solomod featuring pokemon generated using a GPT2 neural network. It is currently unfinished',
