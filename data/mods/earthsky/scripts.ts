@@ -769,7 +769,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 		},
 	},
-	actions: {
+	//actions: {
 		canMegaEvo(pokemon) { //Magic Room suppression and Mega-Ray change
 			const species = pokemon.baseSpecies;
 			const altForme = species.otherFormes && this.dex.getSpecies(species.otherFormes[0]);
@@ -1204,7 +1204,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 			return undefined;
 		},
-	},
+	//},
 	dex: {
 		getImmunity( //Dual-type move type calculation
 			source: {type: string} | string,
