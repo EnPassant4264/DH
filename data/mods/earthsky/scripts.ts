@@ -1206,6 +1206,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		},
 	//},
 	dex: {
+		inherit: true,
 		getImmunity( //Dual-type move type calculation
 			source: {type: string} | string,
 			target: {getTypes: () => string[]} | {types: string[]} | string[] | string
