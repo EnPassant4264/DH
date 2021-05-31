@@ -195,7 +195,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 			return false;
 		},
-		getTarget(pokemon: Pokemon, move: string | Move, targetLoc: number, originalTarget?: Pokemon) { //Tactician
+		getTarget(pokemon: Pokemon, move: string | Move, targetLoc: number, originalTarget?: Pokemon) { //Tactician and Play Dead
 			move = this.dex.getMove(move);
 
 			let tracksTarget = move.tracksTarget;

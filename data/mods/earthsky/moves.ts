@@ -481,11 +481,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		priority: 4,
 		flags: {snatch: 1},
 		stallingMove: true,
-		onTryHit(target, source, move) {
-			return !!this.queue.willAct() && this.runEvent('StallMove', target);
+		onTryHit(pokemon) {
+			return !!this.queue.willAct() && this.runEvent('StallMove', source);
 		},
 		onHit(pokemon) {
-			this.add("-start", pokemon, 'move: Rebound');
+			this.add("-start", source, 'move: Rebound');
 			pokemon.addVolatile('rebound');
 			pokemon.addVolatile('stall');
 		},
@@ -509,7 +509,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		secondary: null,
 		shortDesc: "Reflects damage from an attack this turn.",
 		desc: "The first attack to hit this Pokemon this turn has its damage reflected to the attacker. The full calculation is run, and then the damage is applied as fixed damage to the attacker. All other effects of the move are ignored.",
-		target: "scripted",
+		target: "self",
 		type: "Normal",
 		contestType: "Clever",
 		start: "  [POKEMON] puffed up!",
