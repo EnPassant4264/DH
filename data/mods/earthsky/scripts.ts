@@ -120,7 +120,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			let neutralizinggas = false;
 			for (const pokemon of this.battle.getAllActive()) {
 				// can't use hasAbility because it would lead to infinite recursion
-				if ((pokemon.ability === ('neutralizinggas' as ID) || (pokemon.hasAbility('glyphicspell') && pokemon.abilityData.unownType === "Unown-N")) && !pokemon.volatiles['gastroacid'] &&
+				if ((pokemon.ability === ('neutralizinggas' as ID) || (pokemon.ability === ('glyphicspell' as ID) && pokemon.abilityData.unownType === "Unown-N")) && !pokemon.volatiles['gastroacid'] &&
 					!pokemon.abilityData.ending) {
 					neutralizinggas = true;
 					break;
