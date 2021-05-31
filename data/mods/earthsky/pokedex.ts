@@ -1707,6 +1707,10 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		inherit: true,
 		abilities: {0: "Cacophony", 1: "Tangled Feet", H: "Big Pecks"},
 	},
+	spiritomb: {
+		inherit: true,
+		abilities: {0: "Pressure", H: "Soul Drain"},
+	},
 	drapion: {
 		inherit: true,
 		baseStats: {hp: 70, atk: 100, def: 110, spa: 60, spd: 75, spe: 95},
@@ -1910,18 +1914,6 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		abilities: {0: "Levitate", H: "Static"},
 		otherFormes: ["Eelektross-Egelas"],
 		formeOrder: ["Eelektross", "Eelektross-Egelas"],
-	},
-	litwick: {
-		inherit: true,
-		abilities: {0: "Flash Fire", 1: "Flame Body", H: "Illuminate"},
-	},
-	lampent: {
-		inherit: true,
-		abilities: {0: "Flash Fire", 1: "Flame Body", H: "Illuminate"},
-	},
-	chandelure: {
-		inherit: true,
-		abilities: {0: "Flash Fire", 1: "Flame Body", H: "Illuminate"},
 	},
 	cryogonal: {
 		inherit: true,

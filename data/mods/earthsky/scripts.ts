@@ -1205,7 +1205,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			return undefined;
 		},
 	//},
-	dex: {
+	/*dex: {
 		inherit: true,
 		getImmunity( //Dual-type move type calculation
 			source: {type: string} | string,
@@ -1294,7 +1294,7 @@ export const Scripts: ModdedBattleScriptsData = {
 						// custom tags -- nduubl is used for national dex teambuilder formatting
 						'mega', 'nduubl',
 						// earth & sky tiers
-						'earthsky', /*'esuber', 'esou', 'esnfe', 'eslc',*/
+						'earthsky', /*'esuber', 'esou', 'esnfe', 'eslc', /
 						// illegal/nonstandard reasons
 						'past', 'future', 'unobtainable', 'lgpe', 'custom',
 						// all
@@ -1329,7 +1329,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 			return matches[0];
 		}
-	},
+	},*/
 	init() {
 		/* Removed/renamed accessibility and other init stuff */
 		const unavailablePokemon = [
