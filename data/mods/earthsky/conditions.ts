@@ -67,7 +67,7 @@ export const Conditions: {[k: string]: ModdedConditionData} = {
 			if(pokemon.volatiles['odorsleuth']) return false;
 		},
 		onAccuracy(accuracy, target, source, move) {
-			if(!move.ignoresEvasion || typeof move.accuracy === 'number') return false;
+			if(!move.ignoresEvasion && typeof move.accuracy === 'number') return false;
 		},
 	},
 	evadestall: { //Evasion move counter

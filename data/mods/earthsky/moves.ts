@@ -215,7 +215,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		flags: {contact: 1, protect: 1},
 		beforeTurnCallback(pokemon) {
 			const execInfo = [ //stores start-of-turn state of anything that could disrupt the move.
-				pokemon.status, pokemon.volatiles, pokemon.getMoveData(num).pp
+				pokemon.status, pokemon.volatiles, pokemon.getMoveData(('fullcollide' as ID)).pp
 			];
 		},
 		onBeforeMovePriority: -100,
