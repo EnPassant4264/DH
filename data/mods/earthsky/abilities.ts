@@ -1332,7 +1332,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if (type === 'sandstorm') return false;
 		},
 		onStart(pokemon){
-			if (pokemon.volatiles['odorsleuth') || pokemon.volatiles['minimize') || pokemon.volatiles['doubleteam') || pokemon.volatiles['tangledfeet')){
+			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return false;
 			}
 			if(this.field.effectiveWeather() === 'sandstorm'){
