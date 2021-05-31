@@ -774,7 +774,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			const species = pokemon.baseSpecies;
 			const altForme = species.otherFormes && this.dex.getSpecies(species.otherFormes[0]);
 			const item = pokemon.getItem();
-			if (!('magicroom' in this.battle.field.pseudoWeather) && item.megaEvolves === species.baseSpecies && item.megaStone !== species.name) {
+			if (!('magicroom' in this.field.pseudoWeather) && item.megaEvolves === species.baseSpecies && item.megaStone !== species.name) {
 				//Additional check for required move
 				if (altForme?.isMega && altForme?.requiredMove) {
 					if(pokemon.baseMoves.includes(this.toID(altForme.requiredMove))){
@@ -787,7 +787,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			return null;
 		},
 		canUltraBurst(pokemon) { //Magic Room suppression
-			if (!('magicroom' in this.battle.field.pseudoWeather) && ['Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane'].includes(pokemon.baseSpecies.name) &&
+			if (!('magicroom' in this.field.pseudoWeather) && ['Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane'].includes(pokemon.baseSpecies.name) &&
 				pokemon.getItem().id === 'ultranecroziumz') {
 				return "Necrozma-Ultra";
 			}
