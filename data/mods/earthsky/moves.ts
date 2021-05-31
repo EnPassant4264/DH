@@ -722,7 +722,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				return false;
 			},
 			onTryAddVolatile(volatile, pokemon) {
-				if(pokemon.volatiles['stasis'] && (pokemon.volatiles['stasis'].affectedStatuses.includes(volatile) || pokemon.volatiles['stasis'].noStart.includes(volatile)){
+				if(pokemon.volatiles['stasis'] && (pokemon.volatiles['stasis'].affectedStatuses.includes(volatile) || pokemon.volatiles['stasis'].noStart.includes(volatile))){
 					this.add('fail', target, 'move: Stasis');
 					return false;
 				}
