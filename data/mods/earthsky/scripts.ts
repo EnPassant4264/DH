@@ -8,7 +8,7 @@ export const Scripts: ModdedBattleScriptsData = {
 	teambuilderConfig: {
 		customTiers: ['earthsky'/*, 'esuber', 'esou', 'esnfe', 'eslc'*/],
 	},
-	/* sim edits
+	/* sim edits */
 	pokemon: {
 		getTypes(excludeAdded?: boolean): string[] { //Roost allows complete typelessness. Also, added types no longer exist.
 			const types = this.battle.runEvent('Type', this, null, null, this.types);

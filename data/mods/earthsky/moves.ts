@@ -24,7 +24,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			const veilAbilities = [
 				'aromaveil', 'flowerveil', 'pastelveil', 'slumberveil', 'sweetveil', 'waterveil', 'sandveil', 'snowcloak', 'mistyshroud'
 			];
-			if(veilAbilities.includes(target.GetAbility())) target.addVolatile('gastroacid');
+			if(veilAbilities.includes(target.getAbility())) target.addVolatile('gastroacid');
 			if (target.side.removeSideCondition('mist')) {
 				this.add('-sideend', target.side, this.dex.getEffect('mist').name, '[from] move: Aerate', '[of] ' + source);
 			}
