@@ -706,7 +706,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			affectedStatuses: ['confuse','disable','electrify','encore','imprison','laserfocus','leechseed','magnetrise','mindreader','minimize','nightmare','lockon','partiallytrapped','perishsong','risingchorus','strongpartialtrap','taunt','telekinesis','throatchop','torment','yawn'], //Volatiles with timers to freeze
 			noStart: ['aquaring','attract','charge','curse','destinybond','flashfire','focusenergy','followme','foresight','grudge','ingrain','magiccoat','miracleeye','odorsleuth','powder','powertrick','preheat','rage','ragepowder','snatch','spite','spotlight','substitute','tarshot'], //Volatiles that can't be added, but either have no duration or have to be removable to prevent breaking things
 			onStart(target){
-				this.add('start', target, 'move: Stasis');
+				this.add('-start', target, 'move: Stasis');
 			},
 			onBoost(boost, target, source, effect) {
 				boost = {};
@@ -735,7 +735,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 			//Locks on other timers implemented in scripts.ts as an edit to battle.residualEvent(), and in conditions.ts as edits to sleep and freeze.
 			onEnd(target){
-				this.add('end', target, 'move: Stasis');
+				this.add('-end', target, 'move: Stasis');
 			}
 		},
 		secondary: null,

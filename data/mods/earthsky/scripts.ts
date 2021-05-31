@@ -39,7 +39,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		},
 		cureStatus(silent = false) { //Adds a runEvent to curing status for effects (namely, Stasis) that prevent it.
 			if (!this.hp || !this.status) return false;
-			const result: boolean = this.battle.runEvent('RemoveStatus', this, source, sourceEffect, status);
+			const result: boolean = this.battle.runEvent('RemoveStatus', this, null, null, this.status);
 			if (!result) {
 				this.battle.debug('cure status [' + status.id + '] interrupted');
 				return result;
