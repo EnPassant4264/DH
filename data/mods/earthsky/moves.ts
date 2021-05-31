@@ -296,8 +296,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		target: "all",
 		type: "Dark",
 		contestType: "Cool",
-		start: "  The battlefield became very dark!",
-		end: "  The darkness disappeared from the field.",
+		fieldstart: "  The battlefield became very dark!",
+		fieldend: "  The darkness disappeared from the field.",
 		block: "  Nothing happened through the darkness...",
 		onPrepareHit: function(target, source, move) {
 			this.attrLastMove('[still]');
@@ -354,7 +354,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		accuracy: 100,
 		category: "Special",
 		name: "Pellet Shot",
-		pp: 0,
+		pp: 20,
 		priority: 1,
 		flags: {bullet: 1, protect: 1, mirror: 1},
 		secondary: null,
@@ -374,7 +374,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		accuracy: true,
 		category: "Status",
 		name: "Play Dead",
-		pp: 0,
+		pp: 20,
 		priority: 4,
 		flags: {},
 		stallingMove: true,
@@ -482,8 +482,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		flags: {snatch: 1},
 		stallingMove: true,
 		onTryHit(target, source, move) {
-			if (!source.volatiles['rebound']) return false;
-			if (source.volatiles['rebound'].position === null) return false;
 			return !!this.queue.willAct() && this.runEvent('StallMove', target);
 		},
 		onHit(pokemon) {
@@ -708,36 +706,36 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			affectedStatuses: ['confuse','disable','electrify','encore','imprison','laserfocus','leechseed','magnetrise','mindreader','minimize','nightmare','lockon','partiallytrapped','perishsong','risingchorus','strongpartialtrap','taunt','telekinesis','throatchop','torment','yawn'], //Volatiles with timers to freeze
 			noStart: ['aquaring','attract','charge','curse','destinybond','flashfire','focusenergy','followme','foresight','grudge','ingrain','magiccoat','miracleeye','odorsleuth','powder','powertrick','preheat','rage','ragepowder','snatch','spite','spotlight','substitute','tarshot'], //Volatiles that can't be added, but either have no duration or have to be removable to prevent breaking things
 			onStart(target){
-				this.add('-start', target, 'move: Stasis');
+				this.add('start', target, 'move: Stasis');
 			},
 			onBoost(boost, target, source, effect) {
 				boost = {};
-				this.add('cant', target, 'move: Stasis');
+				this.add('fail', target, 'move: Stasis');
 				return false;
 			},
 			onSetStatus(status, target, source, effect) {
-				this.add('cant', target, 'move: Stasis');
+				this.add('fail', target, 'move: Stasis');
 				return false;
 			},
 			onRemoveStatus(status, target, source, effect) {
-				this.add('cant', target, 'move: Stasis');
+				this.add('fail', target, 'move: Stasis');
 				return false;
 			},
 			onTryAddVolatile(volatile, pokemon) {
-				if(this.effectData.affectedStatuses.includes(volatile) || this.effectData.noStart.includes(volatile)){
-					this.add('cant', target, 'move: Stasis');
+				if(pokemon.volatiles['stasis'] && (pokemon.volatiles['stasis'].affectedStatuses.includes(volatile) || pokemon.volatiles['stasis'].noStart.includes(volatile)){
+					this.add('fail', target, 'move: Stasis');
 					return false;
 				}
 			},
 			onTryRemoveVolatile(volatile, pokemon) {
-				if(this.effectData.affectedStatuses.includes(volatile)){
-					this.add('cant', target, 'move: Stasis');
+				if(pokemon.volatiles['stasis'] && pokemon.volatiles['stasis'].affectedStatuses.includes(volatile)){
+					this.add('fail', target, 'move: Stasis');
 					return false;
 				}
 			},
 			//Locks on other timers implemented in scripts.ts as an edit to battle.residualEvent(), and in conditions.ts as edits to sleep and freeze.
 			onEnd(target){
-				this.add('-end', target, 'move: Stasis');
+				this.add('end', target, 'move: Stasis');
 			}
 		},
 		secondary: null,
@@ -751,7 +749,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		type: "Psychic",
 		contestType: "Clever",
 		start: "  [POKEMON]'s body has been locked in time!",
-		cant: "  [POKEMON]'s condition remained in stasis!",
+		fail: "  [POKEMON]'s condition remained in stasis!",
 		end: "  [POKEMON]'s body returned to normal.",
 		onPrepareHit: function(target, source, move) {
 			this.attrLastMove('[still]');
