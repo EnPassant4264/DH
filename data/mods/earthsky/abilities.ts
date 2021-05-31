@@ -74,7 +74,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	mistyshroud: {
 		onStart(pokemon){
-			if (pokemon.hasVolatile('odorsleuth') || pokemon.hasVolatile('evade') || pokemon.hasVolatile('minimize') || pokemon.hasVolatile('doubleteam') || pokemon.hasVolatile('tangledfeet')){
+			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return false;
 			}
 			if(this.field.effectiveTerrain() === 'mistyterrain'){
@@ -83,7 +83,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAnySetTerrain(target, source, terrain) {
-			if (pokemon.hasVolatile('odorsleuth') || pokemon.hasVolatile('minimize') || pokemon.hasVolatile('doubleteam') || pokemon.hasVolatile('tangledfeet')){
+			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return;
 			}
 			if(terrain.id === 'mistyterrain' && !this.effectData.target){
@@ -1332,7 +1332,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if (type === 'sandstorm') return false;
 		},
 		onStart(pokemon){
-			if (pokemon.hasVolatile('odorsleuth') || pokemon.hasVolatile('minimize') || pokemon.hasVolatile('doubleteam') || pokemon.hasVolatile('tangledfeet')){
+			if (pokemon.volatiles['odorsleuth') || pokemon.volatiles['minimize') || pokemon.volatiles['doubleteam') || pokemon.volatiles['tangledfeet')){
 				return false;
 			}
 			if(this.field.effectiveWeather() === 'sandstorm'){
@@ -1341,7 +1341,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAnySetWeather(target, source, weather) {
-			if (pokemon.hasVolatile('odorsleuth') || pokemon.hasVolatile('evade') || pokemon.hasVolatile('minimize') || pokemon.hasVolatile('doubleteam') || pokemon.hasVolatile('tangledfeet')){
+			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return;
 			}
 			if (weather.id === 'sandstorm'){
@@ -1371,7 +1371,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if (type === 'hail') return false;
 		},
 		onStart(pokemon){
-			if (pokemon.hasVolatile('odorsleuth') || pokemon.hasVolatile('minimize') || pokemon.hasVolatile('doubleteam') || pokemon.hasVolatile('tangledfeet')){
+			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return false;
 			}
 			if(this.field.effectiveWeather() === 'hail'){
@@ -1380,6 +1380,9 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAnySetWeather(target, source, weather) {
+			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
+				return;
+			}
 			if(weather.id === 'hail'){
 				this.abilityData.target.addVolatile('evade', 'hail');
 				this.add('-singleturn', this.abilityData.target, 'ability: Snow Cloak');

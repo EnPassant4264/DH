@@ -1288,7 +1288,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		priority: 0,
 		flags: {snatch: 1},
 		onPrepareHit(pokemon) {
-			if (pokemon.hasVolatile('odorsleuth') || pokemon.hasVolatile('evade') || pokemon.hasVolatile('minimize') || pokemon.hasVolatile('doubleteam') || pokemon.hasVolatile('tangledfeet')){
+			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return false;
 			}
 			return this.runEvent('EvadeStallMove', pokemon);
@@ -2137,7 +2137,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		pp: 5,
 		onPrepareHit(pokemon) {
-			return (!pokemon.hasVolatile('odorsleuth') && this.runEvent('EvadeStallMove', pokemon));
+			return (!pokemon.volatiles['odorsleuth'] && this.runEvent('EvadeStallMove', pokemon));
 		},
 		onHit(pokemon){
 			pokemon.addVolatile('evadestall');
