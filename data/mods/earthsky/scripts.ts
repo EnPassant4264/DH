@@ -1365,23 +1365,24 @@ export const Scripts: ModdedBattleScriptsData = {
 		/* Wide-spread changes */
 		for (let pokemonID in this.data.Pokedex) {
 			const pokemon = this.data.Pokedex[pokemonID];
-			console.log(pokemon.name + " formats data: ");
-			console.log(this.data.FormatsData[pokemonID]); 
-			if(this.data.FormatsData[pokemonID].isNonstandard && this.data.FormatsData[pokemonID].isNonstandard === "Past") { //Mark all Pokemon as current-gen
+			 //Don't do anything with the new Pokemon or Pokestar Studios opponents
+			if(pokemon.num >= 1000 || pokemon.num <= -5000) continue;
+			//Restore all Pokemon to current gen
+			if(this.data.FormatsData[pokemonID].isNonstandard/* && this.data.FormatsData[pokemonID].isNonstandard*/ === "Past") {
 				console.log(pokemon.name + " restoration");
 				delete this.modData('FormatsData', pokemonID).isNonstandard;
-				this.modData('FormatsData', pokemonID).tier = "OU";
+				if(!pokemon.battleOnly) this.modData('FormatsData', pokemonID).tier = "OU"; //In-battle forms don't have their own tier
 			}
-			 //Don't edit the new Pokemon, formes (and Xerneas) that don't have their own movesets, or Pokestar Studios opponents
-			if(pokemon.num >= 1000 || pokemon.num <= -5000 || pokemon.battleOnly || ["Egelas", "Mega", "Mega-X", "Mega-Y", "Primal"].includes(pokemon.forme) || 
-				["Deoxys", "Rotom", "Giratina", "Shaymin", "Arceus", "Keldeo", "Meloetta", "Genesect", "Vivillon", "Aegislash", "Pumpkaboo", "Gourgeist", "Xerneas", "Hoopa", 
-				"Oricorio", "Silvally", "Magearna", "Sinistea", "Polteageist", "Eternatus", "Zarude"].includes(pokemon.baseSpecies))
-				continue;
 			 //and get rid of anything that isn't available
 			if(unavailablePokemon.includes(pokemon.name) || ["Totem", "Gmax"].includes(pokemon.forme)){
 				pokemon.isNonstandard === "Past";
 				continue;
 			}
+			//Don't do move stuff with formes that don't have their own movesets (and Xerneas)
+			if(pokemon.battleOnly || ["Egelas", "Mega", "Mega-X", "Mega-Y", "Primal"].includes(pokemon.forme) || 
+				["Deoxys", "Rotom", "Giratina", "Shaymin", "Arceus", "Keldeo", "Meloetta", "Genesect", "Vivillon", "Aegislash", "Pumpkaboo", "Gourgeist", "Xerneas", "Hoopa", 
+				"Oricorio", "Silvally", "Magearna", "Sinistea", "Polteageist", "Eternatus", "Zarude"].includes(pokemon.baseSpecies))
+				continue;
 			//console.log("Modifying learnset of " + pokemon.name);
 			//console.log(this.modData('Learnsets', pokemonID).learnset);
 			/* Moves */
