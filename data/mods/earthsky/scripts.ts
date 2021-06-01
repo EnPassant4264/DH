@@ -1365,7 +1365,11 @@ export const Scripts: ModdedBattleScriptsData = {
 		/* Wide-spread changes */
 		for (let pokemonID in this.data.Pokedex) {
 			const pokemon = this.data.Pokedex[pokemonID];
-			if(pokemon.isNonstandard === "Past") delete pokemon.isNonstandard; //Mark all Pokemon as current-gen
+			if(pokemon.isNonstandard === "Past") { //Mark all Pokemon as current-gen
+				//console.log(pokemon.name + " restoration");
+				delete pokemon.isNonstandard;
+				pokemon.tier = "OU";
+			}
 			 //Don't edit the new Pokemon, formes (and Xerneas) that don't have their own movesets, or Pokestar Studios opponents
 			if(pokemon.num >= 1000 || pokemon.num <= -5000 || pokemon.battleOnly || ["Egelas", "Mega", "Mega-X", "Mega-Y", "Primal"].includes(pokemon.forme) || 
 				["Deoxys", "Rotom", "Giratina", "Shaymin", "Arceus", "Keldeo", "Meloetta", "Genesect", "Vivillon", "Aegislash", "Pumpkaboo", "Gourgeist", "Xerneas", "Hoopa", 
