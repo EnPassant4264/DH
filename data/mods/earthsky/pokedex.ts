@@ -1111,7 +1111,7 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	},
 	cuboneegelas: {
 		num: 104,
-		name: "Cubone-Tropical",
+		name: "Cubone-Egelas",
 		baseSpecies: "Cubone",
 		forme: "Egelas",
 		types: ["Fire", "Ghost"],
@@ -1179,7 +1179,7 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	},
 	delibirdegelas: {
 		num: 225,
-		name: "Delibird-Tropical",
+		name: "Delibird-Egelas",
 		baseSpecies: "Delibird",
 		forme: "Egelas",
 		types: ["Flying"],
@@ -2156,17 +2156,12 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	cubone: {
 		inherit: true,
 		evos: ["Marowak"],
-		otherFormes: ["Cubone-Tropical"],
-		formeOrder: ["Cubone", "Cubone-Tropical"],
+		otherFormes: ["Cubone-Egelas"],
+		formeOrder: ["Cubone", "Cubone-Egelas"],
 	},
 	marowakalola: {
 		inherit: true,
-		name: "Marowak-Tropical",
 		prevo: "Cubone-Egelas",
-	},
-	exeggcute: {
-		inherit: true,
-		evos: ["Exeggutor", "Exeggutor-Tropical"],
 	},
 	tauros: {
 		inherit: true,
@@ -2185,8 +2180,8 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	},
 	delibird: {
 		inherit: true,
-		otherFormes: ["Delibird-Tropical"],
-		formeOrder: ["Delibird", "Delibird-Tropical"],
+		otherFormes: ["Delibird-Egelas"],
+		formeOrder: ["Delibird", "Delibird-Egelas"],
 	},
 	miltank: {
 		inherit: true,
