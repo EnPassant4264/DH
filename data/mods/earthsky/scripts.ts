@@ -1367,11 +1367,10 @@ export const Scripts: ModdedBattleScriptsData = {
 			const pokemon = this.data.Pokedex[pokemonID];
 			 //Don't do anything with the new Pokemon or Pokestar Studios opponents
 			if(pokemon.num >= 1000 || pokemon.num <= -5000) continue;
-			console.log(pokemon.name + " FormatsData:");
-			console.log(this.data.FormatsData[pokemonID]);
 			//Restore all Pokemon to current gen
-			if(this.data.FormatsData[pokemonID].isNonstandard/* && this.data.FormatsData[pokemonID].isNonstandard*/ === "Past") {
+			if(this.data.FormatsData[pokemonID] && this.data.FormatsData[pokemonID].isNonstandard === "Past") {
 				console.log(pokemon.name + " restoration");
+				console.log(this.modData('FormatsData', pokemonID);
 				delete this.modData('FormatsData', pokemonID).isNonstandard;
 				if(!pokemon.battleOnly){ //Restore tier, but in-battle forms don't have their own tier
 					if(pokemon.evos){
