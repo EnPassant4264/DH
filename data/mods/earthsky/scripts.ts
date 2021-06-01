@@ -1367,6 +1367,8 @@ export const Scripts: ModdedBattleScriptsData = {
 			const pokemon = this.data.Pokedex[pokemonID];
 			 //Don't do anything with the new Pokemon or Pokestar Studios opponents
 			if(pokemon.num >= 1000 || pokemon.num <= -5000) continue;
+			console.log(pokemon.name + " FormatsData:");
+			console.log(this.data.FormatsData[pokemonID]);
 			//Restore all Pokemon to current gen
 			if(this.data.FormatsData[pokemonID].isNonstandard/* && this.data.FormatsData[pokemonID].isNonstandard*/ === "Past") {
 				console.log(pokemon.name + " restoration");
