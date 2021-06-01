@@ -1371,7 +1371,11 @@ export const Scripts: ModdedBattleScriptsData = {
 			if(this.data.FormatsData[pokemonID].isNonstandard/* && this.data.FormatsData[pokemonID].isNonstandard*/ === "Past") {
 				console.log(pokemon.name + " restoration");
 				delete this.modData('FormatsData', pokemonID).isNonstandard;
-				if(!pokemon.battleOnly) this.modData('FormatsData', pokemonID).tier = "OU"; //In-battle forms don't have their own tier
+				if(!pokemon.battleOnly){ //Restore tier, but in-battle forms don't have their own tier
+					if(pokemon.evos){
+						this.modData('FormatsData', pokemonID).tier = pokemon. prevo ? "NFE" : "LC";
+					} else this.modData('FormatsData', pokemonID).tier = "OU";
+				}
 			}
 			 //and get rid of anything that isn't available
 			if(unavailablePokemon.includes(pokemon.name) || ["Totem", "Gmax"].includes(pokemon.forme)){

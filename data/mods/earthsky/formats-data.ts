@@ -325,4 +325,11 @@ export const FormatsData: {[k: string]: ModdedSpeciesFormatsData} = {
 	alcremiemega: {
 		tier: "ES",
 	},
+	//Other
+	darmanitanrage: {
+		tier: "OU",
+	},
+	lycanroctwilight: {
+		tier: "OU",
+	},	
 };

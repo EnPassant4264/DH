@@ -1902,6 +1902,8 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		inherit: true,
 		abilities: {0: "Levitate", H: "Schooling"},
 		evos: ["Eelektrik", "Eelektrik-Egelas"],
+		otherFormes: ["Tynamo-School"],
+		formeOrder: ["Tynamo", "Tynamo-School"],
 	},
 	eelektrik: {
 		inherit: true,
