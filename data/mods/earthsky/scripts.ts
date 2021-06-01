@@ -4285,6 +4285,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		this.modData("Learnsets", "arceus").learnset.screech = ["8M"];
 		this.modData("Learnsets", "arceus").learnset.stasis = ["8T"];
 		this.modData("Learnsets", "arceus").learnset.steelbeam = ["8T"];
+		this.modData("Learnsets", "arceus").learnset.superpower = ["8M"];
 		this.modData("Learnsets", "arceus").learnset.blastburn = ["8E"];
 		this.modData("Learnsets", "arceus").learnset.frenzyplant = ["8E"];
 		this.modData("Learnsets", "arceus").learnset.hydrocannon = ["8E"];

@@ -485,7 +485,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			return !!this.queue.willAct() && this.runEvent('StallMove', source);
 		},
 		onHit(pokemon) {
-			this.add("-start", source, 'move: Rebound');
+			this.add("-start", pokemon, 'move: Rebound');
 			pokemon.addVolatile('rebound');
 			pokemon.addVolatile('stall');
 		},

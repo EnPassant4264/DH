@@ -1783,7 +1783,7 @@ export const Formats: FormatList = [
 		threads: [
 			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
 		],
-		ruleset: [ 'Hidden Move Limit', 'Species Clause', 'Item Clause', 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
+		ruleset: [ 'Hidden Move Limit', 'Obtainable', 'Species Clause', 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
 			'Team Preview', 'Cancel Mod', 'Data Mod', 'Mega Data Mod',],
 		mod: 'earthsky',
 		banlist: [
@@ -1801,7 +1801,7 @@ export const Formats: FormatList = [
 			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
 			`&bullet; <a href="https://drive.google.com/file/d/1N_kSuPC2XifKplZ9huLVlxmkYv3fCmt2/view?usp=sharing">Egelan Pokedex</a>`,
 		],
-		ruleset: [ 'Egelas Pokedex', 'Hidden Move Limit', 'Species Clause', 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
+		ruleset: [ 'Egelas Pokedex', 'Hidden Move Limit', 'Obtainable', 'Species Clause', 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
 			'Team Preview', 'Cancel Mod', 'Data Mod', 'Mega Data Mod'],
 		mod: 'earthsky',
 		banlist: [/*'ES Uber', */'Oceides', 'Hatar', 'Zuros', 'Norphaval', 'Lucario-Mega'],
@@ -1811,7 +1811,7 @@ export const Formats: FormatList = [
 		threads: [
 			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
 		],
-		ruleset: [ 'Hidden Move Limit', 'Species Clause', 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
+		ruleset: [ 'Hidden Move Limit', 'Obtainable', 'Species Clause', 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
 			'Team Preview', 'Cancel Mod', 'Data Mod', 'Mega Data Mod'],
 		mod: 'earthsky',
 		teambuilderFormat: 'Ubers'
