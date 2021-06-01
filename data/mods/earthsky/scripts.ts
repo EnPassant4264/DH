@@ -1370,7 +1370,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			//Restore all Pokemon to current gen
 			if(this.data.FormatsData[pokemonID] && this.data.FormatsData[pokemonID].isNonstandard === "Past") {
 				console.log(pokemon.name + " restoration");
-				console.log(this.modData('FormatsData', pokemonID);
+				console.log(this.modData('FormatsData', pokemonID));
 				delete this.modData('FormatsData', pokemonID).isNonstandard;
 				if(!pokemon.battleOnly){ //Restore tier, but in-battle forms don't have their own tier
 					if(pokemon.evos){
