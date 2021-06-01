@@ -1366,7 +1366,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		for (let pokemonID in this.data.Pokedex) {
 			const pokemon = this.data.Pokedex[pokemonID];
 			if(pokemon.isNonstandard === "Past") { //Mark all Pokemon as current-gen
-				//console.log(pokemon.name + " restoration");
+				console.log(pokemon.name + " restoration");
 				delete pokemon.isNonstandard;
 				pokemon.tier = "OU";
 			}
