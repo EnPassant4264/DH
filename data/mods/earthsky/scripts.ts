@@ -1411,13 +1411,14 @@ export const Scripts: ModdedBattleScriptsData = {
 					/* checks for new universal machines */
 					if(!noUniversalTMs.includes(pokemonID)){
 						if(moveID === "endure" && pokemon.num > 493){
-							if(learnsetTest)	console.log("Adding universal TM Endure");
-							moveLearn.push("8M");
+							if(learnsetTest) console.log("Adding universal TM Endure");
+							moveLearn = ["8M"];
 						} else if(["hiddenpower", "secretpower", "return", "frustration"].includes(moveID) && pokemon.num > 809){
-							if(learnsetTest)	console.log("Adding universal TM " + move.name);
-							moveLearn.push("8M");
-						} else continue;
-					} else continue;
+							if(learnsetTest) console.log("Adding universal TM " + move.name);
+							moveLearn = ["8M"];
+						}
+					}
+					continue;
 				}
 				if(learnsetTest) console.log("Found move " + move.name);
 				if(learnsetTest) console.log(moveLearn);
