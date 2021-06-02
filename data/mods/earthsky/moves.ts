@@ -1516,12 +1516,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					this.add('cant', target, 'move: Flash [of] ' + source);
 				}
 			}
-			if('midnight' in this.battle.field.pseudoWeather){
+			if('midnight' in this.field.pseudoWeather){
 				this.field.removePseudoWeather('midnight');
 				success = true;
 			}
 			return success;
 		},
+		secondary: null,
 		target: "allAdjacentFoes",
 		desc: "Lowers the target's accuracy by 1 stage and disrupts the execution of Focus Punch and moves that spend a turn charging, unless it is hiding behind a substitute. Supernatural darkness is lifted from the battlefield.",
 		shortDesc: "Lowers foe(s)' accuracy. Interrupts charging, removes Midnight.",
@@ -2231,7 +2232,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				factor = 0.25;
 				break;
 			}
-			if('midnight' in this.battle.field.pseudoWeather) factor = 0.75;
+			if('midnight' in this.field.pseudoWeather) factor = 0.75;
 			return !!this.heal(this.modify(pokemon.maxhp, factor));
 		},
 		desc: "The user restores 1/2 of its maximum HP if Delta Stream or no weather conditions are in effect, 3/4 of its maximum HP if Midnight is in effect, or 1/4 of its maximum HP if the weather is Desolate Land, Sunny Day, Hail, Primordial Sea, Rain Dance, or Sandstorm, all rounded half down.",
@@ -2252,7 +2253,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				factor = 0.25;
 				break;
 			}
-			if('midnight' in this.battle.field.pseudoWeather) factor = 0.25;
+			if('midnight' in this.field.pseudoWeather) factor = 0.25;
 			return !!this.heal(this.modify(pokemon.maxhp, factor));
 		},
 		desc: "The user restores 1/2 of its maximum HP if the weather Desolate Land or Sunny Day, 3/4 of its maximum HP if Delta Stream or no weather conditions are in effect, or 1/4 of its maximum HP if the weather is Hail, Primordial Sea, Rain Dance, or Sandstorm, or if Midnight is in effect, all rounded half down.",

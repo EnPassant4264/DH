@@ -137,7 +137,7 @@ export const Scripts: ModdedBattleScriptsData = {
 	},
 	field: {
 		suppressingWeather() {
-			if('midnight' in this.battle.field.pseudoWeather) return true;
+			if('midnight' in this.field.pseudoWeather) return true;
 			for (const side of this.battle.sides) {
 				for (const pokemon of side.active) {
 					if (pokemon && !pokemon.ignoringAbility() && pokemon.getAbility().suppressWeather) {
@@ -148,7 +148,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			return false;
 		},
 		suppressingTerrain(){
-			if('midnight' in this.battle.field.pseudoWeather) return true;
+			if('midnight' in this.field.pseudoWeather) return true;
 		},
 		effectiveTerrain(target?: Pokemon | Side | Battle) {
 			if (this.suppressingTerrain()) return '';
@@ -1335,8 +1335,6 @@ export const Scripts: ModdedBattleScriptsData = {
 		const unavailablePokemon = [
 			'Pikachu-Belle', 'Pikachu-Cosplay', 'Pikachu-Libre', 'Pikachu-PhD', 'Pikachu-Pop-Star', 'Pikachu-Rock-Star', 'Pikachu-Starter', "Slowpoke-Galar", "Slowbro-Galar", 'Eevee-Starter', "Articuno-Galar", "Zapdos-Galar", "Moltres-Galar", 'Pichu-Spiky-eared', "Slowking-Galar", "Darmanitan-Galar-Zen", "Greninja-Ash", 'Floette-Eternal', 'Eternatus-Eternamax', "Kubfu", "Urshifu", "Urshifu-Rapid-Strike", "Regieleki", "Regidrago", "Calyrex", "Glastrier", "Spectrier", "Calyrex-Shadow", "Calyrex-Ice",
 		];
-		const unobtainablePokemon = [
-		];
 		const baseEight = [ //Pokemon using their Gen VIII learnsets as a base
 			"Charmander", "Charmeleon", "Charizard", "Farfetch\u2019d", "Farfetch\u2019d-Galar", "Hitmonlee", "Hitmonchan", "Mr. Mime", "Mr. Mime-Galar", "Scyther", "Bellossom", "Qwilfish", "Scizor", "Remoraid", "Octillery", "Tyrogue", "Hitmontop", "Larvitar", "Pupitar", "Tyranitar", "Zigzagoon", "Zigzagoon-Galar", "Linoone", "Linoone-Galar", "Lotad", "Lombre", "Lunatone", "Solrock", "Bagon", "Shelgon", "Salamence", "Kyogre", "Groudon", "Rayquaza", "Mime Jr.", "Dialga", "Palkia", "Giratina", "Basculin", "Basculin-Blue-Striped", "Reshiram", "Zekrom", "Kyurem", "Fletchling", "Fletchinder", "Talonflame", "Swirlix", "Slurpuff", "Bergmite", "Avalugg", "Xerneas", "Yveltal", "Zygarde",
 		];
@@ -1355,8 +1353,11 @@ export const Scripts: ModdedBattleScriptsData = {
 		const deletedMoves = [
 			"appleacid","astralbarrage","burningjealousy","coaching","corrosivegas","decorate","dragonenergy","dualwingbeat","eeriespell","expandingforce","falsesurrender","fierywrath","freezingglare","glaciallance","grassyglide","gravapple","kinesis","mistyexplosion","risingvoltage","scaleshot","scorchingsands","shellsidearm","skittersmack","steelroller","surgingstrikes","terrainpulse","thundercage","thunderouskick","tripleaxel","wickedblow",
 		];
-		const droppedMachines = [
-			"agility","airslash","aurasphere","batonpass","beatup","blazekick","bodyslam","bravebird","bugbuzz","bulletseed","closecombat","confide","cosmicpower","covet","crosspoison","crunch","darkestlariat","doubleteam","dragondance","drainingkiss","firefang","firespin","flareblitz","focusenergy","focuspunch","guardswap","heatcrash","heavyslam","highhorsepower","icefang","iciclespear","imprison","leafblade","leafstorm","liquidation","magicalleaf","megakick","megapunch","megahorn","metronome","mudshot","muddywater","mysticalfire","payday","pinmissile","playrough","pollenpuff","powerswap","powerwhip","psychicfang","psychocut","razorshell","revenge","reversal","rockblast","sandtomb","scaryface","self-destruct","solarblade","speedswap","spikes","storedpower","swagger","swift","tailslap","throatchop","thunderfang","toxicspikes","triattack","venomdrench","weatherball",
+		const addedMachines = [ //Machines added in Gen VIII and retained in Earth & Sky
+			"amnesia", "assurance", "avalanche", "brine", "charm", "eerieimpulse", "electricterrain", "electroball", "encore", "faketears", "futuresight", "grassyterrain", "hex", "hurricane", "hydropump", "mistyterrain", "nastyplot", "phantomforce", "powergem", "psychicterrain", "screech", "whirlpool"
+		];
+		const droppedMachines = [ //Machines dropped from Earth & Sky
+			"agility","airslash","aurasphere","batonpass","beatup","blazekick","bodyslam","bravebird","bugbuzz","bulletseed","closecombat","confide","cosmicpower","covet","crosspoison","crunch","darkestlariat","doubleteam","dragondance","drainingkiss","firefang","firespin","flareblitz","flash","focusenergy","focuspunch","guardswap","heatcrash","heavyslam","highhorsepower","icefang","iciclespear","imprison","leafblade","leafstorm","liquidation","magicalleaf","megakick","megapunch","megahorn","metronome","mudshot","muddywater","mysticalfire","payday","pinmissile","playrough","pollenpuff","powerswap","powerwhip","psychicfang","psychocut","razorshell","revenge","reversal","rockblast","sandtomb","scaryface","self-destruct","solarblade","speedswap","spikes","storedpower","strugglebug","swagger","swift","tailslap","throatchop","thunderfang","toxicspikes","triattack","venomdrench","weatherball",
 		];
 		const renamedMoves = [
 			"banefulbunker","clangoroussoul","moongeistbeam","stompingtantrum","strangesteam","sunsteelstrike",
@@ -1418,7 +1419,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				for(const learnType of moveLearn){
 					if(levelString.test(learnType)){
 						if(watchogTest) console.log("This move is learned by level");
-						moveMeans.push(learnType);
+						moveMeans.push("8" + learnType.substring(1));
 					}
 				}
 				if(moveLearn.includes("".concat(startGen,"E"))){
@@ -1430,7 +1431,7 @@ export const Scripts: ModdedBattleScriptsData = {
 					moveMeans.push("8R");
 				}
 				// Pulls combined TMs and the three retained Isle Tutors
-				if((moveLearn.includes("7M") || moveLearn.includes("7T") || moveLearn.includes("8M"))){
+				if((moveLearn.includes("6M") || moveLearn.includes("7M") || moveLearn.includes("7T") || moveLearn.includes("8M"))){
 					if(watchogTest) console.log("This move is taught by machine");
 					moveMeans.push("8M");
 				}
@@ -1443,6 +1444,15 @@ export const Scripts: ModdedBattleScriptsData = {
 					moveMeans.push("8T");
 				}
 				if(watchogTest) console.log("Compiled: " + moveMeans);
+				/* adds universal machines, as well as those learned by other means that are newly compatible through machine */
+				if(moveID === "endure" && pokemon.num > 493 && !moveMeans.includes("8M")){
+					if(watchogTest)	console.log("Adding universal TM Endure");
+					moveMeans.push("8M");
+				}
+				if(["hiddenpower", "secretpower", "return", "frustration"].includes(moveID) && pokemon.num > 809 && !moveMeans.includes("8M")){
+					if(watchogTest)	console.log("Adding universal TM " + move.name);
+					moveMeans.push("8M");
+				}
 				/* drops egg moves learned by other means */
 				if(moveMeans.length > 1 && moveMeans.includes("8E")){
 					if(watchogTest) console.log("This move is redundantly an egg move");
@@ -1450,7 +1460,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				}
 				/* drops removed teachables */
 				if(droppedMachines.includes(moveID) && moveMeans.includes("8M")){
-					if(watchogTest) console.log("This move is actually no longer taught");
+					if(watchogTest) console.log("This move is actually no longer taught"); //Note: Flash is in this list because it's restricted and gets re-added manually
 					moveMeans.splice(moveMeans.indexOf("8M"),1);
 					if(moveMeans.length === 0){
 						delete this.modData('Learnsets', pokemonID).learnset[moveID];
