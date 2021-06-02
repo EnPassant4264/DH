@@ -1367,6 +1367,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		/* Wide-spread changes */
 		for (let pokemonID in this.data.Pokedex) {
 			const pokemon = this.data.Pokedex[pokemonID];
+			const watchogTest = ["patrat", "watchog"].includes(pokemonID);
 			 //Don't do anything with the new Pokemon, Totems, and Pokestar Studios opponents
 			if(pokemon.num >= 1000 || pokemon.num <= -5000 || pokemonID.endsWith('totem')) continue;
 			//Change generational accessibility
@@ -1388,7 +1389,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				["Deoxys", "Rotom", "Giratina", "Shaymin", "Arceus", "Keldeo", "Meloetta", "Genesect", "Vivillon", "Aegislash", "Pumpkaboo", "Gourgeist", "Xerneas", "Hoopa", 
 				"Oricorio", "Silvally", "Magearna", "Sinistea", "Polteageist", "Eternatus", "Zarude"].includes(pokemon.baseSpecies))
 				continue;
-			if(pokemonID === "watchog"){
+			if(watchogTest) {
 				console.log("Modifying learnset of " + pokemon.name);
 				console.log(this.modData('Learnsets', pokemonID).learnset);
 			}
@@ -1397,17 +1398,17 @@ export const Scripts: ModdedBattleScriptsData = {
 			let moveDropped = false;
 			let startGen = (pokemon.num > 807 || baseEight.includes[pokemon.name]) ? 8 : 7; //Tags Gen 7 or 8 for level/egg moves
 			const levelString = new RegExp(startGen + 'L[0-9]+');
-			//console.log(levelString);
+			if(watchogTest) console.log(levelString);
 			for(let moveID in this.data.Moves) { //TODO: change to Dex.moves.all() when DH updates to it
 				const move = this.data.Moves[moveID];
 				if(move.isZ || move.isMax) continue;
 				moveLearn = this.modData('Learnsets', pokemonID).learnset[moveID];
 				if(!moveLearn) continue;
-				//console.log("Found move " + move.name);
-				//console.log(moveLearn);
+				if(watchogTest) console.log("Found move " + move.name);
+				if(watchogTest) console.log(moveLearn);
 				/* drops deleted moves */
 				if(deletedMoves.includes(moveID)) {
-					//console.log("This move is deleted!");
+					if(watchogTest) console.log("This move is deleted!");
 					delete this.modData('Learnsets', pokemonID).learnset[moveID];
 					continue;
 				}
@@ -1416,44 +1417,44 @@ export const Scripts: ModdedBattleScriptsData = {
 				// Level and egg moves of base gen
 				for(const learnType of moveLearn){
 					if(levelString.test(learnType)){
-						//console.log("This move is learned by level");
+						if(watchogTest) console.log("This move is learned by level");
 						moveMeans.push(learnType);
 					}
 				}
 				if(moveLearn.includes("".concat(startGen,"E"))){
-					//console.log("This move is learned by egg");
+					if(watchogTest) console.log("This move is learned by egg");
 					moveMeans.push("8E");
 				}
 				if(moveLearn.includes("".concat(startGen,"R"))){
-					//console.log("This move is learned on forme change");
+					if(watchogTest) console.log("This move is learned on forme change");
 					moveMeans.push("8R");
 				}
 				// Pulls combined TMs and the three retained Isle Tutors
 				if((moveLearn.includes("7M") || moveLearn.includes("7T") || moveLearn.includes("8M"))){
-					//console.log("This move is taught by machine");
+					if(watchogTest) console.log("This move is taught by machine");
 					moveMeans.push("8M");
 				}
 				if((moveID === "lashout" || moveID === "poltergeist") && moveLearn.includes("8T")){
-					//console.log("This move is taught by machine");
+					if(watchogTest) console.log("This move is taught by machine");
 					moveMeans.push("8M");
 				}
 				if(['grasspledge', 'firepledge', 'waterpledge', 'frenzyplant', 'blastburn', 'hydrocannon', 'dracometeor', 'steelbeam', 'meteorbeam'].includes(moveID) && moveLearn.includes("8T")){
-					//console.log("This move is taught by tutor");
+					if(watchogTest) console.log("This move is taught by tutor");
 					moveMeans.push("8T");
 				}
-				//console.log("Compiled: " + moveMeans);
+				if(watchogTest) console.log("Compiled: " + moveMeans);
 				/* drops egg moves learned by other means */
-				if(moveMeans !== ["8E"] && moveMeans.includes("8E")){
-					//console.log("This move is redundantly an egg move");
+				if(moveMeans.length > 1 && moveMeans.includes("8E")){
+					if(watchogTest) console.log("This move is redundantly an egg move");
 					moveMeans.splice(moveMeans.indexOf("8E"),1);
 				}
 				/* drops removed teachables */
 				if(droppedMachines.includes(moveID) && moveMeans.includes("8M")){
-					//console.log("This move is actually no longer taught");
+					if(watchogTest) console.log("This move is actually no longer taught");
 					moveMeans.splice(moveMeans.indexOf("8M"),1);
 					if(moveMeans.length === 0){
 						delete this.modData('Learnsets', pokemonID).learnset[moveID];
-						//console.log("This move is not learned anymore");
+						if(watchogTest) console.log("This move is not learned anymore");
 						continue;
 					}
 				}
@@ -1487,7 +1488,7 @@ export const Scripts: ModdedBattleScriptsData = {
 					}
 				}
 			}
-			if(pokemonID === "watchog") console.log(this.modData('Learnsets', pokemonID).learnset);
+			if(watchogTest) console.log(this.modData('Learnsets', pokemonID).learnset);
 		}
 		
 		/* Delete stuff */

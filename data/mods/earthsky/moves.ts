@@ -2141,7 +2141,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		onHit(pokemon){
 			pokemon.addVolatile('evadestall');
 			pokemon.volatiles['evadestall'].duration = 3; //Needs to last a turn after Minimize ends
-			this.add('-start', source, 'Minimize');
+			this.add('-start', pokemon, 'Minimize');
 		},
 		condition: {
 			duration: 2, //Should get removed in onBeforeMove, so this is a failsafe

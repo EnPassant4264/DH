@@ -239,8 +239,8 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	tradewinds: {
 		onStart(source) {
+			this.add('-ability', source, 'Trade Winds');
 			source.side.addSideCondition('tailwind');
-			this.add('-sidestart', source.side, 'Tailwind', 'ability: Trade Winds');
 		},
 		name: "Trade Winds",
 		shortDesc: "On switch-in, this Pokemon summons Tailwind.",
@@ -1078,7 +1078,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		onAnyTryMove(target, source, effect) {
 			if (effect.id === 'midnight') {
 				this.attrLastMove('[still]');
-				this.add('cant', this.effectData.target, 'ability: Illuminate', effect, '[of] ' + this.effectData.target);
+				this.add('cant', this.effectData.source, 'ability: Illuminate', effect, '[of] ' + this.effectData.target);
 				return false;
 			}
 		},
