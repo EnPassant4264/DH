@@ -1220,6 +1220,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		num: 141,
 	},
 	owntempo: {
+		inherit: true,
 		//Attribute copy/theft immunity implemented in moves.ts in the moves themselves.
 		desc: `This Pokemon cannot be confused. Its moves and attributes also cannot be copied or stolen:
 		-Copycat, Mimic, Mirror Move, and Sketch will fail to copy a move it used; Snatch will fail to steal such a move, and Me First will fail to use it.
@@ -1231,6 +1232,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		immune: "  [POKEMON]'s mannerisms couldn't be acquired!"
 	},
 	pastelveil: {
+		inherit: true,
 		onUpdate(pokemon) {
 			if (['psn', 'tox'].includes(pokemon.status)) {
 				this.add('-activate', pokemon, 'ability: Pastel Veil');

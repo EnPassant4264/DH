@@ -1365,8 +1365,8 @@ export const Scripts: ModdedBattleScriptsData = {
 		/* Wide-spread changes */
 		for (let pokemonID in this.data.Pokedex) {
 			const pokemon = this.data.Pokedex[pokemonID];
-			 //Don't do anything with the new Pokemon or Pokestar Studios opponents
-			if(pokemon.num >= 1000 || pokemon.num <= -5000) continue;
+			 //Don't do anything with the new Pokemon, Totems, and Pokestar Studios opponents
+			if(pokemon.num >= 1000 || pokemon.num <= -5000 || species.id.endsWith('totem')) continue;
 			//Restore all Pokemon to current gen
 			if(this.data.FormatsData[pokemonID] && this.data.FormatsData[pokemonID].isNonstandard === "Past") {
 				console.log(pokemon.name + " restoration");
@@ -1379,7 +1379,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				}
 			}
 			 //and get rid of anything that isn't available
-			if(unavailablePokemon.includes(pokemon.name) || ["Totem", "Gmax"].includes(pokemon.forme)){
+			if(unavailablePokemon.includes(pokemon.name) || species.id.endsWith('gmax')){
 				pokemon.isNonstandard === "Past";
 				continue;
 			}

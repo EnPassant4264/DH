@@ -1811,8 +1811,8 @@ export const Formats: FormatList = [
 		threads: [
 			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
 		],
-		ruleset: [ 'Hidden Move Limit', 'Obtainable', 'Species Clause', 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
-			'Team Preview', 'Cancel Mod', 'Data Mod', 'Mega Data Mod'],
+		ruleset: [ 'Hidden Move Limit', 'Standard NatDex', 'Species Clause', 'Sleep Clause Mod', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
+			'Data Mod', 'Mega Data Mod'],
 		mod: 'earthsky',
 		teambuilderFormat: 'Ubers'
 	},
