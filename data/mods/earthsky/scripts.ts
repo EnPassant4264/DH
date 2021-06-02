@@ -137,7 +137,7 @@ export const Scripts: ModdedBattleScriptsData = {
 	},
 	field: {
 		suppressingWeather() {
-			if('midnight' in this.field.pseudoWeather) return true;
+			if('midnight' in this.pseudoWeather) return true;
 			for (const side of this.battle.sides) {
 				for (const pokemon of side.active) {
 					if (pokemon && !pokemon.ignoringAbility() && pokemon.getAbility().suppressWeather) {
@@ -148,7 +148,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			return false;
 		},
 		suppressingTerrain(){
-			if('midnight' in this.field.pseudoWeather) return true;
+			if('midnight' in this.pseudoWeather) return true;
 		},
 		effectiveTerrain(target?: Pokemon | Side | Battle) {
 			if (this.suppressingTerrain()) return '';
@@ -1357,7 +1357,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			"amnesia", "assurance", "avalanche", "brine", "charm", "eerieimpulse", "electricterrain", "electroball", "encore", "faketears", "futuresight", "grassyterrain", "hex", "hurricane", "hydropump", "mistyterrain", "nastyplot", "phantomforce", "powergem", "psychicterrain", "screech", "whirlpool"
 		];
 		const droppedMachines = [ //Machines dropped from Earth & Sky
-			"agility","airslash","aurasphere","batonpass","beatup","blazekick","bodyslam","bravebird","bugbuzz","bulletseed","closecombat","confide","cosmicpower","covet","crosspoison","crunch","darkestlariat","doubleteam","dragondance","drainingkiss","firefang","firespin","flareblitz","flash","focusenergy","focuspunch","guardswap","heatcrash","heavyslam","highhorsepower","icefang","iciclespear","imprison","leafblade","leafstorm","liquidation","magicalleaf","megakick","megapunch","megahorn","metronome","mudshot","muddywater","mysticalfire","payday","pinmissile","playrough","pollenpuff","powerswap","powerwhip","psychicfang","psychocut","razorshell","revenge","reversal","rockblast","sandtomb","scaryface","self-destruct","solarblade","speedswap","spikes","storedpower","strugglebug","swagger","swift","tailslap","throatchop","thunderfang","toxicspikes","triattack","venomdrench","weatherball",
+			"agility","airslash","aurasphere","batonpass","beatup","blazekick","bodyslam","bravebird","bugbuzz","bulletseed","closecombat","confide","cosmicpower","covet","crosspoison","crunch","cut","darkestlariat","doubleteam","dragondance","drainingkiss","firefang","firespin","flareblitz","flash","focusenergy","focuspunch","guardswap","heatcrash","heavyslam","highhorsepower","icefang","iciclespear","imprison","leafblade","leafstorm","liquidation","magicalleaf","megakick","megapunch","megahorn","metronome","mudshot","muddywater","mysticalfire","payday","pinmissile","playrough","pollenpuff","powerswap","powerwhip","psychicfang","psychocut","razorshell","revenge","reversal","rockblast","sandtomb","scaryface","self-destruct","solarblade","speedswap","spikes","storedpower","strugglebug","swagger","swift","tailslap","throatchop","thunderfang","toxicspikes","triattack","venomdrench","weatherball",
 		];
 		const renamedMoves = [
 			"banefulbunker","clangoroussoul","moongeistbeam","stompingtantrum","strangesteam","sunsteelstrike",
@@ -1365,10 +1365,13 @@ export const Scripts: ModdedBattleScriptsData = {
 		const newNameMoves = [
 			"bunkerdown","warriorssoul","lunarray","tantrum","strangesmoke","solarimpact",
 		];
+		const noUniversalTMs = [
+			"tynamo", "scatterbug", "spewpa", "cosmog", "cosmoem", "blipbug", "applin"
+		];
 		/* Wide-spread changes */
 		for (let pokemonID in this.data.Pokedex) {
 			const pokemon = this.data.Pokedex[pokemonID];
-			const watchogTest = ["patrat", "watchog"].includes(pokemonID);
+			const learnsetTest = ["patrat", "watchog"].includes(pokemonID);
 			 //Don't do anything with the new Pokemon, Totems, and Pokestar Studios opponents
 			if(pokemon.num >= 1000 || pokemon.num <= -5000 || pokemonID.endsWith('totem')) continue;
 			//Change generational accessibility
@@ -1390,7 +1393,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				["Deoxys", "Rotom", "Giratina", "Shaymin", "Arceus", "Keldeo", "Meloetta", "Genesect", "Vivillon", "Aegislash", "Pumpkaboo", "Gourgeist", "Xerneas", "Hoopa", 
 				"Oricorio", "Silvally", "Magearna", "Sinistea", "Polteageist", "Eternatus", "Zarude"].includes(pokemon.baseSpecies))
 				continue;
-			if(watchogTest) {
+			if(learnsetTest) {
 				console.log("Modifying learnset of " + pokemon.name);
 				console.log(this.modData('Learnsets', pokemonID).learnset);
 			}
@@ -1399,17 +1402,28 @@ export const Scripts: ModdedBattleScriptsData = {
 			let moveDropped = false;
 			let startGen = (pokemon.num > 807 || baseEight.includes[pokemon.name]) ? 8 : 7; //Tags Gen 7 or 8 for level/egg moves
 			const levelString = new RegExp(startGen + 'L[0-9]+');
-			if(watchogTest) console.log(levelString);
+			if(learnsetTest) console.log(levelString);
 			for(let moveID in this.data.Moves) { //TODO: change to Dex.moves.all() when DH updates to it
 				const move = this.data.Moves[moveID];
 				if(move.isZ || move.isMax) continue;
 				moveLearn = this.modData('Learnsets', pokemonID).learnset[moveID];
-				if(!moveLearn) continue;
-				if(watchogTest) console.log("Found move " + move.name);
-				if(watchogTest) console.log(moveLearn);
+				if(!moveLearn){
+					/* checks for new universal machines */
+					if(!noUniversalTMs.includes(pokemonID)){
+						if(moveID === "endure" && pokemon.num > 493){
+							if(learnsetTest)	console.log("Adding universal TM Endure");
+							moveLearn.push("8M");
+						} else if(["hiddenpower", "secretpower", "return", "frustration"].includes(moveID) && pokemon.num > 809){
+							if(learnsetTest)	console.log("Adding universal TM " + move.name);
+							moveLearn.push("8M");
+						} else continue;
+					} else continue;
+				}
+				if(learnsetTest) console.log("Found move " + move.name);
+				if(learnsetTest) console.log(moveLearn);
 				/* drops deleted moves */
 				if(deletedMoves.includes(moveID)) {
-					if(watchogTest) console.log("This move is deleted!");
+					if(learnsetTest) console.log("This move is deleted!");
 					delete this.modData('Learnsets', pokemonID).learnset[moveID];
 					continue;
 				}
@@ -1418,53 +1432,44 @@ export const Scripts: ModdedBattleScriptsData = {
 				// Level and egg moves of base gen
 				for(const learnType of moveLearn){
 					if(levelString.test(learnType)){
-						if(watchogTest) console.log("This move is learned by level");
+						if(learnsetTest) console.log("This move is learned by level");
 						moveMeans.push("8" + learnType.substring(1));
 					}
 				}
 				if(moveLearn.includes("".concat(startGen,"E"))){
-					if(watchogTest) console.log("This move is learned by egg");
+					if(learnsetTest) console.log("This move is learned by egg");
 					moveMeans.push("8E");
 				}
 				if(moveLearn.includes("".concat(startGen,"R"))){
-					if(watchogTest) console.log("This move is learned on forme change");
+					if(learnsetTest) console.log("This move is learned on forme change");
 					moveMeans.push("8R");
 				}
 				// Pulls combined TMs and the three retained Isle Tutors
 				if((moveLearn.includes("6M") || moveLearn.includes("7M") || moveLearn.includes("7T") || moveLearn.includes("8M"))){
-					if(watchogTest) console.log("This move is taught by machine");
+					if(learnsetTest) console.log("This move is taught by machine");
 					moveMeans.push("8M");
 				}
 				if((moveID === "lashout" || moveID === "poltergeist") && moveLearn.includes("8T")){
-					if(watchogTest) console.log("This move is taught by machine");
+					if(learnsetTest) console.log("This move is taught by machine");
 					moveMeans.push("8M");
 				}
 				if(['grasspledge', 'firepledge', 'waterpledge', 'frenzyplant', 'blastburn', 'hydrocannon', 'dracometeor', 'steelbeam', 'meteorbeam'].includes(moveID) && moveLearn.includes("8T")){
-					if(watchogTest) console.log("This move is taught by tutor");
+					if(learnsetTest) console.log("This move is taught by tutor");
 					moveMeans.push("8T");
 				}
-				if(watchogTest) console.log("Compiled: " + moveMeans);
-				/* adds universal machines, as well as those learned by other means that are newly compatible through machine */
-				if(moveID === "endure" && pokemon.num > 493 && !moveMeans.includes("8M")){
-					if(watchogTest)	console.log("Adding universal TM Endure");
-					moveMeans.push("8M");
-				}
-				if(["hiddenpower", "secretpower", "return", "frustration"].includes(moveID) && pokemon.num > 809 && !moveMeans.includes("8M")){
-					if(watchogTest)	console.log("Adding universal TM " + move.name);
-					moveMeans.push("8M");
-				}
+				if(learnsetTest) console.log("Compiled: " + moveMeans);
 				/* drops egg moves learned by other means */
 				if(moveMeans.length > 1 && moveMeans.includes("8E")){
-					if(watchogTest) console.log("This move is redundantly an egg move");
+					if(learnsetTest) console.log("This move is redundantly an egg move");
 					moveMeans.splice(moveMeans.indexOf("8E"),1);
 				}
 				/* drops removed teachables */
 				if(droppedMachines.includes(moveID) && moveMeans.includes("8M")){
-					if(watchogTest) console.log("This move is actually no longer taught"); //Note: Flash is in this list because it's restricted and gets re-added manually
+					if(learnsetTest) console.log("This move is actually no longer taught"); //Note: Flash is in this list because it's restricted and gets re-added manually
 					moveMeans.splice(moveMeans.indexOf("8M"),1);
 					if(moveMeans.length === 0){
 						delete this.modData('Learnsets', pokemonID).learnset[moveID];
-						if(watchogTest) console.log("This move is not learned anymore");
+						if(learnsetTest) console.log("This move is not learned anymore");
 						continue;
 					}
 				}
@@ -1498,7 +1503,7 @@ export const Scripts: ModdedBattleScriptsData = {
 					}
 				}
 			}
-			if(watchogTest) console.log(this.modData('Learnsets', pokemonID).learnset);
+			if(learnsetTest) console.log(this.modData('Learnsets', pokemonID).learnset);
 		}
 		
 		/* Delete stuff */
