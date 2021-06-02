@@ -1487,7 +1487,7 @@ export const Scripts: ModdedBattleScriptsData = {
 					}
 				}
 			}
-			console.log(this.modData('Learnsets', pokemonID).learnset);
+			if(pokemonID === "watchog") console.log(this.modData('Learnsets', pokemonID).learnset);
 		}
 		
 		/* Delete stuff */

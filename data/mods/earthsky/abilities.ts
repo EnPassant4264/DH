@@ -240,7 +240,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	tradewinds: {
 		onStart(source) {
 			source.side.addSideCondition('tailwind');
-			this.add('-sidestart', side, 'Tailwind', 'ability: Trade Winds');
+			this.add('-sidestart', source.side, 'Tailwind', 'ability: Trade Winds');
 		},
 		name: "Trade Winds",
 		shortDesc: "On switch-in, this Pokemon summons Tailwind.",

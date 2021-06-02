@@ -760,7 +760,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		num: 1024,
 		basePower: 60,
 		basePowerCallback(pokemon, target, move) {
-			if (pokemon.item && !this.battle.runEvent('UseItem', pokemon, null, null, pokemon.item)) {
+			const item = pokemon.getItem();
+			if (item && !this.battle.runEvent('UseItem', pokemon, item)) {
 				this.debug("Power increase for held item");
 				return move.basePower * 1.5;
 			}
@@ -1895,7 +1896,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		basePower: 65,
 		onHit(pokemon, source) {
 			const item = pokemon.getItem();
-			if (item && this.battle.runEvent('UseItem', pokemon, null, null, item)) {
+			if (item && this.battle.runEvent('UseItem', pokemon, item)) {
 				this.add('-enditem', pokemon, item.name, '[from] move: Incinerate');
 				pokemon.lastItem = item.id;
 			}
@@ -3152,7 +3153,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					result = true;
 				} else {
 					const item = active.getItem();
-					if (active.hp && this.battle.runEvent('UseItem', active, null, null, item)) {
+					if (active.hp && this.battle.runEvent('UseItem', active, item)) {
 						
 					}
 				}
