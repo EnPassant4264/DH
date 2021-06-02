@@ -1333,7 +1333,9 @@ export const Scripts: ModdedBattleScriptsData = {
 	init() {
 		/* Removed/renamed accessibility and other init stuff */
 		const unavailablePokemon = [
-			"Slowpoke-Galar", "Slowbro-Galar", "Articuno-Galar", "Zapdos-Galar", "Moltres-Galar", "Slowking-Galar", "Darmanitan-Galar-Zen", "Greninja-Ash", "Kubfu", "Urshifu", "Urshifu-Rapid-Strike", "Regieleki", "Regidrago", "Calyrex", "Glastrier", "Spectrier", "Calyrex-Shadow", "Calyrex-Ice",
+			'Pikachu-Belle', 'Pikachu-Cosplay', 'Pikachu-Libre', 'Pikachu-PhD', 'Pikachu-Pop-Star', 'Pikachu-Rock-Star', 'Pikachu-Starter', "Slowpoke-Galar", "Slowbro-Galar", 'Eevee-Starter', "Articuno-Galar", "Zapdos-Galar", "Moltres-Galar", 'Pichu-Spiky-eared', "Slowking-Galar", "Darmanitan-Galar-Zen", "Greninja-Ash", 'Floette-Eternal', 'Eternatus-Eternamax', "Kubfu", "Urshifu", "Urshifu-Rapid-Strike", "Regieleki", "Regidrago", "Calyrex", "Glastrier", "Spectrier", "Calyrex-Shadow", "Calyrex-Ice",
+		];
+		const unobtainablePokemon = [
 		];
 		const baseEight = [ //Pokemon using their Gen VIII learnsets as a base
 			"Charmander", "Charmeleon", "Charizard", "Farfetch\u2019d", "Farfetch\u2019d-Galar", "Hitmonlee", "Hitmonchan", "Mr. Mime", "Mr. Mime-Galar", "Scyther", "Bellossom", "Qwilfish", "Scizor", "Remoraid", "Octillery", "Tyrogue", "Hitmontop", "Larvitar", "Pupitar", "Tyranitar", "Zigzagoon", "Zigzagoon-Galar", "Linoone", "Linoone-Galar", "Lotad", "Lombre", "Lunatone", "Solrock", "Bagon", "Shelgon", "Salamence", "Kyogre", "Groudon", "Rayquaza", "Mime Jr.", "Dialga", "Palkia", "Giratina", "Basculin", "Basculin-Blue-Striped", "Reshiram", "Zekrom", "Kyurem", "Fletchling", "Fletchinder", "Talonflame", "Swirlix", "Slurpuff", "Bergmite", "Avalugg", "Xerneas", "Yveltal", "Zygarde",
@@ -1367,10 +1369,13 @@ export const Scripts: ModdedBattleScriptsData = {
 			const pokemon = this.data.Pokedex[pokemonID];
 			 //Don't do anything with the new Pokemon, Totems, and Pokestar Studios opponents
 			if(pokemon.num >= 1000 || pokemon.num <= -5000 || pokemonID.endsWith('totem')) continue;
-			//Restore all Pokemon to current gen
-			if(this.data.FormatsData[pokemonID] && this.data.FormatsData[pokemonID].isNonstandard === "Past") {
-				console.log(pokemon.name + " restoration");
-				console.log(this.modData('FormatsData', pokemonID));
+			//Change generational accessibility
+			if(unavailablePokemon.includes(pokemon.name) || pokemonID.endsWith('gmax')){
+				pokemon.isNonstandard === "Past";
+				continue;
+			} else if(this.data.FormatsData[pokemonID] && this.data.FormatsData[pokemonID].isNonstandard === "Past") {
+				//console.log(pokemon.name + " restoration");
+				//console.log(this.modData('FormatsData', pokemonID));
 				delete this.modData('FormatsData', pokemonID).isNonstandard;
 				if(!pokemon.battleOnly){ //Restore tier, but in-battle forms don't have their own tier
 					if(pokemon.evos){
@@ -1378,18 +1383,15 @@ export const Scripts: ModdedBattleScriptsData = {
 					} else this.modData('FormatsData', pokemonID).tier = "OU";
 				}
 			}
-			 //and get rid of anything that isn't available
-			if(unavailablePokemon.includes(pokemon.name) || pokemonID.endsWith('gmax')){
-				pokemon.isNonstandard === "Past";
-				continue;
-			}
 			//Don't do move stuff with formes that don't have their own movesets (and Xerneas)
 			if(pokemon.battleOnly || ["Egelas", "Mega", "Mega-X", "Mega-Y", "Primal"].includes(pokemon.forme) || 
 				["Deoxys", "Rotom", "Giratina", "Shaymin", "Arceus", "Keldeo", "Meloetta", "Genesect", "Vivillon", "Aegislash", "Pumpkaboo", "Gourgeist", "Xerneas", "Hoopa", 
 				"Oricorio", "Silvally", "Magearna", "Sinistea", "Polteageist", "Eternatus", "Zarude"].includes(pokemon.baseSpecies))
 				continue;
-			//console.log("Modifying learnset of " + pokemon.name);
-			//console.log(this.modData('Learnsets', pokemonID).learnset);
+			if(pokemonID === "watchog"){
+				console.log("Modifying learnset of " + pokemon.name);
+				console.log(this.modData('Learnsets', pokemonID).learnset);
+			}
 			/* Moves */
 			let moveLearn; //store move learnset to save memory/time
 			let moveDropped = false;
@@ -1485,7 +1487,7 @@ export const Scripts: ModdedBattleScriptsData = {
 					}
 				}
 			}
-			//console.log(this.modData('Learnsets', pokemonID).learnset);
+			console.log(this.modData('Learnsets', pokemonID).learnset);
 		}
 		
 		/* Delete stuff */
