@@ -1493,6 +1493,7 @@ export const Scripts: ModdedBattleScriptsData = {
 					}
 				}
 				if(!moveDropped) this.modData('Learnsets', pokemonID).learnset[moveID] = moveMeans;
+				else moveDropped = false;
 			}
 			// Ability renames
 			for(let i = 0; i < 7; i++){ //Abilities
