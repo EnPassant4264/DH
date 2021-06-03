@@ -1355,7 +1355,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 			onBeforeTurnCallback(pokemon){
 				pokemon.volatiles['evadestall'].duration = 2; //Holds evasion counter while effect is active 
-			}
+			},
 			onAccuracy(accuracy, target, source, move) {
 				if(['allAdjacentFoes','allAdjacent','all'].includes(move.target)){
 					target.removeVolatile('doubleteam');
