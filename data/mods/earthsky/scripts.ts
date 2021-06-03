@@ -1372,7 +1372,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		/* Wide-spread changes */
 		for (let pokemonID in this.data.Pokedex) {
 			const pokemon = this.data.Pokedex[pokemonID];
-			const learnsetTest = false;//["ferroseed", "ferrothorn"].includes(pokemonID);
+			const learnsetTest = ["solrock"].includes(pokemonID);
 			 //Don't do anything with the new Pokemon, Totems, and Pokestar Studios opponents
 			if(pokemon.num >= 1000 || pokemon.num <= -5000 || pokemonID.endsWith('totem')) continue;
 			//Change generational accessibility
@@ -1403,7 +1403,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			let moveDropped = false;
 			let startGen = (pokemon.num > 807 || baseEight.includes[pokemon.name]) ? 8 : 7; //Tags Gen 7 or 8 for level/egg moves
 			const levelString = new RegExp(startGen + 'L[0-9]+');
-			if(learnsetTest) console.log(levelString);
+			if(learnsetTest) console.log("Starting with Gen " + startGen);
 			for(let moveID in this.data.Moves) { //TODO: change to Dex.moves.all() when DH updates to it
 				const move = this.data.Moves[moveID];
 				if(move.isZ || move.isMax) continue;

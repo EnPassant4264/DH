@@ -1361,10 +1361,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					target.removeVolatile('doubleteam');
 					move.spreadHit = true;
 				}
-				if(!move.ignoreEvasion && typeof move.accuracy === 'number') return false;
+				if(!move.ignoreEvasion && typeof move.accuracy === 'number'){
+					target.removeVolatile('doubleteam');
+					return false;
+				}
 				return;
 			},
-			onStart(pokemon){
+			onEnd(pokemon){
 				pokemon.removeVolatile('evadestall');
 			},
 		},
@@ -2383,11 +2386,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			pokemon.usedItemThisTurn = true;
 		},
 		onModifyType(move, pokemon) {
-			const item = this.battle.dex.getItem(pokemon.lastItem);
+			const item = this.dex.getItem(pokemon.lastItem);
 			move.type = item.naturalGift.type;
 		},
 		onPrepareHit(target, pokemon, move) {
-			const item = this.battle.dex.getItem(pokemon.lastItem);
+			const item = this.dex.getItem(pokemon.lastItem);
 			move.basePower = item.naturalGift.basePower;
 			this.runEvent('AfterUseItem', pokemon, null, null, item);
 		},
@@ -3235,10 +3238,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		pp: 10,
 		priority: 0,
 		flags: {protect: 1, mirror: 1, sound: 1},
-		onBasePower(target, source, move){
-			if(target.hasType(source.getTypes())){
+		onBasePowerPriority: 6,
+		onBasePower(basePower, user, target, move){
+			if(target.hasType(user.getTypes())){
 				this.debug('Synchronoise power boost');
-				return move.basePower * 2;
+				return basePower * 2;
 			}
 		},
 		secondary: null,
