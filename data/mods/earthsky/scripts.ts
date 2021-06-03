@@ -1371,7 +1371,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		/* Wide-spread changes */
 		for (let pokemonID in this.data.Pokedex) {
 			const pokemon = this.data.Pokedex[pokemonID];
-			const learnsetTest = ["ferroseed", "ferrothorn"].includes(pokemonID);
+			const learnsetTest = false;//["ferroseed", "ferrothorn"].includes(pokemonID);
 			 //Don't do anything with the new Pokemon, Totems, and Pokestar Studios opponents
 			if(pokemon.num >= 1000 || pokemon.num <= -5000 || pokemonID.endsWith('totem')) continue;
 			//Change generational accessibility

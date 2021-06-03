@@ -1294,7 +1294,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		},
 		onHit(pokemon){
 			pokemon.addVolatile('evadestall');
-			this.add('-start', source, 'move: Double Team');
+			this.add('-start', pokemon, 'move: Double Team');
 		},
 		volatileStatus: 'doubleteam',
 		condition: {
@@ -2290,7 +2290,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		onTryHit(target, pokemon) {
 			let move = 'triattack';
-			if ('midnight' in this.battle.field.pseudoWeather){
+			if ('midnight' in this.field.pseudoWeather){
 				move = 'nightdaze';
 			} else if (this.field.isTerrain('electricterrain')) {
 				move = 'thunderbolt';
@@ -2645,7 +2645,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		onModifyMove(move, pokemon) {
 			move.secondaries = [];
-			if ('midnight' in this.battle.field.pseudoWeather){
+			if ('midnight' in this.field.pseudoWeather){
 				move.secondaries.push({
 					chance: 30,
 					status: 'slp',

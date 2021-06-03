@@ -824,15 +824,15 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAccuracy(accuracy, target, source, move) {
 			if (move.twoType){
-				if (this.dex.getImmunity(move, pokemon) && this.dex.getEffectiveness(move, pokemon) >= 2) {
-					this.add('-miss', pokemon, 'ability: Anticipation');
+				if (this.dex.getImmunity(move, target) && this.dex.getEffectiveness(move, target) >= 2) {
+					this.add('-miss', source, 'ability: Anticipation', '[of] ' + target);
 					return false;
 				}
 			}
 			const moveType = move.id === 'hiddenpower' ? target.hpType : move.type;
-			if (this.dex.getImmunity(moveType, pokemon) && this.dex.getEffectiveness(moveType, pokemon) >= 2) {
-				this.add('-miss', pokemon, 'ability: Anticipation');
-				return false;
+			if (this.dex.getImmunity(moveType, target) && this.dex.getEffectiveness(moveType, target) >= 2) {
+				this.add('-miss', source, 'ability: Anticipation', '[of] ' + target);
+				return false
 			}
 		},
 		rating: 3,
@@ -1019,7 +1019,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				return false;
 			}
 		},
-		onResidual(){
+		onResidual(pokemon){
 			pokemon.abilityData.warnMoves = [];
 		},
 		rating: 2.5,
