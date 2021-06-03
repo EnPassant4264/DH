@@ -1459,11 +1459,6 @@ export const Scripts: ModdedBattleScriptsData = {
 					moveMeans.push("8T");
 				}
 				if(learnsetTest) console.log("Compiled: " + moveMeans);
-				/* drops egg moves learned by other means */
-				if(moveMeans.length > 1 && moveMeans.includes("8E")){
-					if(learnsetTest) console.log("This move is redundantly an egg move");
-					moveMeans.splice(moveMeans.indexOf("8E"),1);
-				}
 				/* drops removed teachables */
 				if(droppedMachines.includes(moveID) && moveMeans.includes("8M")){
 					if(learnsetTest) console.log("This move is actually no longer taught"); //Note: Flash is in this list because it's restricted and gets re-added manually
@@ -1473,6 +1468,11 @@ export const Scripts: ModdedBattleScriptsData = {
 						if(learnsetTest) console.log("This move is not learned anymore");
 						continue;
 					}
+				}
+				/* drops egg moves learned by other means */
+				if(moveMeans.length > 1 && moveMeans.includes("8E")){
+					if(learnsetTest) console.log("This move is redundantly an egg move");
+					moveMeans.splice(moveMeans.indexOf("8E"),1);
 				}
 				/* Move renames */
 				//Lash Out - differentiating between old and new
