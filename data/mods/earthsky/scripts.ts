@@ -149,6 +149,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		},
 		suppressingTerrain(){
 			if('midnight' in this.pseudoWeather) return true;
+			return false;
 		},
 		effectiveTerrain(target?: Pokemon | Side | Battle) {
 			if (this.suppressingTerrain()) return '';

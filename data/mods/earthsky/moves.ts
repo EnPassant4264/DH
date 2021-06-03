@@ -910,6 +910,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		onModifyMove(move, pokemon) {
 			if (this.field.effectiveTerrain(pokemon) === 'mistyterrain') move.boosts = {spd: 2};
 		},
+		boosts: {
+			spd: 1;
+		},
 		target: "allies",
 		desc: "Raises allies' Special Defense by 1 stage. If the terrain is Misty Terrain, this move will raise allies' Special Defense by 2 stages.",
 		shortDesc: "Raises allies' Sp. Def by 1; 2 in Misty Terrain.",
@@ -949,8 +952,57 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	bide: {
 		inherit: true,
 		condition: {
-			inherit: true,
 			duration: 2,
+			onLockMove: 'bide',
+			onStart(pokemon) {
+				this.effectData.totalDamage = 0;
+				this.add('-start', pokemon, 'move: Bide');
+			},
+			onDamagePriority: -101,
+			onDamage(damage, target, source, move) {
+				if (!move || move.effectType !== 'Move' || !source) return;
+				this.effectData.totalDamage += damage;
+				this.effectData.lastDamageSource = source;
+			},
+			onBeforeMove(pokemon, target, move) {
+				if (this.effectData.duration === 1) {
+					this.add('-end', pokemon, 'move: Bide');
+					target = this.effectData.lastDamageSource;
+					if (!target || !this.effectData.totalDamage) {
+						this.attrLastMove('[still]');
+						this.add('-fail', pokemon);
+						return false;
+					}
+					if (!target.isActive) {
+						const possibleTarget = this.getRandomTarget(pokemon, this.dex.getMove('pound'));
+						if (!possibleTarget) {
+							this.add('-miss', pokemon);
+							return false;
+						}
+						target = possibleTarget;
+					}
+					const moveData: Partial<ActiveMove> = {
+						id: 'bide' as ID,
+						name: "Bide",
+						accuracy: true,
+						damage: this.effectData.totalDamage * 2,
+						category: "Physical",
+						priority: 1,
+						flags: {contact: 1, protect: 1},
+						effectType: 'Move',
+						type: 'Normal',
+					};
+					this.tryMoveHit(target, pokemon, moveData as ActiveMove);
+					return false;
+				}
+				this.add('-activate', pokemon, 'move: Bide');
+			},
+			onMoveAborted(pokemon) {
+				pokemon.removeVolatile('bide');
+			},
+			onEnd(pokemon) {
+				this.add('-end', pokemon, 'move: Bide', '[silent]');
+			},
 		},
 	},
 	bind: {
@@ -1293,15 +1345,17 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			return this.runEvent('EvadeStallMove', pokemon);
 		},
 		onHit(pokemon){
-			pokemon.addVolatile('evadestall');
 			this.add('-start', pokemon, 'move: Double Team');
 		},
 		volatileStatus: 'doubleteam',
 		condition: {
 			duration: 0,
 			onStart(pokemon){
-				pokemon.volatiles['evadestall'].duration = 2; //Holds evasion counter while effect is active 
+				pokemon.addVolatile('evadestall');
 			},
+			onBeforeTurnCallback(pokemon){
+				pokemon.volatiles['evadestall'].duration = 2; //Holds evasion counter while effect is active 
+			}
 			onAccuracy(accuracy, target, source, move) {
 				if(['allAdjacentFoes','allAdjacent','all'].includes(move.target)){
 					target.removeVolatile('doubleteam');
@@ -1309,6 +1363,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 				if(!move.ignoresEvasion && typeof move.accuracy === 'number') return false;
 				return;
+			},
+			onStart(pokemon){
+				pokemon.removeVolatile('evadestall');
 			},
 		},
 		secondary: null,
@@ -1522,7 +1579,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			}
 			return success;
 		},
-		secondary: null,
+		boosts: {},
 		target: "allAdjacentFoes",
 		desc: "Lowers the target's accuracy by 1 stage and disrupts the execution of Focus Punch and moves that spend a turn charging, unless it is hiding behind a substitute. Supernatural darkness is lifted from the battlefield.",
 		shortDesc: "Lowers foe(s)' accuracy. Interrupts charging, removes Midnight.",
@@ -1538,7 +1595,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				spd: -1,
 			},
 		},
-		shortDesc: "Has a 20% chance to lower the target's Special Defense by 1.",
+		desc: "Has a 20% chance to lower the target's Special Defense by 1.",
 		shortDesc: "20% chance to lower the target's Sp. Def by 1.",
 	},
 	flatter: {
@@ -1557,11 +1614,24 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		contestType: "Beautiful",
 	},
 	flowershield: {
-		inherit: true,
+		num: 579,
+		accuracy: true,
+		basePower: 0,
+		category: "Status",
+		name: "Flower Shield",
+		pp: 20,
+		priority: 0,
+		flags: {distance: 1},
+		boosts: {
+			def: 1,
+		},
 		onModifyMove(move, pokemon) {
 			if (this.field.effectiveTerrain(pokemon) === 'grassyterrain') move.boosts = {def: 2};
 		},
+		secondary: null,
 		target: "allies",
+		type: "Fairy",
+		contestType: "Beautiful",
 		desc: "Raises allies' Defense by 1 stage. If the terrain is Grassy Terrain, this move will raise allies' Defense by 2 stages.",
 		shortDesc: "Raises allies' Defense by 1; 2 in Grassy Terrain.",
 	},
@@ -1724,7 +1794,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	grasspledge: {
 		inherit: true,
 		condition: {
-			inherit: true,
+			duration: 4,
+			onStart(targetSide) {
+				this.add('-sidestart', targetSide, 'Grass Pledge');
+			},
+			onEnd(targetSide) {
+				this.add('-sideend', targetSide, 'Grass Pledge');
+			},
 			onModifySpe(spe, pokemon) {
 				return this.chainModify(0.5);
 			},
@@ -1737,7 +1813,14 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	grassyterrain: {
 		inherit: true,
 		condition: {
-			inherit: true,
+			duration: 5,
+			durationCallback(source, effect) {
+				if (source?.hasItem('terrainextender')) {
+					return 8;
+				}
+				return 5;
+			},
+			onBasePowerPriority: 6,
 			onBasePower(basePower, attacker, defender, move) {
 				const weakenedMoves = ['earthquake', 'bulldoze', 'magnitude'];
 				if (weakenedMoves.includes(move.id)) {
@@ -1749,6 +1832,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					return this.chainModify([0x14CD, 0x1000]);
 				}
 			},
+			onStart(battle, source, effect) {
+				if (effect?.effectType === 'Ability') {
+					this.add('-fieldstart', 'move: Grassy Terrain', '[from] ability: ' + effect, '[of] ' + source);
+				} else {
+					this.add('-fieldstart', 'move: Grassy Terrain');
+				}
+			},
 			onAfterHit(source, target, move){
 				if(['firespin', 'firepledge', 'inferno', 'searingshot', 'napalm', 'burnup', 'overheat', 'blastburn'].includes(move.id)){
 					this.field.removeTerrain();
@@ -1757,6 +1847,17 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				if(['whirlpool', 'waterpledge', 'muddywater', 'surf', 'originpulse', 'tidalwave', 'hydrocannon', 'waterspout'].includes(move.id)){
 					this.field.removeTerrain();
 					target.side.addSideCondition('grasspledge');
+				}
+			},
+			onResidualOrder: 5,
+			onResidualSubOrder: 3,
+			onResidual() {
+				this.eachEvent('Terrain');
+			},
+			onTerrain(pokemon) {
+				if (pokemon.isGrounded() && !pokemon.isSemiInvulnerable()) {
+					this.debug('Pokemon is grounded, healing through Grassy Terrain.');
+					this.heal(pokemon.baseMaxhp / 16, pokemon, pokemon);
 				}
 			},
 			onEnd() {
@@ -2273,15 +2374,20 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	naturalgift: {
 		inherit: true,
-		onPrepareHit(target, pokemon, move) {},
 		onTryMove(pokemon, move) {
 			if (pokemon.ignoringItem()) return false;
 			const item = pokemon.getItem();
 			if (!item.naturalGift) return false;
-			move.basePower = item.naturalGift.basePower;
 			pokemon.setItem('');
-			pokemon.lastItem = item.id;
+			pokemon.lastItem = item.id; //Jank set-up that assumes lastItem can't be changed in-between trying the move and preparing to hit with it.
 			pokemon.usedItemThisTurn = true;
+		},
+		onModifyType(move, pokemon) {
+			move.type = pokemon.lastItem.naturalGift.type;
+		},
+		onPrepareHit(target, pokemon, move) {
+			const item = pokemon.lastItem;
+			move.basePower = item.naturalGift.basePower;
 			this.runEvent('AfterUseItem', pokemon, null, null, item);
 		},
 		desc: "The type and power of this move depend on the user's held Berry, and the Berry is lost. Fails if the user is not holding a Berry, if the user has the Klutz Ability, or if Magic Room is in effect for the user.",
@@ -2620,10 +2726,25 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	safeguard: {
 		inherit: true,
-		condition: {
-			inherit: true,
-			onImmunity(type, pokemon) {
-				if (['sandstorm', 'hail', 'firepledge'].includes(type)) return false;
+		condition: {duration: 5,
+			durationCallback(target, source, effect) {
+				if (source?.hasAbility('persistent')) {
+					this.add('-activate', source, 'ability: Persistent', effect);
+					return 7;
+				}
+				return 5;
+			},
+			onSetStatus(status, target, source, effect) {
+				if (!effect || !source) return;
+				if (effect.id === 'yawn') return;
+				if (effect.effectType === 'Move' && effect.infiltrates && target.side !== source.side) return;
+				if (target !== source) {
+					this.debug('interrupting setStatus');
+					if (effect.id === 'synchronize' || (effect.effectType === 'Move' && !effect.secondaries)) {
+						this.add('-activate', target, 'move: Safeguard');
+					}
+					return null;
+				}
 			},
 			onTryAddVolatile(status, target, source, effect) {
 				if (!effect || !source) return;
@@ -2632,6 +2753,17 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					if (effect.effectType === 'Move' && !effect.secondaries) this.add('-activate', target, 'move: Safeguard');
 					return null;
 				}
+			},
+			onStart(side) {
+				this.add('-sidestart', side, 'Safeguard');
+			},
+			onImmunity(type, pokemon) {
+				if (['sandstorm', 'hail', 'firepledge'].includes(type)) return false;
+			},
+			onResidualOrder: 21,
+			onResidualSubOrder: 2,
+			onEnd(side) {
+				this.add('-sideend', side, 'Safeguard');
 			},
 		},
 		desc: "For 5 turns, the user and its party members cannot have non-volatile status conditions, confusion, Leech Seed, or a Curse or Nightmare inflicted on them by other Pokemon. Pokemon on the user's side cannot become affected by Yawn but can fall asleep from its effect. Residual damage from Spikes, Stealth Rock, sandstorm, hail, and a burning field is blocked for the user and its team. It is removed from the user's side if the user or an ally is successfully hit by Defog. Fails if the effect is already active on the user's side.",
@@ -3447,12 +3579,46 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	electricterrain: {
 		inherit: true,
 		condition: {
-			inherit: true,
+			duration: 5,
+			durationCallback(source, effect) {
+				if (source?.hasItem('terrainextender')) {
+					return 8;
+				}
+				return 5;
+			},
+			onSetStatus(status, target, source, effect) {
+				if (status.id === 'slp' && target.isGrounded() && !target.isSemiInvulnerable()) {
+					if (effect.id === 'yawn' || (effect.effectType === 'Move' && !effect.secondaries)) {
+						this.add('-activate', target, 'move: Electric Terrain');
+					}
+					return false;
+				}
+			},
+			onTryAddVolatile(status, target) {
+				if (!target.isGrounded() || target.isSemiInvulnerable()) return;
+				if (status.id === 'yawn') {
+					this.add('-activate', target, 'move: Electric Terrain');
+					return null;
+				}
+			},
+			onBasePowerPriority: 6,
 			onBasePower(basePower, attacker, defender, move) {
 				if ((move.type === 'Electric' || (move.twoType && move.twoType === 'Electric')) && attacker.isGrounded() && !attacker.isSemiInvulnerable()) {
 					this.debug('electric terrain boost');
 					return this.chainModify([0x14CD, 0x1000]);
 				}
+			},
+			onStart(battle, source, effect) {
+				if (effect?.effectType === 'Ability') {
+					this.add('-fieldstart', 'move: Electric Terrain', '[from] ability: ' + effect, '[of] ' + source);
+				} else {
+					this.add('-fieldstart', 'move: Electric Terrain');
+				}
+			},
+			onResidualOrder: 21,
+			onResidualSubOrder: 2,
+			onEnd() {
+				this.add('-fieldend', 'move: Electric Terrain');
 			},
 		},
 	},
@@ -3514,12 +3680,45 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	mistyterrain: {
 		inherit: true,
 		condition: {
-			inherit: true,
+			duration: 5,
+			durationCallback(source, effect) {
+				if (source?.hasItem('terrainextender')) {
+					return 8;
+				}
+				return 5;
+			},
+			onSetStatus(status, target, source, effect) {
+				if (!target.isGrounded() || target.isSemiInvulnerable()) return;
+				if (effect && ((effect as Move).status || effect.id === 'yawn')) {
+					this.add('-activate', target, 'move: Misty Terrain');
+				}
+				return false;
+			},
+			onTryAddVolatile(status, target, source, effect) {
+				if (!target.isGrounded() || target.isSemiInvulnerable()) return;
+				if (status.id === 'confusion') {
+					if (effect.effectType === 'Move' && !effect.secondaries) this.add('-activate', target, 'move: Misty Terrain');
+					return null;
+				}
+			},
+			onBasePowerPriority: 6,
 			onBasePower(basePower, attacker, defender, move) {
 				if ((move.type === 'Dragon' || (move.twoType && move.twoType === 'Dragon')) && defender.isGrounded() && !defender.isSemiInvulnerable()) {
 					this.debug('misty terrain weaken');
 					return this.chainModify(0.5);
 				}
+			},
+			onStart(battle, source, effect) {
+				if (effect?.effectType === 'Ability') {
+					this.add('-fieldstart', 'move: Misty Terrain', '[from] ability: ' + effect, '[of] ' + source);
+				} else {
+					this.add('-fieldstart', 'move: Misty Terrain');
+				}
+			},
+			onResidualOrder: 21,
+			onResidualSubOrder: 2,
+			onEnd(side) {
+				this.add('-fieldend', 'Misty Terrain');
 			},
 		},
 	},
@@ -3542,12 +3741,47 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	psychicterrain: {
 		inherit: true,
 		condition: {
-			inherit: true,
+			duration: 5,
+			durationCallback(source, effect) {
+				if (source?.hasItem('terrainextender')) {
+					return 8;
+				}
+				return 5;
+			},
+			onTryHitPriority: 4,
+			onTryHit(target, source, effect) {
+				if (effect && (effect.priority <= 0.1 || effect.target === 'self')) {
+					return;
+				}
+				if (target.isSemiInvulnerable() || target.side === source.side) return;
+				if (!target.isGrounded()) {
+					const baseMove = this.dex.getMove(effect.id);
+					if (baseMove.priority > 0) {
+						this.hint("Psychic Terrain doesn't affect Pokémon immune to Ground.");
+					}
+					return;
+				}
+				this.add('-activate', target, 'move: Psychic Terrain');
+				return null;
+			},
+			onBasePowerPriority: 6,
 			onBasePower(basePower, attacker, defender, move) {
 				if ((move.type === 'Psychic' || (move.twoType && move.twoType === 'Psychic')) && attacker.isGrounded() && !attacker.isSemiInvulnerable()) {
 					this.debug('psychic terrain boost');
 					return this.chainModify([0x14CD, 0x1000]);
 				}
+			},
+			onStart(battle, source, effect) {
+				if (effect?.effectType === 'Ability') {
+					this.add('-fieldstart', 'move: Psychic Terrain', '[from] ability: ' + effect, '[of] ' + source);
+				} else {
+					this.add('-fieldstart', 'move: Psychic Terrain');
+				}
+			},
+			onResidualOrder: 21,
+			onResidualSubOrder: 2,
+			onEnd() {
+				this.add('-fieldend', 'move: Psychic Terrain');
 			},
 		},
 	},
