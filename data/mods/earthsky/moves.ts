@@ -911,7 +911,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			if (this.field.effectiveTerrain(pokemon) === 'mistyterrain') move.boosts = {spd: 2};
 		},
 		boosts: {
-			spd: 1;
+			spd: 1,
 		},
 		target: "allies",
 		desc: "Raises allies' Special Defense by 1 stage. If the terrain is Misty Terrain, this move will raise allies' Special Defense by 2 stages.",
