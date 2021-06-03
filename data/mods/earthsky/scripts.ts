@@ -1337,7 +1337,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			'Pikachu-Belle', 'Pikachu-Cosplay', 'Pikachu-Libre', 'Pikachu-PhD', 'Pikachu-Pop-Star', 'Pikachu-Rock-Star', 'Pikachu-Starter', "Slowpoke-Galar", "Slowbro-Galar", 'Eevee-Starter', "Articuno-Galar", "Zapdos-Galar", "Moltres-Galar", 'Pichu-Spiky-eared', "Slowking-Galar", "Darmanitan-Galar-Zen", "Greninja-Ash", 'Floette-Eternal', 'Eternatus-Eternamax', "Kubfu", "Urshifu", "Urshifu-Rapid-Strike", "Regieleki", "Regidrago", "Calyrex", "Glastrier", "Spectrier", "Calyrex-Shadow", "Calyrex-Ice",
 		];
 		const baseEight = [ //Pokemon using their Gen VIII learnsets as a base
-			"Charmander", "Charmeleon", "Charizard", "Farfetch\u2019d", "Farfetch\u2019d-Galar", "Hitmonlee", "Hitmonchan", "Mr. Mime", "Mr. Mime-Galar", "Scyther", "Bellossom", "Qwilfish", "Scizor", "Remoraid", "Octillery", "Tyrogue", "Hitmontop", "Larvitar", "Pupitar", "Tyranitar", "Zigzagoon", "Zigzagoon-Galar", "Linoone", "Linoone-Galar", "Lotad", "Lombre", "Lunatone", "Solrock", "Bagon", "Shelgon", "Salamence", "Kyogre", "Groudon", "Rayquaza", "Mime Jr.", "Dialga", "Palkia", "Giratina", "Basculin", "Basculin-Blue-Striped", "Reshiram", "Zekrom", "Kyurem", "Fletchling", "Fletchinder", "Talonflame", "Swirlix", "Slurpuff", "Bergmite", "Avalugg", "Xerneas", "Yveltal", "Zygarde",
+			"charmander", "charmeleon", "charizard", "farfetchd", "farfetchdgalar", "hitmonlee", "hitmonchan", "mrmime", "mrmimegalar", "scyther", "bellossom", "qwilfish", "scizor", "remoraid", "octillery", "tyrogue", "hitmontop", "larvitar", "pupitar", "tyranitar", "zigzagoon", "zigzagoongalar", "linoone", "linoonegalar", "lotad", "lombre", "lunatone", "solrock", "bagon", "shelgon", "salamence", "kyogre", "groudon", "rayquaza", "mimejr", "dialga", "palkia", "giratina", "basculin", "basculinbluestriped", "reshiram", "zekrom", "kyurem", "fletchling", "fletchinder", "talonflame", "swirlix", "slurpuff", "bergmite", "avalugg", "xerneas", "yveltal", "zygarde",
 		];
 		const deletedItems = [
 			"luckypunch", "throatspray", "utilityumbrella",
@@ -1401,7 +1401,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			/* Moves */
 			let moveLearn; //store move learnset to save memory/time
 			let moveDropped = false;
-			let startGen = (pokemon.num > 807 || baseEight.includes[pokemon.name]) ? 8 : 7; //Tags Gen 7 or 8 for level/egg moves
+			let startGen = ((pokemon.num > 807 || baseEight.includes[pokemonID]) ? 8 : 7); //Tags Gen 7 or 8 for level/egg moves
 			const levelString = new RegExp(startGen + 'L[0-9]+');
 			if(learnsetTest) console.log("Starting with Gen " + startGen);
 			for(let moveID in this.data.Moves) { //TODO: change to Dex.moves.all() when DH updates to it
