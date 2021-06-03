@@ -1361,7 +1361,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					target.removeVolatile('doubleteam');
 					move.spreadHit = true;
 				}
-				if(!move.ignoresEvasion && typeof move.accuracy === 'number') return false;
+				if(!move.ignoreEvasion && typeof move.accuracy === 'number') return false;
 				return;
 			},
 			onStart(pokemon){
@@ -1852,7 +1852,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onResidualOrder: 5,
 			onResidualSubOrder: 3,
 			onResidual() {
-				this.eachEvent('Terrain');
+				if (this.field.isTerrain('grassyterrain')) this.eachEvent('Terrain');
 			},
 			onTerrain(pokemon) {
 				if (pokemon.isGrounded() && !pokemon.isSemiInvulnerable()) {
@@ -2263,7 +2263,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					'stomp', 'steamroller', 'bodyslam', 'dragonrush', 'bodypress',
 				];
 				if (boostedMoves.includes(move.id)) return true;
-				if (!move.ignoresEvasion || typeof(move.accuracy) === 'number') return false;
+				if (!move.ignoreEvasion || typeof(move.accuracy) === 'number') return false;
 				return;
 			},
 		},
@@ -2383,10 +2383,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			pokemon.usedItemThisTurn = true;
 		},
 		onModifyType(move, pokemon) {
-			move.type = pokemon.lastItem.naturalGift.type;
+			const item = this.battle.dex.getItem(pokemon.lastItem);
+			move.type = item.naturalGift.type;
 		},
 		onPrepareHit(target, pokemon, move) {
-			const item = pokemon.lastItem;
+			const item = this.battle.dex.getItem(pokemon.lastItem);
 			move.basePower = item.naturalGift.basePower;
 			this.runEvent('AfterUseItem', pokemon, null, null, item);
 		},
@@ -2421,8 +2422,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					return false;
 				}
 				//Sets sleep duration to 3 turns without resetting turns spent.
-				pokemon.status.effectData.time = 4 + pokemon.status.effectData.time - pokemon.status.effectData.startTime;
-				pokemon.status.effectData.startTime = 4;
+				pokemon.statusData.time = 4 + pokemon.statusData.time - pokemon.statusData.startTime;
+				pokemon.statusData.startTime = 4;
 				this.add('-start', pokemon, 'Nightmare');
 			},
 			onResidualOrder: 9,

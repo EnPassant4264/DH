@@ -34,7 +34,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			if ('ingrain' in this.volatiles) return false;
 			const item = (this.ignoringItem() ? '' : this.item);
 			if (item === 'ironball') return false;
-			if (!(this.hasAbility('suctioncups') || this.hasAbility('heavymetal'))) return false;
+			if (this.hasAbility('suctioncups') || this.hasAbility('heavymetal')) return false;
 			return true;
 		},
 		cureStatus(silent = false) { //Adds a runEvent to curing status for effects (namely, Stasis) that prevent it.

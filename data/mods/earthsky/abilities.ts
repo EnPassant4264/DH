@@ -572,7 +572,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		onAccuracy(accuracy, target, source, move) {
 			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-O'){ //Observe: Forewarn evasion
 				if(!pokemon.abilityData.warnMoves.length) return;
-				if (typeof(accuracy) === 'number' && !move.ignoresEvasion && [target, move] in pokemon.abilityData.warnMoves){
+				if (typeof(accuracy) === 'number' && !move.ignoreEvasion && [target, move] in pokemon.abilityData.warnMoves){
 					this.add('-miss', pokemon, 'ability: Glyphic Spell');
 					return false;
 				}
@@ -823,6 +823,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAccuracy(accuracy, target, source, move) {
+			if (typeof(move.accuracy) === 'number' || move.ignoreEvasion) return;
 			if (move.twoType){
 				if (this.dex.getImmunity(move, target) && this.dex.getEffectiveness(move, target) >= 2) {
 					this.add('-miss', source, 'ability: Anticipation', '[of] ' + target);
@@ -832,7 +833,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			const moveType = move.id === 'hiddenpower' ? target.hpType : move.type;
 			if (this.dex.getImmunity(moveType, target) && this.dex.getEffectiveness(moveType, target) >= 2) {
 				this.add('-miss', source, 'ability: Anticipation', '[of] ' + target);
-				return false
+				return false;
 			}
 		},
 		rating: 3,
@@ -1013,9 +1014,9 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if (!pokemon.abilityData.warnMoves.length) return;
 		},
 		onAccuracy(accuracy, target, source, move) {
-			if(!pokemon.abilityData.warnMoves.length) return;
-			if (typeof(accuracy) === 'number' && !move.ignoresEvasion && [target, move] in this.effectData.warnMoves){
-				this.add('-miss', pokemon, 'ability: Forewarn');
+			if (!target.abilityData.warnMoves.length || typeof(accuracy) !== 'number' || move.ignoreEvasion) return;
+			if ([target, move] in this.effectData.warnMoves){
+				this.add('-miss', source, 'ability: Forewarn', '[of] ' + target);
 				return false;
 			}
 		},
@@ -1444,7 +1445,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				pokemon.removeVolatile(move.id);
 			},
 			onAccuracy(accuracy, target, source, move) {
-				if (!move.ignoresEvasion || typeof(move.accuracy) === 'number') return false;
+				if (!move.ignoreEvasion || typeof(move.accuracy) === 'number') return false;
 			},
 		},
 		name: "Tangled Feet",
