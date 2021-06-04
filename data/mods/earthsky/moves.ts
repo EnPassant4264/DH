@@ -2377,16 +2377,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	naturalgift: {
 		inherit: true,
-		onTryMove(pokemon, move) {
+		onModifyType(move, pokemon) {
 			if (pokemon.ignoringItem()) return false;
 			const item = pokemon.getItem();
 			if (!item.naturalGift) return false;
 			pokemon.setItem('');
 			pokemon.lastItem = item.id; //Jank set-up that assumes lastItem can't be changed in-between trying the move and preparing to hit with it.
 			pokemon.usedItemThisTurn = true;
-		},
-		onModifyType(move, pokemon) {
-			const item = this.dex.getItem(pokemon.lastItem);
 			move.type = item.naturalGift.type;
 		},
 		onPrepareHit(target, pokemon, move) {

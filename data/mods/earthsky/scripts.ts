@@ -21,7 +21,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			if (this.volatiles['smackdown']) return true;
 			if (!negateImmunity && this.hasType('Flying')) return false; // ???/Flying from Burn Up is no longer typeless.
 			if (this.hasAbility('levitate') && !this.battle.suppressingAttackEvents()) return null;
-			if ('magnetrise' in this.volatiles || 'risingchorus' in this.volatiles || 'telekinesis' in this.volatiles) return false;
+			if (this.volatiles['magnetrise'] || this.volatiles['risingchorus'] || this.volatiles['telekinesis']) return false;
 			const item = (this.ignoringItem() ? '' : this.item);
 			return item !== 'airballoon';
 		},
@@ -31,7 +31,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				return false;
 			}
 			if ('gravity' in this.battle.field.pseudoWeather) return false;
-			if ('ingrain' in this.volatiles) return false;
+			if (this.volatiles['ingrain']) return false;
 			const item = (this.ignoringItem() ? '' : this.item);
 			if (item === 'ironball') return false;
 			if (this.hasAbility('suctioncups') || this.hasAbility('heavymetal')) return false;
@@ -1358,7 +1358,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			"amnesia", "assurance", "avalanche", "brine", "charm", "eerieimpulse", "electricterrain", "electroball", "encore", "faketears", "futuresight", "grassyterrain", "hex", "hurricane", "hydropump", "mistyterrain", "nastyplot", "phantomforce", "powergem", "psychicterrain", "screech", "whirlpool"
 		];
 		const droppedMachines = [ //Machines dropped from Earth & Sky
-			"agility","airslash","aurasphere","batonpass","beatup","blazekick","bodyslam","bravebird","bugbuzz","bulletseed","closecombat","confide","cosmicpower","covet","crosspoison","crunch","cut","darkestlariat","doubleteam","dragondance","drainingkiss","firefang","firespin","flareblitz","flash","focusenergy","focuspunch","guardswap","heatcrash","heavyslam","highhorsepower","icefang","iciclespear","imprison","leafblade","leafstorm","liquidation","magicalleaf","megakick","megapunch","megahorn","metronome","mudshot","muddywater","mysticalfire","payday","pinmissile","playrough","pollenpuff","powerswap","powerwhip","psychicfang","psychocut","razorshell","revenge","reversal","rockblast","sandtomb","scaryface","self-destruct","solarblade","speedswap","spikes","storedpower","strugglebug","swagger","swift","tailslap","throatchop","thunderfang","toxicspikes","triattack","venomdrench","weatherball",
+			"agility","airslash","aurasphere","batonpass","beatup","blazekick","bodyslam","bravebird","bugbuzz","bulletseed","closecombat","confide","cosmicpower","covet","crosspoison","crunch","cut","darkestlariat","doubleteam","dragondance","drainingkiss","firefang","firespin","flareblitz","flash","focusenergy","focuspunch","guardswap","heatcrash","heavyslam","highhorsepower","icefang","iciclespear","imprison","leafblade","leafstorm","liquidation","magicalleaf","megakick","megapunch","megahorn","metronome","mudshot","muddywater","mysticalfire","payday","pinmissile","playrough","pollenpuff","powerswap","poweruppunch","powerwhip","psychicfang","psychocut","razorshell","revenge","reversal","rockblast","sandtomb","scaryface","self-destruct","solarblade","speedswap","spikes","storedpower","strugglebug","swagger","swift","tailslap","throatchop","thunderfang","toxicspikes","triattack","venomdrench","weatherball",
 		];
 		const renamedMoves = [
 			"banefulbunker","clangoroussoul","moongeistbeam","stompingtantrum","strangesteam","sunsteelstrike",
@@ -1506,10 +1506,12 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 			// Ability renames
 			for(let i = 0; i < 7; i++){ //Abilities
-				for(const abilityID in this.modData('Pokedex', pokemonID).abilities){
-					if(this.modData('Pokedex', pokemonID).abilities[abilityID] === renamedAbilities[i]){
-						//console.log(this.toID(renamedAbilities[i]).name + " name change");
-						this.modData('Pokedex', pokemonID).abilities[abilityID] = this.toID(newNameAbilities[i]);
+				const pokeAbilities = this.modData('Pokedex', pokemonID).abilities;
+				for(const abilityKey in pokeAbilities){
+					if(this.toID(pokeAbilities[abilityKey]) === renamedAbilities[i]){
+						console.log(this.data.Abilities(renamedAbilities[i]).name + " name change");
+						this.modData('Pokedex', pokemonID).abilities[abilityKey] = this.data.Abilities[newNameAbilities[i]].name;
+						console.log(this.modData('Pokedex', pokemonID).abilities[abilityKey]);
 						break;
 					}
 				}
@@ -1525,6 +1527,10 @@ export const Scripts: ModdedBattleScriptsData = {
 		for(const moveID of deletedMoves) { //then drops removed moves as past-gen so they can't be used
 			const move = this.modData('Moves', moveID);
 			move.isNonstandard = "Past";
+		}
+		for(const abilityID of renamedAbilities) {
+			const ability = this.modData('Abilities', abilityID);
+			ability.isNonstandard = "Past";
 		}
 		for(const abilityID of deletedAbilities) {
 			const ability = this.modData('Abilities', abilityID);
@@ -3448,17 +3454,17 @@ export const Scripts: ModdedBattleScriptsData = {
 		this.modData("Learnsets", "seviper").learnset.warriorssoul = ["8D"];
 		this.modData("Learnsets", "seviper").learnset.compensation = ["8M"];
 		// Lunatone
+		this.modData("Learnsets", "lunatone").learnset.midnight = ["8D"];
 		this.modData("Learnsets", "lunatone").learnset.futuresight = ["8M"];
 		this.modData("Learnsets", "lunatone").learnset.healblock = ["8L1"];
-		this.modData("Learnsets", "lunatone").learnset.midnight = ["8D"];
 		this.modData("Learnsets", "lunatone").learnset.moonblast = ["8L40"];
 		this.modData("Learnsets", "lunatone").learnset.powergem = ["8L35","8M"];
 		this.modData("Learnsets", "lunatone").learnset.stoneedge = ["8M"];
 		this.modData("Learnsets", "lunatone").learnset.flash = ["8M"];
 		// Solrock
-		this.modData("Learnsets", "solrock").learnset.healblock = ["8L1"];
 		this.modData("Learnsets", "solrock").learnset.pyroball = ["8D"];
 		this.modData("Learnsets", "solrock").learnset.flash = ["8M"];
+		this.modData("Learnsets", "solrock").learnset.healblock = ["8L1"];
 		this.modData("Learnsets", "solrock").learnset.mindbend = ["8L1"];
 		delete this.modData('Learnsets', 'solrock').learnset.confusion;
 		// Barboach
@@ -5629,8 +5635,11 @@ export const Scripts: ModdedBattleScriptsData = {
 		delete this.modData('Learnsets', 'diancie').learnset.toxic;
 		// Hoopa
 		this.modData("Learnsets", "hoopa").learnset.spiritbreak = ["8D"];
+		this.modData("Learnsets", "hoopa").learnset.feintattack = ["8L15"];
+		this.modData("Learnsets", "hoopa").learnset.lightscreen = ["8M"];
 		this.modData("Learnsets", "hoopa").learnset.nightmare = ["8M"];
 		this.modData("Learnsets", "hoopa").learnset.poltergeist = ["8M"];
+		this.modData("Learnsets", "hoopa").learnset.shadowpunch = ["8L15"];
 		this.modData("Learnsets", "hoopa").learnset.stasis = ["8T"];
 		delete this.modData('Learnsets', 'hoopa').learnset.toxic;
 		// Volcanion
