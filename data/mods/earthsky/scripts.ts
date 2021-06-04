@@ -1509,7 +1509,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				const pokeAbilities = this.modData('Pokedex', pokemonID).abilities;
 				for(const abilityKey in pokeAbilities){
 					if(this.toID(pokeAbilities[abilityKey]) === renamedAbilities[i]){
-						console.log(this.data.Abilities(renamedAbilities[i]).name + " name change");
+						console.log(this.data.Abilities[renamedAbilities[i]].name + " name change");
 						this.modData('Pokedex', pokemonID).abilities[abilityKey] = this.data.Abilities[newNameAbilities[i]].name;
 						console.log(this.modData('Pokedex', pokemonID).abilities[abilityKey]);
 						break;
