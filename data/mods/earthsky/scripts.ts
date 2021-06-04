@@ -1372,7 +1372,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		/* Wide-spread changes */
 		for (let pokemonID in this.data.Pokedex) {
 			const pokemon = this.data.Pokedex[pokemonID];
-			const learnsetTest = ["solrock"].includes(pokemonID);
+			const learnsetTest = false;//["solrock"].includes(pokemonID);
 			 //Don't do anything with the new Pokemon, Totems, and Pokestar Studios opponents
 			if(pokemon.num >= 1000 || pokemon.num <= -5000 || pokemonID.endsWith('totem')) continue;
 			//Change generational accessibility
@@ -3448,11 +3448,15 @@ export const Scripts: ModdedBattleScriptsData = {
 		this.modData("Learnsets", "seviper").learnset.warriorssoul = ["8D"];
 		this.modData("Learnsets", "seviper").learnset.compensation = ["8M"];
 		// Lunatone
+		this.modData("Learnsets", "lunatone").learnset.futuresight = ["8M"];
+		this.modData("Learnsets", "lunatone").learnset.healblock = ["8L1"];
 		this.modData("Learnsets", "lunatone").learnset.midnight = ["8D"];
+		this.modData("Learnsets", "lunatone").learnset.moonblast = ["8L40"];
 		this.modData("Learnsets", "lunatone").learnset.powergem = ["8L35","8M"];
 		this.modData("Learnsets", "lunatone").learnset.stoneedge = ["8M"];
 		this.modData("Learnsets", "lunatone").learnset.flash = ["8M"];
 		// Solrock
+		this.modData("Learnsets", "solrock").learnset.healblock = ["8L1"];
 		this.modData("Learnsets", "solrock").learnset.pyroball = ["8D"];
 		this.modData("Learnsets", "solrock").learnset.flash = ["8M"];
 		this.modData("Learnsets", "solrock").learnset.mindbend = ["8L1"];
