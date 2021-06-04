@@ -1401,6 +1401,11 @@ export const Scripts: ModdedBattleScriptsData = {
 			/* Moves */
 			let moveLearn; //store move learnset to save memory/time
 			let moveDropped = false;
+			if(learnsetTest) {
+				console.log(baseEight);
+				console.log(pokemonID);
+				console.log(baseEight.includes[pokemonID]);
+			}
 			let startGen = ((pokemon.num > 807 || baseEight.includes[pokemonID]) ? 8 : 7); //Tags Gen 7 or 8 for level/egg moves
 			const levelString = new RegExp(startGen + 'L[0-9]+');
 			if(learnsetTest) console.log("Starting with Gen " + startGen);
@@ -1494,7 +1499,10 @@ export const Scripts: ModdedBattleScriptsData = {
 					}
 				}
 				if(!moveDropped) this.modData('Learnsets', pokemonID).learnset[moveID] = moveMeans;
-				else moveDropped = false;
+				else{
+					
+					moveDropped = false;
+				}
 			}
 			// Ability renames
 			for(let i = 0; i < 7; i++){ //Abilities
