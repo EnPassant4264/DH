@@ -784,7 +784,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			this.effectData.switchingIn = true;
 		},
 		onStart(pokemon){
-			const replaced = pokemon.side.faintedLastTurn;
+			const replaced = pokemon.side.faintedThisTurn;
 			if (!this.effectData.switchingIn || !replaced) return;
 			const ability = replaced.getAbility();
 			const additionalBannedAbilities = [
@@ -1082,7 +1082,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if ('midnight' in this.field.pseudoWeather) {
 				this.field.removePseudoWeather('midnight');
 			}
-		}
+		},
 		onAnyTryMove(target, source, effect) {
 			if (effect.id === 'midnight') {
 				this.attrLastMove('[still]');
@@ -1312,7 +1312,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			this.effectData.switchingIn = true;
 		},
 		onStart(pokemon){
-			const replaced = pokemon.side.faintedLastTurn;
+			const replaced = pokemon.side.faintedThisTurn;
 			if (!this.effectData.switchingIn || !replaced) return;
 			const ability = replaced.getAbility();
 			const additionalBannedAbilities = [
