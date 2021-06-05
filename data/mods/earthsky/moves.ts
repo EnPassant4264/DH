@@ -277,7 +277,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			duration: 5,
 			durationCallback(source, effect) {
-				if (source?.hasItem('cursedgem')) {
+				if (source?.hasItem('cursedjewel')) {
 					return 8;
 				}
 				return 5;
@@ -2216,6 +2216,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			this.add('-start', pokemon, 'move: Mind Reader');
 		},
 		condition: {
+			duration: 0,
 			onSourceInvulnerabilityPriority: 1,
 			onSourceInvulnerability(target, source, move) {
 				if (move && source === this.effectData.target) return 0;
@@ -2240,7 +2241,10 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		pp: 5,
 		onPrepareHit(pokemon) {
-			return (!pokemon.volatiles['odorsleuth'] && this.runEvent('EvadeStallMove', pokemon));
+			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
+				return false;
+			}
+			return this.runEvent('EvadeStallMove', pokemon);
 		},
 		onHit(pokemon){
 			pokemon.addVolatile('evadestall');
@@ -2250,7 +2254,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			duration: 2, //Should get removed in onBeforeMove, so this is a failsafe
 			onBeforeMove(pokemon, move) {
-				pokemon.removeVolatile(move.id);
+				pokemon.removeVolatile('minimize');
 			},
 			onSourceModifyDamage(damage, source, target, move) {
 				const boostedMoves = [
@@ -2265,8 +2269,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					'stomp', 'steamroller', 'bodyslam', 'dragonrush', 'bodypress',
 				];
 				if (boostedMoves.includes(move.id)) return true;
-				if (!move.ignoreEvasion || typeof(move.accuracy) === 'number') return false;
-				return;
+				if(!move.ignoreEvasion && typeof move.accuracy === 'number') return false;
 			},
 		},
 		boosts: {},
@@ -3131,6 +3134,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	steelbeam: {
 		inherit: true,
 		accuracy: 100,
+		onAfterMove(pokemon, target, move) {
+			if (pokemon.moveThisTurnResult != null && move.mindBlownRecoil && !move.multihit) {
+				this.damage(Math.round(pokemon.maxhp / 2), pokemon, pokemon, this.dex.getEffect('Steel Beam'), true);
+			}
+		},
 		contestType: "Cool", 
 	},
 	stickyweb: {

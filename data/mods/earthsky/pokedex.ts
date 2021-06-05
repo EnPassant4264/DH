@@ -1737,7 +1737,7 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	},
 	dusknoir: {
 		inherit: true,
-		abilities: {0: "Levitate", H: "Soul Drain"},
+		abilities: {0: "Pressure", H: "Soul Drain"},
 	},
 	rotom: {
 		inherit: true,

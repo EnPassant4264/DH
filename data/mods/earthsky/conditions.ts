@@ -78,7 +78,7 @@ export const Conditions: {[k: string]: ModdedConditionData} = {
 			if(pokemon.volatiles['odorsleuth']) return false;
 			this.effectData.counter = 3;
 		},
-		onEvadeMove(pokemon) {
+		onEvadeStallMove(pokemon) {
 			// this.effectData.counter should never be undefined here.
 			// However, just in case, use 1 if it is undefined.
 			const counter = this.effectData.counter || 1;

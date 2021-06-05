@@ -1178,6 +1178,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	moody: {
 		onBeforeTurnCallback(){
+			console.log(this.effectData.boost);
 			this.effectData.boost = null;
 		},
 		onDamagingHit(damage, target, source, move){
@@ -1352,10 +1353,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 			if (weather.id === 'sandstorm'){
 				pokemon.addVolatile('evade', 'sandstorm');
-				this.add('-singleturn', this.abilityData.target, 'ability: Sand Veil');
+				this.add('-singleturn', pokemon, 'ability: Sand Veil');
 			} else if (this.effectData.source === 'sandstorm'){
 				pokemon.removeVolatile('evade');
-				this.add('-end', this.abilityData.target, 'ability: Sand Veil');
+				this.add('-end', pokemon, 'ability: Sand Veil');
 			}
 		},
 		name: "Sand Veil",
@@ -1367,9 +1368,31 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		end: "  [POKEMON] became visible again."
 	},
 	slowstart: {
-		inherit: true,
-		onEnd(pokemon) {},
-		desc: "After switching in, this Pokemon's Attack and Speed are halved for the first 5 turns it is in battle.",
+		onStart(pokemon) {
+			if(!this.effectData.duration){
+				this.effectData.duration = 5;
+				this.add('-start', target, 'ability: Slow Start');
+			}
+		},
+		onModifyAtkPriority: 5,
+		onModifyAtk(atk, pokemon) {
+			if(this.effectData.duration) return this.chainModify(0.5);
+		},
+		onModifySpe(spe, pokemon) {
+			if(this.effectData.duration) return this.chainModify(0.5);
+		},
+		onResidualOrder: 1,
+		onResidual(pokemon) {
+			if(this.effectData.duration > 0) this.effectData.duration--;
+			if(this.effectData.duration === 0){
+				this.effectData.duration = -1; //Truthy, so it doesn't get re-applied in onStart, but won't decrement or re-trigger the ending here either
+				this.add('-end', pokemon, 'Slow Start');
+			}
+		},
+		name: "Slow Start",
+		rating: -1,
+		num: 112,
+		desc: "This Pokemon's Attack and Speed are halved for the first 5 turns it is on the field in battle.",
 		shortDesc: "This Pokemon's Attack and Speed are halved for its first 5 turns."
 	},
 	snowcloak: {
@@ -1391,11 +1414,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				return;
 			}
 			if(weather.id === 'hail'){
-				this.abilityData.target.addVolatile('evade', 'hail');
-				this.add('-singleturn', this.abilityData.target, 'ability: Snow Cloak');
+				pokemon.addVolatile('evade', 'hail');
+				this.add('-singleturn', pokemon 'ability: Snow Cloak');
 			} else if (this.effectData.source === 'hail'){
 				pokemon.removeVolatile('evade');
-				this.add('-end', this.abilityData.target, 'ability: Snow Cloak');
+				this.add('-end', pokemon, 'ability: Snow Cloak');
 			}
 		},
 		name: "Snow Cloak",
