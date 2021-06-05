@@ -1011,6 +1011,11 @@ export class TeamValidator {
 				from: 'Gen 5 Dream World',
 				isHidden: !!this.dex.mod('gen5').getSpecies(species.id).abilities['H'],
 			};
+		} else if (source.charAt(1) === 'D') {
+			eventData = {
+				generation: 8,
+				from: 'Gen 8 Special', //It can mean whatever you want it to mean!
+			};
 		} else if (source.charAt(1) === 'E') {
 			if (this.findEggMoveFathers(source, species, setSources)) {
 				return undefined;
