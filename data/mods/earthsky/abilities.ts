@@ -1205,7 +1205,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				this.effectData.boost = {atk: 1, def: -1, spa: 1, spd: -1, spe: 1};
 			}
 		},
-		onResidualOrder: 0,
+		onResidualOrder: 1,
 		onResidual(pokemon) {
 			if(this.effectData.boost !== null) this.boost(this.effectData.boost);
 		},

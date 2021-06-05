@@ -138,7 +138,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		desc: "If held by a Beheeyem, this item allows it to Mega Evolve in battle.",
 		num: 1010,
 	},
-	sandaconite: {
+	sandacondite: {
 		name: "Sandacondite",
 		megaStone: "Sandaconda-Mega",
 		megaEvolves: "Sandaconda",

@@ -2209,24 +2209,23 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	mindreader: {
 		inherit: true,
 		flags: {protect: 1, snatch: 1},
-		onTryHit(target, source) {
-			if (source.volatiles['mindreader']) return false;
+		onTryHit(pokemon) {
+			if (pokemon.volatiles['mindreader']) return false;
 		},
 		onHit(pokemon){
 			this.add('-start', pokemon, 'move: Mind Reader');
 		},
 		condition: {
-			noCopy: true, // doesn't get copied by Baton Pass
 			onSourceInvulnerabilityPriority: 1,
 			onSourceInvulnerability(target, source, move) {
-				if (move && source === this.effectData.target && target === this.effectData.source) return 0;
+				if (move && source === this.effectData.target) return 0;
 			},
 			onModifyMove(move) {
 				move.ignoreEvasion = true;
 				delete move.flags['protect'];
 			},
 			onSourceAccuracy(accuracy, target, source, move) {
-				if (move && source === this.effectData.target && target === this.effectData.source) return true;
+				if (move && source === this.effectData.target) return true;
 			},
 			onAfterHit(target, source, move){
 				source.removeVolatile('mindreader');
@@ -2967,11 +2966,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			noCopy: true,
 			onStart(pokemon) {
-				let applies = false;
-				if (pokemon.hasType('Flying') || pokemon.hasAbility('levitate')) applies = true;
-				if (pokemon.hasItem('ironball') || this.field.getPseudoWeather('gravity') || 
-					pokemon.volatiles['ingrain'] || pokemon.volatiles['roost'] || pokemon.volatiles['dig'] || pokemon.volatiles['dive'])
-					applies = false;
+				let applies = !(pokemon.isGrounded());
 				if (pokemon.removeVolatile('fly') || pokemon.removeVolatile('bounce')) {
 					applies = true;
 					this.queue.cancelMove(pokemon);
