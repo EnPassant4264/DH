@@ -83,6 +83,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAnySetTerrain(target, source, terrain) {
+			const pokemon = this.effectData.target;
 			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return;
 			}
@@ -650,6 +651,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAnySetWeather(target, source, weather) {
+			const pokemon = this.effectData.target;
 			if(pokemon.species.baseSpecies === 'unown'){
 				if(pokemon.abilityData.unownType === 'Unown-D'){
 					const strongWeathers = ['desolateland', 'primordialsea', 'deltastream'];
@@ -1344,6 +1346,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAnySetWeather(target, source, weather) {
+			const pokemon = this.effectData.target;
 			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return;
 			}
@@ -1383,6 +1386,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAnySetWeather(target, source, weather) {
+			const pokemon = this.effectData.target;
 			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return;
 			}
