@@ -276,7 +276,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		pseudoWeather: 'midnight',
 		condition: {
 			duration: 5,
-			durationCallback(source, effect) {
+			durationCallback(target, source, effect) {
 				if (source?.hasItem('cursedjewel')) {
 					return 8;
 				}
@@ -1025,6 +1025,41 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		desc: "Has a 30% chance to freeze the target. If the weather is Hail, this move does not check accuracy.",
 		shortDesc: "30% chance to freeze foe(s). Can't miss in hail.",
 	},
+	block: {
+		num: 335,
+		accuracy: true,
+		basePower: 0,
+		category: "Status",
+		name: "Block",
+		pp: 5,
+		priority: 0,
+		flags: {reflectable: 1, mirror: 1},
+		volatileStatus: 'block',
+		condition: {
+			onTrapPokemon(pokemon) {
+				pokemon.tryTrap();
+			},
+			onSourceHit(damage, target, source, move) {
+				if(!source?.hasItem('shedshell')) delete move.selfSwitch;
+			},
+			onAfterMoveSecondaryPriority: 3,
+			onAfterMoveSecondary(target, source, move) {
+				if(target === this.effectData.target && !target?.hasItem('shedshell')){
+					target.switchFlag = false;
+				}
+			},
+			onEmergencyExit(target) {
+				if(target === this.effectData.target && !target?.hasItem('shedshell')){
+					target.switchFlag = false;
+					return false;
+				}
+			},
+		},
+		secondary: null,
+		target: "normal",
+		type: "Normal",
+		contestType: "Cute",
+	},
 	boltbeak: {
 		inherit: true,
 		basePower: 60,
@@ -1487,6 +1522,33 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	explosion: {
 		inherit: true,
 		basePower: 300,
+	},
+	fairylock: {
+		inherit: true,
+		condition: {
+			duration: 2,
+			onStart(target) {
+				this.add('-fieldactivate', 'move: Fairy Lock');
+			},
+			onTrapPokemon(pokemon) {
+				pokemon.tryTrap();
+			},
+			onSourceHit(damage, target, source, move) {
+				if(!source?.hasItem('shedshell')) delete move.selfSwitch;
+			},
+			onAfterMoveSecondaryPriority: 3,
+			onAfterMoveSecondary(target, source, move) {
+				if(!target?.hasItem('shedshell')){
+					target.switchFlag = false;
+				}
+			},
+			onEmergencyExit(target) {
+				if(!target?.hasItem('shedshell')){
+					target.switchFlag = false;
+					return false;
+				}
+			},
+		},
 	},
 	firefang: {
 		inherit: true,
@@ -2373,6 +2435,34 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		pp: 30,
 	},
+	mudsport: {
+		inherit: true,
+		condition: {
+			duration: 5,
+			onStart(side, source) {
+				this.add('-fieldstart', 'move: Mud Sport', '[of] ' + source);
+			},
+			onAllySetStatus(status, target, source, effect) {
+				if (status.id === 'prz') {
+					this.debug('Mud Sport prevents paralysis');
+					const effectHolder = this.effectData.target;
+					this.add('-block', target, 'move: Mud Sport');
+					return null;
+				}
+			},
+			onBasePowerPriority: 1,
+			onBasePower(basePower, attacker, defender, move) {
+				if (move.type === 'Electric') {
+					this.debug('mud sport weaken');
+					return this.chainModify([0x548, 0x1000]);
+				}
+			},
+			onResidualOrder: 21,
+			onEnd() {
+				this.add('-fieldend', 'move: Mud Sport');
+			},
+		},
+	},
 	mysticalfire: {
 		inherit: true,
 		basePower: 70,
@@ -3033,7 +3123,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		onHit(target) {
 			if ((target.types.length > 1 && target.types[1] === "Water") || target.types === ["Water"]) return false;
 			if (target.types[0] === "Water"){ //Due to above line, this is true only if the target is dual-typed
-				delete target.types[1];
+				target.types = ["Water"];
 			} else {
 				target.types[1] = 'Water';
 			}
@@ -3047,19 +3137,28 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		accuracy: 100,
 	},
 	spiderweb: {
-		inherit: true,
+		num: 169,
+		accuracy: true,
+		basePower: 0,
+		category: "Status",
+		name: "Spider Web",
+		pp: 10,
+		priority: 0,
+		flags: {protect: 1, reflectable: 1, mirror: 1},
+		secondary: null,
 		volatileStatus: 'spiderweb',
 		condition: {
 			duration: 3,
-			noCopy: true,
-			onTrapPokemon(pokemon) {
-				pokemon.tryTrap();
-			},
 			onStart(target) {
 				this.add('-activate', target, 'trapped');
 			},
+			onTrapPokemon(pokemon) {
+				pokemon.tryTrap();
+			},
 		},
 		target: 'allAdjacentFoes',
+		type: "Bug",
+		contestType: "Clever",
 		desc: "Prevents the target from switching out for three turns. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Parting Shot, Teleport, U-turn, or Volt Switch. If the target leaves the field using Baton Pass, the replacement will remain trapped.",
 		shortDesc: "Traps foe(s) for three turns.",
 	},
@@ -3453,6 +3552,34 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	vitalthrow: {
 		inherit: true,
 		basePower: 80,
+	},
+	watersport: {
+		inherit: true,
+		condition: {
+			duration: 5,
+			onStart(side, source) {
+				this.add('-fieldstart', 'move: Water Sport', '[of] ' + source);
+			},
+			onAllySetStatus(status, target, source, effect) {
+				if (status.id === 'brn') {
+					this.debug('Water Sport prevents burns');
+					const effectHolder = this.effectData.target;
+					this.add('-block', target, 'move: Water Sport');
+					return null;
+				}
+			},
+			onBasePowerPriority: 1,
+			onBasePower(basePower, attacker, defender, move) {
+				if (move.type === 'Fire') {
+					this.debug('water sport weaken');
+					return this.chainModify([0x548, 0x1000]);
+				}
+			},
+			onResidualOrder: 21,
+			onEnd() {
+				this.add('-fieldend', 'move: Water Sport');
+			},
+		},
 	},
 	weatherball: {
 		inherit: true,

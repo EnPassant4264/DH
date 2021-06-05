@@ -87,7 +87,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return;
 			}
-			if(terrain.id === 'mistyterrain' && !this.effectData.target){
+			if(this.field.effectiveTerrain() === 'mistyterrain'){
 				pokemon.addVolatile('evade', 'mistyterrain');
 				this.add('-singleturn', pokemon, 'ability: Misty Shroud');
 			} else if (this.effectData.source === 'mistyterrain'){
@@ -194,8 +194,8 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	supermassive: {
 		onStart(source) {
+			this.add('-ability', source, 'Supermassive');
 			this.field.addPseudoWeather('gravity');
-			this.add('-start', source, 'Gravity', 'ability: Supermassive');
 		},
 		name: "Supermassive",
 		shortDesc: "On switch-in, this Pokemon summons Gravity.",
@@ -916,7 +916,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			for (let i = 0; i < pokemon.side.foe.active.length; i++) {
 				let warnPokeMove: (Move | Pokemon)[][] = [];
 				const target = pokemon.side.foe.active[i];
-				if (target.fainted || (user.activeMoveActions > 1 && target.activeMoveActions > 1)) continue;
+				if (target.fainted || (pokemon.activeMoveActions > 1 && target.activeMoveActions > 1)) continue;
 				let warnBp = 1;
 				for (const moveSlot of target.moveSlots) {
 					const move = this.dex.getMove(moveSlot.move);
@@ -1186,22 +1186,20 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			console.log(this.effectData.boost);
 			this.effectData.boost = null;
 		},
+		onSourceHit(target, source, move) {
+			if(move.category === "Physical"){
+				this.effectData.boost = {spa: 2, atk: -1};
+			}
+			if(move.category === "Special"){
+				this.effectData.boost = {atk: 2, spa: -1};
+			}
+		}
 		onDamagingHit(damage, target, source, move){
-			console.log(source + " is using " + move + " on " + target);
-			if(target === this.effectData.target){
-				if(move.category === "Physical"){
-					this.effectData.boost = {def: 2, spd: -1};
-				}
-				if(move.category === "Special"){
-					this.effectData.boost = {spd: 2, def: -1};
-				}
-			} else if (source === this.effectData.target){
-				if(move.category === "Physical"){
-					this.effectData.boost = {spa: 2, atk: -1};
-				}
-				if(move.category === "Special"){
-					this.effectData.boost = {atk: 2, spa: -1};
-				}
+			if(move.category === "Physical"){
+				this.effectData.boost = {def: 2, spd: -1};
+			}
+			if(move.category === "Special"){
+				this.effectData.boost = {spd: 2, def: -1};
 			}
 		},
 		onSourceAfterFaint(length, target, source, effect) {
@@ -1354,7 +1352,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
-			if (weather.id === 'sandstorm'){
+			if (this.field.effectiveWeather() === 'sandstorm'){
 				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 					return;
 				}
@@ -1375,6 +1373,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	slowstart: {
 		onStart(pokemon) {
+			console.log("Slow Start count: " + this.effectData.duration);
 			if(!this.effectData.duration){
 				this.effectData.duration = 5;
 				this.add('-start', pokemon, 'ability: Slow Start');
@@ -1416,7 +1415,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
-			if(weather.id === 'hail'){
+			if(this.field.effectiveWeather() === 'hail'){
 				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 					return;
 				}
