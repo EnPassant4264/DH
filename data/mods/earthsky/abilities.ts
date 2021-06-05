@@ -1415,7 +1415,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 			if(weather.id === 'hail'){
 				pokemon.addVolatile('evade', 'hail');
-				this.add('-singleturn', pokemon 'ability: Snow Cloak');
+				this.add('-singleturn', pokemon, 'ability: Snow Cloak');
 			} else if (this.effectData.source === 'hail'){
 				pokemon.removeVolatile('evade');
 				this.add('-end', pokemon, 'ability: Snow Cloak');
