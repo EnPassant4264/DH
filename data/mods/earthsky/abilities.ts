@@ -469,7 +469,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				}
 			}
 		},
-		onBeforeTurnCallback(pokemon) {
+		beforeTurnCallback(pokemon) {
 			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-O'){ //Observe: Forewarn
 				for (let i = 0; i < pokemon.side.foe.active.length; i++) {
 					let warnPokeMove: (Move | Pokemon)[] = [];
@@ -825,7 +825,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAccuracy(accuracy, target, source, move) {
-			if (typeof(move.accuracy) === 'number' || move.ignoreEvasion) return;
+			if (move.accuracy === true || move.ignoreEvasion) return;
 			if (move.twoType){
 				if (this.dex.getImmunity(move, target) && this.dex.getEffectiveness(move, target) >= 2) {
 					this.add('-miss', source, 'ability: Anticipation', '[of] ' + target);
@@ -909,10 +909,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	forewarn: {
 		inherit: true,
-		onStart(pokemon){
+		beforeTurnCallback(pokemon) {
 			pokemon.abilityData.warnMoves = [];
 		},
-		onBeforeTurnCallback(pokemon) {
+		onStart(pokemon) {
 			for (let i = 0; i < pokemon.side.foe.active.length; i++) {
 				let warnPokeMove: (Move | Pokemon)[][] = [];
 				const target = pokemon.side.foe.active[i];
@@ -1078,6 +1078,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	illuminate: {
 		name: "Illuminate",
+		onStart(pokemon){
+			if ('midnight' in this.field.pseudoWeather) {
+				this.field.removePseudoWeather('midnight');
+			}
+		}
 		onAnyTryMove(target, source, effect) {
 			if (effect.id === 'midnight') {
 				this.attrLastMove('[still]');
@@ -1177,11 +1182,12 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		shortDesc: "This Pokemon's ballistic moves (Shadow Ball, Sludge Bomb, Flash Cannon, etc) have 1.5x power.",
 	},
 	moody: {
-		onBeforeTurnCallback(){
+		beforeTurnCallback(){
 			console.log(this.effectData.boost);
 			this.effectData.boost = null;
 		},
 		onDamagingHit(damage, target, source, move){
+			console.log(source + " is using " + move + " on " + target);
 			if(target === this.effectData.target){
 				if(move.category === "Physical"){
 					this.effectData.boost = {def: 2, spd: -1};
@@ -1205,7 +1211,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onTryHeal(damage, target, source, effect) {
 			if(damage >= this.effectData.target.maxhp / 5){
-				this.effectData.boost = {atk: 1, def: -1, spa: 1, spd: -1, spe: 1};
+				this.effectData.boost = {atk: 1, spa: 1, spe: 1, def: -1, spd: -1};
 			}
 		},
 		onResidualOrder: 1,
@@ -1348,10 +1354,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
-			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
-				return;
-			}
 			if (weather.id === 'sandstorm'){
+				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
+					return;
+				}
 				pokemon.addVolatile('evade', 'sandstorm');
 				this.add('-singleturn', pokemon, 'ability: Sand Veil');
 			} else if (this.effectData.source === 'sandstorm'){
@@ -1371,7 +1377,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		onStart(pokemon) {
 			if(!this.effectData.duration){
 				this.effectData.duration = 5;
-				this.add('-start', target, 'ability: Slow Start');
+				this.add('-start', pokemon, 'ability: Slow Start');
 			}
 		},
 		onModifyAtkPriority: 5,
@@ -1410,10 +1416,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
-			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
-				return;
-			}
 			if(weather.id === 'hail'){
+				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
+					return;
+				}
 				pokemon.addVolatile('evade', 'hail');
 				this.add('-singleturn', pokemon, 'ability: Snow Cloak');
 			} else if (this.effectData.source === 'hail'){

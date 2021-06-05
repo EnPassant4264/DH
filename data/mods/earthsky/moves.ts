@@ -1353,7 +1353,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onStart(pokemon){
 				pokemon.addVolatile('evadestall');
 			},
-			onBeforeTurnCallback(pokemon){
+			beforeTurnCallback(pokemon){
 				pokemon.volatiles['evadestall'].duration = 2; //Holds evasion counter while effect is active 
 			},
 			onAccuracy(accuracy, target, source, move) {

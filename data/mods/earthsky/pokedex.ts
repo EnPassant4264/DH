@@ -1781,7 +1781,7 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	},
 	regigigas: {
 		inherit: true,
-		abilities: {0: "Slow Start", H: "Synchronize"},
+		abilities: {0: "Slow Start", H: "Stall"},
 	},
 	giratinaorigin: {
 		inherit: true,
