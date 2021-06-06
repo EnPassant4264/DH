@@ -15,7 +15,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			basePower: 100,
 			type: "Steel",
 		},
-		onBeforeMovePriority: 9,
+		onBeforeMovePriority: 7,
 		onBeforeMove(pokemon) {
 			if (pokemon.volatiles['flinch']) {
 				pokemon.eatItem();

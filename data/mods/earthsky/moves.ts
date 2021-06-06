@@ -4156,9 +4156,29 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		contestType: "Tough",
 	},
 	psychicfangs: {
-		inherit: true,
+		num: 706,
+		accuracy: 100,
+		basePower: 85,
+		category: "Physical",
 		name: "Psychic Fang",
+		pp: 10,
+		priority: 0,
+		flags: {bite: 1, contact: 1, protect: 1, mirror: 1},
+		onTryHit(pokemon) {
+			// will shatter screens through sub, before you hit
+			if (pokemon.runImmunity('Psychic')) {
+				pokemon.side.removeSideCondition('reflect');
+				pokemon.side.removeSideCondition('lightscreen');
+				pokemon.side.removeSideCondition('auroraveil');
+			}
+		},
+		secondary: null,
+		target: "normal",
+		type: "Psychic",
 		contestType: "Cute",
+	},
+	psychicfang: {
+		name: "Psychic Fangs",
 	},
 	tantrum: {
 		num: 707,
