@@ -896,7 +896,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 								break;
 							}
 						}
-						if(!this.dex.getImmunity(moveType, pokemon)) bp = 0;
+						if(!this.dex.getImmunity(move.type, pokemon) || (move.twoType && !this.dex.getImmunity(move.twoType, pokemon))) bp = 0;
 						if (bp >= warnBp) {
 							if(!warnPokeMove) {
 								warnPokeMove = [[move, target]];

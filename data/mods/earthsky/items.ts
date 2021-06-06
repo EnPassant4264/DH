@@ -328,21 +328,19 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		desc: "Allies' Grass-type moves have 1.1x power.",
 	},
 	seaincense: {
-		inherit: true,
+		name: "Sea Incense",
+		spritenum: 430,
+		fling: {
+			basePower: 20,
+		},
 		onAllyBasePowerPriority: 15,
 		onAllyBasePower(basePower, attacker, defender, move) {
 			if (move.type === 'Water' || (move.twoType && move.twoType === 'Water')) {
 				return this.chainModify([0x1199, 0x1000]);
 			}
 		},
-		onBasePower(basePower, user, target, move) {
-			if (move.type === 'Water' || (move.twoType && move.twoType === 'Water')) {
-				return this.chainModify([0x1199, 0x1000]);
-			}
-		},
-		fling: {
-			basePower: 20,
-		},
+		num: 254,
+		gen: 3,
 		desc: "Allies' Water-type moves have 1.1x power.",
 	},
 	silverpowder: {
