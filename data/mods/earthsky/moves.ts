@@ -3148,7 +3148,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		secondary: null,
 		volatileStatus: 'spiderweb',
 		condition: {
-			duration: 3,
+			duration: 4,
 			onStart(target) {
 				this.add('-activate', target, 'trapped');
 			},

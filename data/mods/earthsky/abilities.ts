@@ -297,10 +297,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					if (target.illusion) {
 						this.singleEvent('End', this.dex.getAbility('Illusion'), target.abilityData, target, pokemon, 'neutralizinggas');
 					}
-					if (target.volatiles['slowstart']) {
-						delete target.volatiles['slowstart'];
-						this.add('-end', target, 'Slow Start', '[silent]');
-					}
 				}
 			}
 		},
@@ -395,8 +391,8 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 							target.addVolatile('encore');
 						}
 						break;
-					case 'Unown-O': //Observe: Frisk, Forewarn setup
-						pokemon.abilityData.warnMoves = [];
+					case 'Unown-O': //Observe: Frisk, Forewarn
+						pokemon.addVolatile('forewarn', "Glyphic Spell");
 						for (const target of pokemon.side.foe.active) {
 							if (!target || target.fainted) continue;
 							if (target.item) {
@@ -469,114 +465,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				}
 			}
 		},
-		beforeTurnCallback(pokemon) {
-			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-O'){ //Observe: Forewarn
-				for (let i = 0; i < pokemon.side.foe.active.length; i++) {
-					let warnPokeMove: (Move | Pokemon)[] = [];
-					const target = pokemon.side.foe.active[i];
-					if (target.fainted || (user.activeMoveActions > 1 && target.activeMoveActions > 1)) continue;
-					let warnBp = 1;
-					for (const moveSlot of target.moveSlots) {
-						const move = this.dex.getMove(moveSlot.move);
-						if(!move) continue;
-						let moveType = move.getType();
-						let bp = move.basePower;
-						bp *= target.hasType(moveType()) ? 1.5 : 1; //STAB
-						bp *= Math.pow(2, this.dex.getEffectiveness(moveType, pokemon)); //Type effectiveness
-						if (move.ohko) bp = 150;
-						else if (['counter', 'metalburst', 'mirrorcoat', 'rebound'].includes(move.id)) bp = 120;
-						else if (move.multihit){
-							if(Array.isArray(move.multihit)){ //Move has variable hits
-								bp *= move.multihit[1]; //Assumes maximum value
-							} else {
-								bp *= move.multihit;
-							}
-						}
-						if (!bp && move.category !== 'Status'){
-							switch(move.id){
-							//Fixed-damage moves: Twice the percentage of max HP the move deals
-							case('dragonrage'):
-							case('sonicboom'):
-								bp = move.damage / pokemon.maxhp * 200;
-								break;
-							case('endeavor'):
-								bp = (target.hp - pokemon.hp) / pokemon.maxhp * 200;
-								break;
-							case('finalgambit'):
-								bp = target.hp / pokemon.maxhp * 200;
-								break;
-							case('natureswrath'):
-							case('superfang'):
-								bp = pokemon.hp / 2 / pokemon.maxhp * 200;
-								break;
-							case('nightshade'):
-							case('psywave'): //Damage variance is ignored
-							case('seismictoss'):
-								bp = target.level / pokemon.maxhp * 200;
-								break;
-							//Variable-power moves
-							case('beatup'): //The number of unfainted/unstatused Pokemon is known, but their Attack might not be so it assumes 10 (the old BP) for simplicity
-								bp = 10 * target.side.pokemon.filter(ally => ally === pokemon || !ally.fainted && !ally.status).length;
-								break;
-							case('poltergeist'):
-								const item = pokemon.getItem();
-								bp = (item.fling) ? 80 + item.fling.basePower : 0;
-								break;
-							case('crushgrip'): //All these move use basePowerCallback, so use that to get an accurate number
-							case('flail'):
-							case('grassknot'):
-							case('heatcrash'):
-							case('heavyslam'):
-							case('lowkick'):
-							case('reversal'):
-							case('powertrip'):
-							case('punishment'):
-							case('storedpower'):
-							case('wringout'):
-								bp = move.basePowerCallback(target, pokemon);
-							//VP moves which return default values because they require information the player can't see
-							case('fling'): //Held item; potentially known if announced, but assumes it isn't
-								bp = 20;
-								break;
-							case('frustration'): //Happiness
-							case('return'):
-								bp = 1;
-								break;
-							case('naturalgift'): //Held item; potentially known if announced, but assumes it isn't
-								bp = 70;
-								break;
-							case('trumpcarp'): //Move's PP
-								bp = 40;
-								break;
-							default: //Electro Ball, Gyro Ball
-								bp = 80;
-								break;
-							}
-						}
-						if(!this.dex.getImmunity(moveType, pokemon)) bp = 0;
-						if (bp >= warnBp) {
-							if(!warnPokeMove) {
-								warnPokeMove = [[move, target]];
-							} else {
-								warnPokeMove.push([move, target]);
-							}
-							warnBp = bp;
-						}
-					}
-					if(!warnPokeMove) continue;
-					pokemon.abilityData.warnMoves.push(this.sample(warnPokeMove));
-					this.add('-fmove', pokemon, 'ability: Glyphic Spell', warnPokeMove[0], '[of] ' + warnPokeMove[1]);
-				}
-				if (!this.effectData.warnMoves.length) return;
-			}
-		},
-		onAccuracy(accuracy, target, source, move) {
-			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-O'){ //Observe: Forewarn evasion
-				if(!pokemon.abilityData.warnMoves.length) return;
-				if (typeof(accuracy) === 'number' && !move.ignoreEvasion && [target, move] in pokemon.abilityData.warnMoves){
-					this.add('-miss', pokemon, 'ability: Glyphic Spell');
-					return false;
-				}
+		onFoeSwitchIn(pokemon) {
+			const target = this.effectData.target;
+			if(target.species.baseSpecies === 'unown' && target.abilityData.unownType === 'Unown-O'){ //Observe: Forewarn
+				target.addVolatile('forewarn', "Glyphic Spell");
 			}
 		},
 		onTryHit(target, source, move) {
@@ -909,122 +801,126 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	forewarn: {
 		inherit: true,
-		beforeTurnCallback(pokemon) {
-			pokemon.abilityData.warnMoves = [];
-		},
-		onStart(pokemon) {
-			for (let i = 0; i < pokemon.side.foe.active.length; i++) {
-				let warnPokeMove: (Move | Pokemon)[][] = [];
-				const target = pokemon.side.foe.active[i];
-				if (target.fainted || (pokemon.activeMoveActions > 1 && target.activeMoveActions > 1)) continue;
-				let warnBp = 1;
-				for (const moveSlot of target.moveSlots) {
-					const move = this.dex.getMove(moveSlot.move);
-					if(!move) continue;
-					let bp = move.basePower;
-					//STAB
-					bp *= target.hasType(move.type) ? 1.5 : 1;
-					bp *= (move.twoType) ? (target.hasType(move.twoType) ? 1.5 : 1) : 1;
-					//Type effectiveness
-					bp *= Math.pow(2, this.dex.getEffectiveness(moveType, pokemon));
-					bp *= (move.twoType) ? Math.pow(2, this.dex.getEffectiveness(moveType, pokemon)) : 1;
-					//Non-BP
-					if (move.ohko) bp = 150;
-					else if (['counter', 'metalburst', 'mirrorcoat', 'rebound'].includes(move.id)) bp = 120;
-					else if (move.multihit){
-						if(Array.isArray(move.multihit)){ //Move has variable hits
-							bp *= move.multihit[1]; //Assumes maximum value
-						} else {
-							bp *= move.multihit;
+		onStart(pokemon){
+			pokemon.addVolatile('forewarn', "Forewarn");
+		}
+		onFoeSwitchIn(pokemon){
+			this.effectData.target.addVolatile('forewarn', "Forewarn");
+		}
+		condition: {
+			onStart(pokemon) {
+				for (let i = 0; i < pokemon.side.foe.active.length; i++) {
+					let warnPokeMove: (Move | Pokemon)[][] = [];
+					const target = pokemon.side.foe.active[i];
+					if (target.fainted || (pokemon.activeMoveActions > 1 && target.activeMoveActions > 1)) continue;
+					let warnBp = 1;
+					for (const moveSlot of target.moveSlots) {
+						const move = this.dex.getMove(moveSlot.move);
+						if(!move) continue;
+						let bp = move.basePower;
+						//STAB
+						bp *= target.hasType(move.type) ? 1.5 : 1;
+						//bp *= (move.twoType) ? (target.hasType(move.twoType) ? 1.5 : 1) : 1;
+						//Type effectiveness
+						bp *= Math.pow(2, this.dex.getEffectiveness(move.type, pokemon));
+						//bp *= (move.twoType) ? Math.pow(2, this.dex.getEffectiveness(move.twoType, pokemon)) : 1;
+						//Non-BP
+						if (move.ohko) bp = 150;
+						else if (['counter', 'metalburst', 'mirrorcoat', 'rebound'].includes(move.id)) bp = 120;
+						else if (move.multihit){
+							if(Array.isArray(move.multihit)){ //Move has variable hits
+								bp *= move.multihit[1]; //Assumes maximum value
+							} else {
+								bp *= move.multihit;
+							}
+						}
+						if (!bp && move.category !== 'Status'){
+							switch(move.id){
+							//Fixed-damage moves: Twice the percentage of max HP the move deals
+							case('dragonrage'):
+							case('sonicboom'):
+								bp = move.damage / pokemon.maxhp * 200;
+								break;
+							case('endeavor'):
+								bp = (target.hp - pokemon.hp) / pokemon.maxhp * 200;
+								break;
+							case('finalgambit'):
+								bp = target.hp / pokemon.maxhp * 200;
+								break;
+							case('natureswrath'):
+							case('superfang'):
+								bp = pokemon.hp / 2 / pokemon.maxhp * 200;
+								break;
+							case('nightshade'):
+							case('psywave'): //Damage variance is ignored
+							case('seismictoss'):
+								bp = target.level / pokemon.maxhp * 200;
+								break;
+							//Variable-power moves
+							case('beatup'): //The number of unfainted/unstatused Pokemon is known, but their Attack might not be so it assumes 10 (the old BP) for simplicity
+								bp = 10 * target.side.pokemon.filter(ally => ally === pokemon || !ally.fainted && !ally.status).length;
+								break;
+							case('poltergeist'):
+								const item = pokemon.getItem();
+								bp = (item.fling) ? 80 + item.fling.basePower : 0;
+								break;
+							//All these move use basePowerCallback, so use that to get an accurate number
+							case('crushgrip'):
+							case('flail'):
+							case('grassknot'):
+							case('heatcrash'):
+							case('heavyslam'):
+							case('lowkick'):
+							case('reversal'):
+							case('powertrip'):
+							case('punishment'):
+							case('storedpower'):
+							case('wringout'):
+								bp = move.basePowerCallback(target, pokemon);
+							//VP moves which return default values because they require information the player can't see
+							case('fling'): //Held item; potentially known if announced, but assumes it isn't
+								bp = 20;
+								break;
+							case('frustration'): //Happiness
+							case('return'):
+								bp = 102;
+								break;
+							case('naturalgift'): //Held item; potentially known if announced, but assumes it isn't
+								bp = 70;
+								break;
+							case('trumpcarp'): //Move's PP
+								bp = 40;
+								break;
+							default: //Electro Ball, Gyro Ball
+								bp = 80;
+								break;
+							}
+						}
+						if(!this.dex.getImmunity(moveType, pokemon)) bp = 0;
+						if (bp >= warnBp) {
+							if(!warnPokeMove) {
+								warnPokeMove = [[move, target]];
+							} else {
+								warnPokeMove.push = [move, target];
+							}
+							warnBp = bp;
 						}
 					}
-					if (!bp && move.category !== 'Status'){
-						switch(move.id){
-						//Fixed-damage moves: Twice the percentage of max HP the move deals
-						case('dragonrage'):
-						case('sonicboom'):
-							bp = move.damage / pokemon.maxhp * 200;
-							break;
-						case('endeavor'):
-							bp = (target.hp - pokemon.hp) / pokemon.maxhp * 200;
-							break;
-						case('finalgambit'):
-							bp = target.hp / pokemon.maxhp * 200;
-							break;
-						case('natureswrath'):
-						case('superfang'):
-							bp = pokemon.hp / 2 / pokemon.maxhp * 200;
-							break;
-						case('nightshade'):
-						case('psywave'): //Damage variance is ignored
-						case('seismictoss'):
-							bp = target.level / pokemon.maxhp * 200;
-							break;
-						//Variable-power moves
-						case('beatup'): //The number of unfainted/unstatused Pokemon is known, but their Attack might not be so it assumes 10 (the old BP) for simplicity
-							bp = 10 * target.side.pokemon.filter(ally => ally === pokemon || !ally.fainted && !ally.status).length;
-							break;
-						case('poltergeist'):
-							const item = pokemon.getItem();
-							bp = (item.fling) ? 80 + item.fling.basePower : 0;
-							break;
-						case('crushgrip'): //All these move use basePowerCallback, so use that to get an accurate number
-						case('flail'):
-						case('grassknot'):
-						case('heatcrash'):
-						case('heavyslam'):
-						case('lowkick'):
-						case('reversal'):
-						case('powertrip'):
-						case('punishment'):
-						case('storedpower'):
-						case('wringout'):
-							bp = move.basePowerCallback(target, pokemon);
-						//VP moves which return default values because they require information the player can't see
-						case('fling'): //Held item; potentially known if announced, but assumes it isn't
-							bp = 20;
-							break;
-						case('frustration'): //Happiness
-						case('return'):
-							bp = 1;
-							break;
-						case('naturalgift'): //Held item; potentially known if announced, but assumes it isn't
-							bp = 70;
-							break;
-						case('trumpcarp'): //Move's PP
-							bp = 40;
-							break;
-						default: //Electro Ball, Gyro Ball
-							bp = 80;
-							break;
-						}
-					}
-					if(!this.dex.getImmunity(moveType, pokemon)) bp = 0;
-					if (bp >= warnBp) {
-						if(!warnPokeMove) {
-							warnPokeMove = [[move, target]];
-						} else {
-							warnPokeMove.push = [move, target];
-						}
-						warnBp = bp;
-					}
+					if(!warnPokeMove) continue;
+					pokemon.abilityData.warnMoves.push(this.sample(warnPokeMove));
+					this.add('-activate', pokemon, `ability: $(this.effectData.source)`, warnPokeMove[2], '[of] ' + warnPokeMove[1]); //used because Glyphic Spell also adds this volatile
+					console.log("Forewarn found " + warnPokeMove[2] + "'s " + warnPokeMove[1]);
 				}
-				if(!warnPokeMove) continue;
-				pokemon.abilityData.warnMoves.push(this.sample(warnPokeMove));
-				this.add('-activate', pokemon, 'ability: Forewarn', warnPokeMove[2], '[of] ' + warnPokeMove[1]);
-			}
-			if (!pokemon.abilityData.warnMoves.length) return;
-		},
-		onAccuracy(accuracy, target, source, move) {
-			if (!target.abilityData.warnMoves.length || typeof(accuracy) !== 'number' || move.ignoreEvasion) return;
-			if ([target, move] in this.effectData.warnMoves){
-				this.add('-miss', source, 'ability: Forewarn', '[of] ' + target);
-				return false;
-			}
-		},
-		onResidual(pokemon){
-			pokemon.abilityData.warnMoves = [];
-		},
+				if (!pokemon.abilityData.warnMoves.length) return;
+			},
+			onAccuracy(accuracy, target, source, move) {
+				if (!target.abilityData.warnMoves.length || typeof(accuracy) !== 'number' || move.ignoreEvasion) return;
+				if ([target, move] in this.effectData.warnMoves){
+					this.add('-miss', source, `ability: $(this.effectData.source)`, '[of] ' + target); //see above
+					return false;
+				}
+			},
+		}
 		rating: 2.5,
 		desc: "On switch-in, this Pokemon is alerted to each opposing Pokemon's move with the highest power. When an opposing Pokemon uses its identified attack on this Pokemon, it will dodge it using the rules of Evasiveness.",
 		shortDesc: "This Pokemon is alerted to each foe's strongest attack and becomes Evasive to them.",
@@ -1182,10 +1078,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		shortDesc: "This Pokemon's ballistic moves (Shadow Ball, Sludge Bomb, Flash Cannon, etc) have 1.5x power.",
 	},
 	moody: {
-		beforeTurnCallback(){
-			console.log(this.effectData.boost);
-			this.effectData.boost = null;
-		},
 		onSourceHit(target, source, move) {
 			if(move.category === "Physical"){
 				this.effectData.boost = {spa: 2, atk: -1};
@@ -1215,6 +1107,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		onResidualOrder: 1,
 		onResidual(pokemon) {
 			if(this.effectData.boost !== null) this.boost(this.effectData.boost);
+			this.effectData.boost = null;
 		},
 		name: "Moody",
 		desc: `At the end of each turn, this Pokemon has stats raised and lowered based on what it has done during that turn:
@@ -1373,11 +1266,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	slowstart: {
 		onStart(pokemon) {
-			console.log("Slow Start count: " + this.effectData.duration);
 			if(!this.effectData.duration){
 				this.effectData.duration = 5;
 				this.add('-start', pokemon, 'ability: Slow Start');
 			}
+			console.log("Slow Start count: " + this.effectData.duration);
 		},
 		onModifyAtkPriority: 5,
 		onModifyAtk(atk, pokemon) {
@@ -1393,6 +1286,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				this.effectData.duration = -1; //Truthy, so it doesn't get re-applied in onStart, but won't decrement or re-trigger the ending here either
 				this.add('-end', pokemon, 'Slow Start');
 			}
+			console.log("Slow Start count: " + this.effectData.duration);
 		},
 		name: "Slow Start",
 		rating: -1,
