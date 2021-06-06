@@ -1193,7 +1193,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if(move.category === "Special"){
 				this.effectData.boost = {atk: 2, spa: -1};
 			}
-		}
+		},
 		onDamagingHit(damage, target, source, move){
 			if(move.category === "Physical"){
 				this.effectData.boost = {def: 2, spd: -1};
