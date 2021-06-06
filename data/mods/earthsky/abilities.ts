@@ -920,7 +920,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					return false;
 				}
 			},
-		}
+		},
 		rating: 2.5,
 		desc: "On switch-in, this Pokemon is alerted to each opposing Pokemon's move with the highest power. When an opposing Pokemon uses its identified attack on this Pokemon, it will dodge it using the rules of Evasiveness.",
 		shortDesc: "This Pokemon is alerted to each foe's strongest attack and becomes Evasive to them.",
