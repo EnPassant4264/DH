@@ -803,10 +803,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		inherit: true,
 		onStart(pokemon){
 			pokemon.addVolatile('forewarn', "Forewarn");
-		}
+		},
 		onFoeSwitchIn(pokemon){
 			this.effectData.target.addVolatile('forewarn', "Forewarn");
-		}
+		},
 		condition: {
 			onStart(pokemon) {
 				for (let i = 0; i < pokemon.side.foe.active.length; i++) {

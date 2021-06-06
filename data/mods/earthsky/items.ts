@@ -335,7 +335,6 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 				return this.chainModify([0x1199, 0x1000]);
 			}
 		},
-		onBasePowerPriority: 15,
 		onBasePower(basePower, user, target, move) {
 			if (move.type === 'Water' || (move.twoType && move.twoType === 'Water')) {
 				return this.chainModify([0x1199, 0x1000]);

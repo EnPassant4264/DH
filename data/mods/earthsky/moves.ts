@@ -1039,7 +1039,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onTrapPokemon(pokemon) {
 				pokemon.tryTrap();
 			},
-			onSourceHit(damage, target, source, move) {
+			onTryMove(damage, target, source, move) {
 				if(!source?.hasItem('shedshell')) delete move.selfSwitch;
 			},
 			onAfterMoveSecondaryPriority: 3,
@@ -1395,12 +1395,12 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				if(['allAdjacentFoes','allAdjacent','all'].includes(move.target)){
 					target.removeVolatile('doubleteam');
 					move.spreadHit = true;
+					return;
 				}
 				if(!move.ignoreEvasion && typeof move.accuracy === 'number'){
 					target.removeVolatile('doubleteam');
 					return false;
 				}
-				return;
 			},
 			onEnd(pokemon){
 				pokemon.removeVolatile('evadestall');
@@ -2442,7 +2442,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onStart(side, source) {
 				this.add('-fieldstart', 'move: Mud Sport', '[of] ' + source);
 			},
-			onAllySetStatus(status, target, source, effect) {
+			onSetStatus(status, target, source, effect) {
 				if (status.id === 'prz') {
 					this.debug('Mud Sport prevents paralysis');
 					const effectHolder = this.effectData.target;
@@ -3560,7 +3560,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onStart(side, source) {
 				this.add('-fieldstart', 'move: Water Sport', '[of] ' + source);
 			},
-			onAllySetStatus(status, target, source, effect) {
+			onSetStatus(status, target, source, effect) {
 				if (status.id === 'brn') {
 					this.debug('Water Sport prevents burns');
 					const effectHolder = this.effectData.target;
