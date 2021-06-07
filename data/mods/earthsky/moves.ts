@@ -22,7 +22,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		secondary:{
 			chance: 100,
 			status: 'frz',
-		}
+		},
 		shortDesc: "Freezes the target. OP,used for testing freeze.",
 		target: "normal",
 		type: "Ice",
