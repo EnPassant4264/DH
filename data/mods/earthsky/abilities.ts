@@ -79,6 +79,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 			if(this.field.effectiveTerrain() === 'mistyterrain'){
 				pokemon.addVolatile('evade', 'mistyterrain');
+				pokemon.addVolatile('evadestall');
 				this.add('-singleturn', pokemon, 'ability: Misty Shroud');
 			}
 		},
@@ -89,6 +90,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 			if(terrain === 'mistyterrain' && !('midnight' in this.field.pseudoWeather)){
 				pokemon.addVolatile('evade', 'mistyterrain');
+				pokemon.addVolatile('evadestall');
 				this.add('-singleturn', pokemon, 'ability: Misty Shroud');
 			} else if (this.effectData.source === 'mistyterrain'){
 				pokemon.removeVolatile('evade');
@@ -717,7 +719,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAccuracy(accuracy, target, source, move) {
-			if (move.accuracy === true || move.ignoreEvasion) return;
+			if (accuracy === true || move.ignoreEvasion) return;
 			if (move.twoType){
 				if (this.dex.getImmunity(move, target) && this.dex.getEffectiveness(move, target) >= 2) {
 					this.add('-miss', source, 'ability: Anticipation', '[of] ' + target);
@@ -809,6 +811,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		condition: {
 			onStart(pokemon) {
+				let warnPokeMove = undefined;
 				this.effectData.warnMoves = [];
 				for (let i = 0; i < pokemon.side.foe.active.length; i++) {
 					const target = pokemon.side.foe.active[i];
@@ -1250,6 +1253,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 			if(this.field.effectiveWeather() === 'sandstorm'){
 				pokemon.addVolatile('evade', 'sandstorm');
+				pokemon.addVolatile('evadestall');
 				this.add('-singleturn', pokemon, 'ability: Sand Veil');
 			}
 		},
@@ -1260,6 +1264,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					return;
 				}
 				pokemon.addVolatile('evade', 'sandstorm');
+				pokemon.addVolatile('evadestall');
 				this.add('-singleturn', pokemon, 'ability: Sand Veil');
 			} else if (this.effectData.source === 'sandstorm'){
 				pokemon.removeVolatile('evade');
@@ -1291,9 +1296,9 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onResidualOrder: 1,
 		onResidual(pokemon) {
-			this.effectData.time--;
+			if(pokemon.activeTurns && this.effectData.time > 0) this.effectData.time--;
 			if(this.effectData.time === 0){
-				this.effectData.time--; //-1 is truthy, so it doesn't get re-applied in onStart, but won't decrement or re-trigger the ending here either
+				this.effectData.time = -1; //-1 is truthy, so it doesn't get re-applied in onStart, but won't decrement or re-trigger the ending here either
 				this.add('-end', pokemon, 'Slow Start');
 			}
 			console.log("Slow Start count: " + this.effectData.time);
@@ -1314,6 +1319,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 			if(this.field.effectiveWeather() === 'hail'){
 				pokemon.addVolatile('evade', 'hail');
+				pokemon.addVolatile('evadestall');
 				this.add('-singleturn', pokemon, 'ability: Snow Cloak');
 			}
 		},
@@ -1324,6 +1330,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					return;
 				}
 				pokemon.addVolatile('evade', 'hail');
+				pokemon.addVolatile('evadestall');
 				this.add('-singleturn', pokemon, 'ability: Snow Cloak');
 			} else if (this.effectData.source === 'hail'){
 				pokemon.removeVolatile('evade');

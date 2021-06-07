@@ -1203,8 +1203,10 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	curse: {
 		inherit: true,
-		onBeforeMove(target, source, move){
+		onBeforeMovePriority: 3,
+		onBeforeMove(source, target, move){
 			if (!source.hasType('Ghost') && !target.hasType('Ghost')) move.flags['snatch'] = 1;
+			if (source.hasType('Ghost') && target.hasType('Ghost')) move.flags['reflectable'] = 1;
 		},
 		onTryHit(target, source, move) {
 			if (!source.hasType('Ghost')) {
@@ -2155,10 +2157,10 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				if (move && source === this.effectData.target && target === this.effectData.source) return 0;
 			},
 			onSourceAccuracy(accuracy, target, source, move) {
-				if (move && source === this.effectData.target && target === this.effectData.source) return true;
-			},
-			onModifyMove(move) {
-				if (move && source === this.effectData.target && target === this.effectData.source) move.ignoreEvasion = true;
+				if (move && source === this.effectData.target && target === this.effectData.source){
+					move.ignoreEvasion = true;
+					return true;
+				}
 			},
 			onTryHit(target, source, move){
 				if (move && source === this.effectData.target && target === this.effectData.source) delete move.flags['protect'];
@@ -2455,7 +2457,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				this.add('-fieldstart', 'move: Mud Sport', '[of] ' + source);
 			},
 			onSetStatus(status, target, source, effect) {
-				if (status.id === 'prz') {
+				if (status.id === 'par') {
 					this.debug('Mud Sport prevents paralysis');
 					const effectHolder = this.effectData.target;
 					this.add('-block', target, 'move: Mud Sport');
@@ -4100,7 +4102,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		accuracy: true,
 		basePower: 0,
 		category: "Status",
-		name: "Warrior\'s Soul",
+		name: "Warrior's Soul",
 		pp: 5,
 		priority: 0,
 		flags: {snatch: 1, sound: 1, dance: 1},
@@ -4167,7 +4169,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		type: "Dark",
 		contestType: "Tough",
 	},
-	psychicfangs: {
+	psychicfang: {
 		num: 706,
 		accuracy: 100,
 		basePower: 85,
@@ -4189,7 +4191,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		type: "Psychic",
 		contestType: "Cute",
 	},
-	psychicfang: {
+	psychicfangs: {
 		name: "Psychic Fangs",
 	},
 	tantrum: {

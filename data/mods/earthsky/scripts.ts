@@ -772,10 +772,11 @@ export const Scripts: ModdedBattleScriptsData = {
 	},
 	//actions: {
 		canMegaEvo(pokemon) { //Magic Room suppression and Mega-Ray change
+			if('magicroom' in this.field.pseudoWeather) return null;
 			const species = pokemon.baseSpecies;
 			const altForme = species.otherFormes && this.dex.getSpecies(species.otherFormes[0]);
 			const item = pokemon.getItem();
-			if (!('magicroom' in this.field.pseudoWeather) && item.megaEvolves === species.baseSpecies && item.megaStone !== species.name) {
+			if (item.megaEvolves === species.baseSpecies && item.megaStone !== species.name) {
 				//Additional check for required move
 				if (altForme?.isMega && altForme?.requiredMove) {
 					if(pokemon.baseMoves.includes(this.toID(altForme.requiredMove))){
@@ -788,11 +789,40 @@ export const Scripts: ModdedBattleScriptsData = {
 			return null;
 		},
 		canUltraBurst(pokemon) { //Magic Room suppression
-			if (!('magicroom' in this.field.pseudoWeather) && ['Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane'].includes(pokemon.baseSpecies.name) &&
+			if('magicroom' in this.field.pseudoWeather) return null;
+			if (['Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane'].includes(pokemon.baseSpecies.name) &&
 				pokemon.getItem().id === 'ultranecroziumz') {
 				return "Necrozma-Ultra";
 			}
 			return null;
+		},
+		runMegaEvo(pokemon) { //Extra Magic Room suppression since it doesn't seem to work
+			if('magicroom' in this.field.pseudoWeather) return false;
+			const speciesid = pokemon.canMegaEvo || pokemon.canUltraBurst;
+			if (!speciesid) return false;
+			const side = pokemon.side;
+
+			// Pokémon affected by Sky Drop cannot mega evolve. Enforce it here for now.
+			for (const foeActive of side.foe.active) {
+				if (foeActive.volatiles['skydrop'] && foeActive.volatiles['skydrop'].source === pokemon) {
+					return false;
+				}
+			}
+
+			pokemon.formeChange(speciesid, pokemon.getItem(), true);
+
+			// Limit one mega evolution
+			const wasMega = pokemon.canMegaEvo;
+			for (const ally of side.pokemon) {
+				if (wasMega) {
+					ally.canMegaEvo = null;
+				} else {
+					ally.canUltraBurst = null;
+				}
+			}
+
+			this.runEvent('AfterMega', pokemon);
+			return true;
 		},
 		useMoveInner(moveOrMoveName, pokemon, target, sourceEffect, zMove, maxMove) { //Sheer Force post-secondary change
 			if (!sourceEffect && this.effect.id) sourceEffect = this.effect;

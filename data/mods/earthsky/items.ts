@@ -246,22 +246,19 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		desc: "When Flung, increases the target's Defense and Sp. Def stats by 1 stage. Fails if target is immune to powder.",
 	},
 	oddincense: {
-		inherit: true,
+		name: "Odd Incense",
+		spritenum: 312,
+		fling: {
+			basePower: 20,
+		},
 		onAllyBasePowerPriority: 15,
 		onAllyBasePower(basePower, attacker, defender, move) {
 			if (move.type === 'Psychic' || (move.twoType && move.twoType === 'Psychic')) {
 				return this.chainModify([0x1199, 0x1000]);
 			}
 		},
-		onBasePowerPriority: 15,
-		onBasePower(basePower, user, target, move) {
-			if (move.type === 'Psychic' || (move.twoType && move.twoType === 'Psychic')) {
-				return this.chainModify([0x1199, 0x1000]);
-			}
-		},
-		fling: {
-			basePower: 20,
-		},
+		num: 314,
+		gen: 4,
 		desc: "Allies' Psychic-type moves have 1.1x power.",
 	},
 	quickpowder: {
@@ -284,41 +281,35 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		desc: "When Flung, increases the target's Speed by 1 stage. Fails if target is immune to powder.",
 	},
 	rockincense: {
-		inherit: true,
+		name: "Rock Incense",
+		spritenum: 416,
+		fling: {
+			basePower: 20,
+		},
 		onAllyBasePowerPriority: 15,
 		onAllyBasePower(basePower, attacker, defender, move) {
 			if (move.type === 'Rock' || (move.twoType && move.twoType === 'Rock')) {
 				return this.chainModify([0x1199, 0x1000]);
 			}
 		},
-		onBasePowerPriority: 15,
-		onBasePower(basePower, user, target, move) {
-			if (move.type === 'Rock' || (move.twoType && move.twoType === 'Rock')) {
-				return this.chainModify([0x1199, 0x1000]);
-			}
-		},
-		fling: {
-			basePower: 20,
-		},
+		num: 315,
+		gen: 4,
 		desc: "Allies' Rock-type moves have 1.1x power.",
 	},
 	roseincense: {
-		inherit: true,
+		name: "Rose Incense",
+		spritenum: 419,
+		fling: {
+			basePower: 20,
+		},
 		onAllyBasePowerPriority: 15,
 		onAllyBasePower(basePower, attacker, defender, move) {
 			if (move.type === 'Grass' || (move.twoType && move.twoType === 'Grass')) {
 				return this.chainModify([0x1199, 0x1000]);
 			}
 		},
-		onBasePowerPriority: 15,
-		onBasePower(basePower, user, target, move) {
-			if (move.type === 'Grass' || (move.twoType && move.twoType === 'Grass')) {
-				return this.chainModify([0x1199, 0x1000]);
-			}
-		},
-		fling: {
-			basePower: 20,
-		},
+		num: 318,
+		gen: 4,
 		desc: "Allies' Grass-type moves have 1.1x power.",
 	},
 	seaincense: {
