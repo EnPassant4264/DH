@@ -1205,7 +1205,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		onBeforeMove(target, source, move){
 			if (!source.hasType('Ghost') && !target.hasType('Ghost')) move.flags['snatch'] = 1;
-		}
+		},
 		onTryHit(target, source, move) {
 			if (!source.hasType('Ghost')) {
 				delete move.volatileStatus;
