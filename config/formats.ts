@@ -1779,7 +1779,7 @@ export const Formats: FormatList = [
 		column: 4,
 	},
 		{
-		name: "[Gen 8] Earth & Sky",
+		name: "[Gen 8] Earth & Sky OU",
 		threads: [
 			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
 		],

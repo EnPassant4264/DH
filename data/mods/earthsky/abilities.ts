@@ -87,7 +87,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return;
 			}
-			if(this.field.effectiveTerrain() === 'mistyterrain'){
+			if(terrain === 'mistyterrain' && !('midnight' in this.field.pseudoWeather)){
 				pokemon.addVolatile('evade', 'mistyterrain');
 				this.add('-singleturn', pokemon, 'ability: Misty Shroud');
 			} else if (this.effectData.source === 'mistyterrain'){
@@ -811,7 +811,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			onStart(pokemon) {
 				this.effectData.warnMoves = [];
 				for (let i = 0; i < pokemon.side.foe.active.length; i++) {
-					let warnPokeMove: (Move | Pokemon)[][] = [];
 					const target = pokemon.side.foe.active[i];
 					if (target.fainted || (pokemon.activeMoveActions > 1 && target.activeMoveActions > 1)) continue;
 					let warnBp = 1;
@@ -1256,7 +1255,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
-			if (this.field.effectiveWeather() === 'sandstorm'){
+			if (weather === 'sandstorm' && !('midnight' in this.field.pseudoWeather)){ //AnySetWeather happens before the weather is active, so it will fail with effectiveWeather
 				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 					return;
 				}
@@ -1277,26 +1276,27 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	slowstart: {
 		onStart(pokemon) {
-			if(!this.effectData.duration){
-				this.effectData.duration = 5;
+			if(!this.effectData.time){
+				this.effectData.time = 5;
 				this.add('-start', pokemon, 'ability: Slow Start');
 			}
-			console.log("Slow Start count: " + this.effectData.duration);
+			console.log("Slow Start count: " + this.effectData.time);
 		},
 		onModifyAtkPriority: 5,
 		onModifyAtk(atk, pokemon) {
-			if(this.effectData.duration > 0) return this.chainModify(0.5);
+			if(this.effectData.time > 0) return this.chainModify(0.5);
 		},
 		onModifySpe(spe, pokemon) {
-			if(this.effectData.duration > 0) return this.chainModify(0.5);
+			if(this.effectData.time > 0) return this.chainModify(0.5);
 		},
 		onResidualOrder: 1,
 		onResidual(pokemon) {
-			if(this.effectData.duration === 0){
-				this.effectData.duration--; //-1 is truthy, so it doesn't get re-applied in onStart, but won't decrement or re-trigger the ending here either
+			this.effectData.time--;
+			if(this.effectData.time === 0){
+				this.effectData.time--; //-1 is truthy, so it doesn't get re-applied in onStart, but won't decrement or re-trigger the ending here either
 				this.add('-end', pokemon, 'Slow Start');
 			}
-			console.log("Slow Start count: " + this.effectData.duration);
+			console.log("Slow Start count: " + this.effectData.time);
 		},
 		name: "Slow Start",
 		rating: -1,
@@ -1319,7 +1319,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
-			if(this.field.effectiveWeather() === 'hail'){
+			if(weather === 'hail' && !('midnight' in this.field.pseudoWeather)){
 				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 					return;
 				}

@@ -211,7 +211,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		name: "Fell Swoop",
 		pp: 10,
 		priority: 0,
-		flags: {contact: 1, protect: 1, mirror: 1},
+		flags: {contact: 1, gravity: 1, protect: 1, mirror: 1},
 		secondary: {
 			chance: 20,
 			volatileStatus: 'flinch',
@@ -1105,14 +1105,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		desc: "Hits twice. If the first hit breaks the target's substitute, it will take damage for the second hit. This move ignores immunity to Ground moves, treating the Flying-type as neutrally effective.",
 	},
 	bounce: {
-		num: 340,
-		accuracy: 85,
-		basePower: 85,
-		category: "Physical",
-		name: "Bounce",
-		pp: 5,
-		priority: 0,
-		flags: {contact: 1, charge: 1, protect: 1, mirror: 1, gravity: 1, distance: 1},
+		inherit: true,
 		onTryMove(pokemon, move) {
 			if(!pokemon.canFloat()) return false;
 			if (pokemon.removeVolatile(move.id)) {
@@ -1139,13 +1132,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 			},
 		},
-		secondary: {
-			chance: 30,
-			status: 'par',
-		},
-		target: "any",
-		type: "Flying",
-		contestType: "Cute",
 		desc: "Has a 30% chance to paralyze the target. This attack charges on the first turn and executes on the second. On the first turn, the user avoids all attacks other than Hurricane, Smack Down, Thousand Arrows, Thunder, and Twister, which have doubled power when used against it. If the user is holding a Power Herb, the move completes in one turn.",
 	},
 	bugbite: {
@@ -1217,12 +1203,14 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	curse: {
 		inherit: true,
+		onBeforeMove(target, source, move){
+			if (!source.hasType('Ghost') && !target.hasType('Ghost')) move.flags['snatch'] = 1;
+		}
 		onTryHit(target, source, move) {
 			if (!source.hasType('Ghost')) {
 				delete move.volatileStatus;
 				delete move.onHit;
 				move.self = {boosts: {spe: -1, atk: 1, def: 1}};
-				if(!target.hasType('Ghost')) move.flags['snatch'] = 1;
 			} else if (move.volatileStatus && target.volatiles['curse']) {
 				return false;
 			}
@@ -1309,6 +1297,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	dig: {
 		inherit: true,
+		basePower: 90,
 		onTryMove(attacker, defender, move) {
 			if(!attacker.isGrounded() && !(attacker.hasType('Flying') || attacker.hasAbility('levitate'))) return false;
 			if (attacker.removeVolatile(move.id)) {
@@ -1342,6 +1331,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	dive: {
 		inherit: true,
+		basePower: 90,
 		onTryMove(attacker, defender, move) {
 			if(!attacker.isGrounded() && !(attacker.hasType('Flying') || attacker.hasAbility('levitate'))) return false;
 			if (attacker.removeVolatile(move.id)) {
@@ -1364,13 +1354,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				if (type === 'sandstorm' || type === 'hail') return false;
 			},
 			onInvulnerability(target, source, move) {
-				if (['surf', 'whirlpool', 'dive', 'whitewater', 'tidalwave'].includes(move.id)) {
+				if (['surf', 'whirlpool', 'dive', 'muddywater', 'tidalwave'].includes(move.id)) {
 					return;
 				}
 				return false;
 			},
 			onSourceModifyDamage(damage, source, target, move) {
-				if (['surf', 'whirlpool', 'dive', 'whitewater', 'tidalwave'].includes(move.id)) {
+				if (['surf', 'whirlpool', 'dive', 'muddywater', 'tidalwave'].includes(move.id)) {
 					return this.chainModify(2);
 				}
 			},
@@ -1420,8 +1410,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onStart(pokemon){
 				pokemon.addVolatile('evadestall');
 			},
-			beforeTurnCallback(pokemon){
-				pokemon.volatiles['evadestall'].duration = 2; //Holds evasion counter while effect is active 
+			onBeforeMove(pokemon){
+				pokemon.volatiles['evadestall'].duration = 2; //Holds evasion counter while effect is active. 
 			},
 			onAccuracy(accuracy, target, source, move) {
 				if(['allAdjacentFoes','allAdjacent','all'].includes(move.target)){
@@ -1433,9 +1423,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					target.removeVolatile('doubleteam');
 					return false;
 				}
-			},
-			onEnd(pokemon){
-				pokemon.removeVolatile('evadestall');
 			},
 		},
 		secondary: null,
@@ -1565,7 +1552,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onTrapPokemon(pokemon) {
 				pokemon.tryTrap();
 			},
-			onSourceHit(damage, target, source, move) {
+			onHit(damage, target, source, move) {
 				if(!source?.hasItem('shedshell')) delete move.selfSwitch;
 			},
 			onAfterMoveSecondaryPriority: 3,
@@ -1734,7 +1721,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	fly: {
 		inherit: true,
-		flags: {contact: 1, charge: 1, protect: 1, mirror: 1, distance: 1},
 		onTryMove(attacker, defender, move) {
 			if (!attacker.canFloat()) return false;
 			if (attacker.removeVolatile(move.id)) {
@@ -1769,7 +1755,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		basePower: 80,
 		pp: 10,
 		category: "Physical",
-		flags: {contact: 1, protect: 1, mirror: 1, distance: 1, nonsky: 1},
 		priority: 0,
 		secondary: null,
 		onTryMove(pokemon) {
@@ -2031,7 +2016,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	highjumpkick: {
 		inherit: true,
 		accuracy: 70,
-		flags: {contact: 1, protect: 1, mirror: 1},
 		onTryMove(pokemon) {
 			if(!pokemon.canFloat()) return false;
 		},
@@ -2137,7 +2121,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	jumpkick: {
 		inherit: true,
 		accuracy: 90,
-		flags: {contact: 1, protect: 1, mirror: 1},
 		onTryMove(pokemon) {
 			if(!pokemon.canFloat()) return false;
 		},
@@ -2235,7 +2218,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	//Magic Room changes implemented in other moves.
 	magnetrise: {
 		inherit: true,
-		flags: {snatch: 1},
 		volatileStatus: 'magnetrise',
 		condition: {
 			duration: 5,

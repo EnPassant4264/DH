@@ -15,7 +15,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			basePower: 100,
 			type: "Steel",
 		},
-		onBeforeMovePriority: 7,
+		onBeforeMovePriority: 10,
 		onBeforeMove(pokemon) {
 			if (pokemon.volatiles['flinch']) {
 				pokemon.eatItem();
@@ -182,13 +182,10 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			if (move.target === 'foeSide' || (move.target === 'all' && move.id !== 'perishsong')) {
 				return;
 			}
-			const dazzlingHolder = this.effectData.target;
-			if (dazzlingHolder === target && move.priority > 0.1
-				&& this.dex.getImmunity('powder', source) && !dazzlingHolder.ignoringItem())
+			if (move.priority > 0.1	&& this.dex.getImmunity('powder', source) && target.useItem())
 			{
-				dazzlingHolder.useItem();
 				this.attrLastMove('[still]');
-				this.add('cant', dazzlingHolder, 'item: BrightPowder', move, '[of] ' + target);
+				this.add('activate', target, 'item: BrightPowder');
 				return false;
 			}
 		},
@@ -202,9 +199,6 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		spritenum: 155,
 		fling: {
 			basePower: 20,
-		},
-		onModifySpe(spe) {
-			return this.chainModify(0.75);
 		},
 		onAllyModifySpe(spe) {
 			return this.chainModify(0.75);
@@ -328,7 +322,8 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		desc: "Allies' Grass-type moves have 1.1x power.",
 	},
 	seaincense: {
-		inherit: true,
+		name: "Sea Incense",
+		spritenum: 430,
 		fling: {
 			basePower: 20,
 		},
@@ -338,6 +333,8 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 				return this.chainModify([0x1199, 0x1000]);
 			}
 		},
+		num: 254,
+		gen: 3,
 		desc: "Allies' Water-type moves have 1.1x power.",
 	},
 	silverpowder: {
