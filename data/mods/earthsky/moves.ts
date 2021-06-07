@@ -10,6 +10,28 @@ sound: Power is multiplied by 1.2 when used by a Pokemon with the Cacophony Abil
 */
 
 export const Moves: {[moveid: string]: ModdedMoveData} = {
+	freezetest: {
+		num: 1030,
+		basePower: 0,
+		accuracy: true,
+		category: "Status",
+		name: "Freeze Test",
+		pp: 15,
+		priority: 0,
+		flags: {protect: 1, mirror: 1},
+		secondary:{
+			chance: 100,
+			status: 'frz',
+		}
+		shortDesc: "Freezes the target. OP,used for testing freeze.",
+		target: "normal",
+		type: "Ice",
+		contestType: "Cute",
+		onPrepareHit: function(target, source, move) {
+			this.attrLastMove('[still]');
+			this.add('-anim', source, "Icy Wind", target);
+		},
+	},
 	/* New Moves */
 	aerate: {
 		num: 1000,
@@ -1195,6 +1217,16 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	curse: {
 		inherit: true,
+		onTryHit(target, source, move) {
+			if (!source.hasType('Ghost')) {
+				delete move.volatileStatus;
+				delete move.onHit;
+				move.self = {boosts: {spe: -1, atk: 1, def: 1}};
+				if(!target.hasType('Ghost')) move.flags['snatch'] = 1;
+			} else if (move.volatileStatus && target.volatiles['curse']) {
+				return false;
+			}
+		},
 		target: "normal",
 	},
 	cut: {
@@ -2200,9 +2232,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		shortDesc: "Changes the target's secondary typing to Psychic.",
 		contestType: "Cute",
 	},
-	magicroom: {
-		//Magic Room changes implemented in other moves.
-	},
+	//Magic Room changes implemented in other moves.
 	magnetrise: {
 		inherit: true,
 		flags: {snatch: 1},

@@ -809,6 +809,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		condition: {
 			onStart(pokemon) {
+				this.effectData.warnMoves = [];
 				for (let i = 0; i < pokemon.side.foe.active.length; i++) {
 					let warnPokeMove: (Move | Pokemon)[][] = [];
 					const target = pokemon.side.foe.active[i];
@@ -907,11 +908,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						}
 					}
 					if(!warnPokeMove) continue;
-					pokemon.abilityData.warnMoves.push(this.sample(warnPokeMove));
+					this.effectData.warnMoves.push(this.sample(warnPokeMove));
 					this.add('-activate', pokemon, `ability: $(this.effectData.source)`, warnPokeMove[2], '[of] ' + warnPokeMove[1]); //used because Glyphic Spell also adds this volatile
 					console.log("Forewarn found " + warnPokeMove[2] + "'s " + warnPokeMove[1]);
 				}
-				if (!pokemon.abilityData.warnMoves.length) return;
+				if (!this.effectData.warnMoves.length) return;
 			},
 			onAccuracy(accuracy, target, source, move) {
 				if (!target.abilityData.warnMoves.length || typeof(accuracy) !== 'number' || move.ignoreEvasion) return;
@@ -1120,6 +1121,16 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		rating: 3,
 		num: 141,
 	},
+	noguard: {
+		inherit: true,
+		onAnyAccuracy(accuracy, target, source, move) {
+			if (move && (source === this.effectData.target || target === this.effectData.target)) {
+				move.ignoreEvasion = true; //Since it returns true instead of changing the accuracy to true, Evasiveness doesn't recognize it. And Evasiveness seems to come after.
+				return true;
+			}
+			return accuracy;
+		},
+	},
 	owntempo: {
 		inherit: true,
 		//Attribute copy/theft immunity implemented in moves.ts in the moves themselves.
@@ -1274,16 +1285,15 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onModifyAtkPriority: 5,
 		onModifyAtk(atk, pokemon) {
-			if(this.effectData.duration) return this.chainModify(0.5);
+			if(this.effectData.duration > 0) return this.chainModify(0.5);
 		},
 		onModifySpe(spe, pokemon) {
-			if(this.effectData.duration) return this.chainModify(0.5);
+			if(this.effectData.duration > 0) return this.chainModify(0.5);
 		},
 		onResidualOrder: 1,
 		onResidual(pokemon) {
-			if(this.effectData.duration > 0) this.effectData.duration--;
 			if(this.effectData.duration === 0){
-				this.effectData.duration = -1; //Truthy, so it doesn't get re-applied in onStart, but won't decrement or re-trigger the ending here either
+				this.effectData.duration--; //-1 is truthy, so it doesn't get re-applied in onStart, but won't decrement or re-trigger the ending here either
 				this.add('-end', pokemon, 'Slow Start');
 			}
 			console.log("Slow Start count: " + this.effectData.duration);

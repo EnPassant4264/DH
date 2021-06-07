@@ -328,8 +328,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		desc: "Allies' Grass-type moves have 1.1x power.",
 	},
 	seaincense: {
-		name: "Sea Incense",
-		spritenum: 430,
+		inherit: true,
 		fling: {
 			basePower: 20,
 		},
@@ -339,8 +338,6 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 				return this.chainModify([0x1199, 0x1000]);
 			}
 		},
-		num: 254,
-		gen: 3,
 		desc: "Allies' Water-type moves have 1.1x power.",
 	},
 	silverpowder: {

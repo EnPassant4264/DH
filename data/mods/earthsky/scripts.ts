@@ -4963,6 +4963,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		delete this.modData('Learnsets', 'cubchoo').learnset.toxic;
 		// Beartic
 		this.modData("Learnsets", "beartic").learnset.snowtumble = ["8D"];
+		this.modData("Learnsets", "beartic").learnset.freezetest = ["8L1"];
 		delete this.modData('Learnsets', 'beartic').learnset.toxic;
 		// Cryogonal
 		this.modData("Learnsets", "cryogonal").learnset.mirrorshot = ["8D"];
