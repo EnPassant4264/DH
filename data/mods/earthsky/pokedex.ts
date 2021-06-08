@@ -2217,9 +2217,21 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		inherit: true,
 		evos: ["Victreebell"],
 	},
-	victreebel: {
-		inherit: true,
+	victreebell: {
+		num: 71,
 		name: "Victreebell",
+		types: ["Grass", "Poison"],
+		baseStats: {hp: 80, atk: 105, def: 65, spa: 100, spd: 70, spe: 70},
+		abilities: {0: "Chlorophyll", H: "Gluttony"},
+		heightm: 1.7,
+		weightkg: 15.5,
+		color: "Green",
+		prevo: "Weepinbell",
+		evoType: "useItem",
+		evoItem: "Leaf Stone",
+		eggGroups: ["Grass"],
+	},
+	victreebel: {
 	},
 	torkoal: {
 		inherit: true,

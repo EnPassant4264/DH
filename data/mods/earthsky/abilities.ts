@@ -107,7 +107,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	nightwalker: {
 		onModifySpe(spe, pokemon) {
-			if ('midnight' in this.battle.field.pseudoWeather) {
+			if ('midnight' in this.field.pseudoWeather) {
 				return this.chainModify(2);
 			}
 		},
@@ -728,7 +728,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 			const moveType = move.id === 'hiddenpower' ? source.hpType : move.type;
 			if (this.dex.getImmunity(moveType, target) && this.dex.getEffectiveness(moveType, target) >= 2) {
-				this.add('-miss', source, 'ability: Anticipation', '[of] ' + target);
+				this.add('-miss', target, 'ability: Anticipation', '[of] ' + source);
 				return false;
 			}
 		},
@@ -1260,7 +1260,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
 			console.log(weather + " being set, " + pokemon.name + " should activate Sand Veil");
-			if (weather === 'sandstorm' && !('midnight' in this.field.pseudoWeather)){ //AnySetWeather happens before the weather is active, so it will fail with effectiveWeather
+			if (weather == "Sandstorm" && !('midnight' in this.field.pseudoWeather)){ //AnySetWeather happens before the weather is active, so it will fail with isWeather
 				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 					return;
 				}
@@ -1327,7 +1327,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
 			console.log(weather + " being set, " + pokemon.name + " should activate Snow Cloak");
-			if(weather === 'hail' && !('midnight' in this.field.pseudoWeather)){
+			if(weather == "Hail" && !('midnight' in this.field.pseudoWeather)){ //AnySetWeather happens before the weather is active, so it will fail with isWeather
 				console.log("Snow Cloak detects hail");
 				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 					return;
@@ -1378,20 +1378,20 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	tangledfeet: {
 		onDamage(damage, target, source, effect) {
-			if (effect === 'confused') {
+			if (effect.id === this.toID('confused')) {
 				target.addVolatile('tangledfeet');
 			}
 		},
 		condition: {
-			duration: 2, //Should get removed in onTryMove, so this is a failsafe
+			duration: 2, //Should get removed in onBeforeMove, so this is a failsafe
 			onStart(pokemon, source) {
 				this.add('-activate', pokemon, 'ability: Tangled Feet');
 			},
-			onTryMove(pokemon, move) {
-				pokemon.removeVolatile(move.id);
+			onBeforeMove(pokemon, move) {
+				pokemon.removeVolatile('tangledfeet');
 			},
 			onAccuracy(accuracy, target, source, move) {
-				if (!move.ignoreEvasion || typeof(move.accuracy) === 'number') return false;
+				if (!move.ignoreEvasion && typeof(move.accuracy) === 'number') return false;
 			},
 		},
 		name: "Tangled Feet",
@@ -1419,7 +1419,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				this.add('-end', pokemon, 'tangling');
 			},
 		},
-		name: "Tangling Hair",
+		name: "Tangling",
 		rating: 2,
 		num: 221,
 		activate: "  [TARGET] became tangled! It can't escape!",

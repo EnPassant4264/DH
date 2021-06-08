@@ -1804,11 +1804,12 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	forestscurse: {
 		inherit: true,
 		onHit(target) {
-			if ((target.types.length > 1 && target.types[1] === "Grass") || target.types === ["Grass"]) return false;
-			if (target.types[0] === "Grass"){ //Due to above line, this is true only if the target is dual-typed
-				target.types === ["Grass"];
+			const targetTypes = target.getTypes();
+			if ((targetTypes.length > 1 && targetTypes[1] === "Grass") || targetTypes === ["Grass"]) return false;
+			if (targetTypes[0] === "Grass"){ //Due to above line, this is true only if the target is dual-typed
+				target.setType("Grass");
 			} else {
-				target.types[1] = 'Grass';
+				target.setType([targetTypes[0],"Grass"]);
 			}
 			this.add('-start', target, 'typechange', 'Grass', '[from] move: Forest\'s Curse');
 		},
@@ -2165,8 +2166,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				if (move && source === this.effectData.target && target === this.effectData.source){
 					move.accuracy = true;
 					move.ignoreEvasion = true;
-					delete move.flags['protect'];
-					return true;
 				}
 			},
 			onAfterHit(target, source, move){
@@ -2214,11 +2213,12 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	magicpowder: {
 		inherit: true,
 		onHit(target) {
-			if ((target.types.length > 1 && target.types[1] === "Psychic") || target.types === ["Psychic"]) return false;
-			if (target.types[0] === "Psychic"){ //Due to above line, this is true only if the target is dual-typed
-				target.types === ["Psychic"];
+			const targetTypes = target.getTypes();
+			if ((targetTypes.length > 1 && targetTypes[1] === "Psychic") || targetTypes === ["Psychic"]) return false;
+			if (targetTypes[0] === "Psychic"){ //Due to above line, this is true only if the target is dual-typed
+				target.setType("Psychic");
 			} else {
-				target.types[1] = 'Psychic';
+				target.setType([targetTypes[0],"Psychic"]);
 			}
 			this.add('-start', target, 'typechange', 'Psychic', '[from] move: Magic Powder');
 		},
@@ -2303,7 +2303,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			duration: 0,
 			onModifyMove(move, source, target) {
-				if(move && source != target && source === this.effectData.target){
+				if(move && source !== target && source === this.effectData.target){
 					move.accuracy = true;
 					move.ignoreEvasion = true;
 					delete move.flags['protect'];
@@ -3140,11 +3140,12 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	soak: {
 		inherit: true,
 		onHit(target) {
-			if ((target.types.length > 1 && target.types[1] === "Water") || target.types === ["Water"]) return false;
-			if (target.types[0] === "Water"){ //Due to above line, this is true only if the target is dual-typed
-				target.types = ["Water"];
+			const targetTypes = target.getTypes();
+			if ((targetTypes.length > 1 && targetTypes[1] === "Water") || targetTypes === ["Water"]) return false;
+			if (targetTypes[0] === "Water"){ //Due to above line, this is true only if the target is dual-typed
+				target.setType("Water");
 			} else {
-				target.types[1] = 'Water';
+				target.setType([targetTypes[0],"Water"]);
 			}
 			this.add('-start', target, 'typechange', 'Water', '[from] move: Soak');
 		},
@@ -3523,11 +3524,12 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	trickortreat: {
 		inherit: true,
 		onHit(target) {
-			if ((target.types.length > 1 && target.types[1] === "Ghost") || target.types === ["Ghost"]) return false;
-			if (target.types[0] === "Ghost"){ //Due to above line, this is true only if the target is dual-typed
-				target.types === ["Ghost"];
+			const targetTypes = target.getTypes();
+			if ((targetTypes.length > 1 && targetTypes[1] === "Ghost") || targetTypes === ["Ghost"]) return false;
+			if (targetTypes[0] === "Ghost"){ //Due to above line, this is true only if the target is dual-typed
+				target.setType("Ghost");
 			} else {
-				target.types[1] = 'Ghost';
+				target.setType([targetTypes[0],"Ghost"]);
 			}
 			this.add('-start', target, 'typechange', 'Ghost', '[from] move: Trick-or-Treat');
 		},
@@ -3603,7 +3605,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	weatherball: {
 		inherit: true,
 		onModifyType(move, pokemon) {
-			if ('midnight' in this.battle.field.pseudoWeather){
+			if ('midnight' in this.field.pseudoWeather){
 				move.type = 'Dark';
 			} //no 'else' because effectiveWeather will return blank with Midnight active
 			switch (pokemon.effectiveWeather()) {
@@ -3624,7 +3626,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			}
 		},
 		onModifyMove(move, pokemon) {
-			if ('midnight' in this.battle.field.pseudoWeather){
+			if ('midnight' in this.field.pseudoWeather){
 				move.basePower *= 2;
 			} //no 'else' because effectiveWeather will return blank with Midnight active
 			switch (pokemon.effectiveWeather()) {
