@@ -16,16 +16,29 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 	hiddenmovelimit: {
 		effectType: 'ValidatorRule',
 		name: 'Hidden Move Limit',
-		desc: "Ensures that no more than one Hidden Move is known per Pok&eacute;mon family",
+		desc: "Ensures that no more than one Hidden Move is known per Pok&eacute;mon family and that forme/evolution-exclusive Hidden Moves are respected.",
 		onValidateTeam(team) {
 			const learnedHiddenTable: Pokemon[] = [];
 			const problems: string[] = [];
 			for (const set of team) {
 				if (set.moves) {
-					const pokemon = this.dex.getSpecies(set.species);
+					const pokemon = this.dex.getSpecies(set.species || set.name);
 					for (const moveId of set.moves) {
 						const pokeLearnsMove = this.dex.getLearnsetData(pokemon, this.dex.getMove(moveId));
 						if(pokeLearnsMove === ["8D"]){
+							if(pokemon.baseSpecies.restrictedHidden){ //Denotes that Pokemon can't learn alt-forme's or prevo's Hidden Move
+								if(pokemon.changesFrom && pokemon.name !== pokemon.changesFrom && 
+								this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom), this.dex.getMove(moveId)) === ["8D"]) //This move is base forme's Hidden Move
+									problems.push(`${pokemon} can't learn ${moveId} because it is ${pokemon.baseSpecies}'s exclusive Hidden Move.`);
+								if(pokemon.prevo && this.dex.getLearnsetData(pokemon.prevo, this.dex.getMove(moveId) === ["8D"])) //This move is prevo's Hidden Move
+									problems.push(`${pokemon} can't learn ${moveId} because it is ${pokemon.prevo}'s exclusive Hidden Move.`);
+								}
+							} else if (pokemon.prevo && pokemon.prevo.restrictedHidden){ //This Pokemon is third-stage, and the second stage can't learn the first stage's Hidden Move
+								const prevo = pokemon.prevo;
+								if(prevo.prevo && this.dex.getLearnsetData(prevo.prevo, this.dex.getMove(moveId) === ["8D"])) //This move is first stage's Hidden Move
+									problems.push(`${pokemon} can't learn ${moveId} because it is ${prevo.prevo}'s exclusive Hidden Move.`);
+								}
+							}
 							for(const poke of learnedHiddenTable){
 								if(poke.baseSpecies === pokemon.baseSpecies)
 									problems.push(`No more than one ${pokemon.baseSpecies} can know its Hidden Move.`);

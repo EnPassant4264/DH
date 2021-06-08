@@ -1742,6 +1742,7 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	rotom: {
 		inherit: true,
 		abilities: {0: "Levitate", H: "Prankster"},
+		exclusiveHidden: true,
 	},
 	rotomwash: {
 		inherit: true,
@@ -1801,6 +1802,7 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		inherit: true,
 		abilities: {0: "Natural Cure", H: "Grass Pelt"},
 		unreleasedHidden: true,
+		exclusiveHidden: true,
 	},
 	shayminsky: {
 		inherit: true,
@@ -2211,6 +2213,51 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	minior: {
 		inherit: true,
 		evos: ["Prominoid"],
+	},
+	/* Evolution/Forme Exclusive Hidden Moves */
+	jynx: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	shedinja: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	lucario: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	accelgor: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	tornadus: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	thundurus: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	landorus: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	gurdurr: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	conkeldurr: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	oricorio: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	necrozma: {
+		inherit: true,
+		exclusiveHidden: true,
 	},
 	/* Misc. */
 	weepinbell: {
