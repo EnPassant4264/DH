@@ -7443,5 +7443,7 @@ export const Learnsets: {[speciesid: string]: ModdedLearnsetData} = {
 			wrap: ["8V", "7V"],
 		},
 	},
-	victreebel: {},
+	victreebel: {
+		learnset: {},
+	},
 };
