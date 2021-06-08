@@ -1203,11 +1203,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	curse: {
 		inherit: true,
-		onBeforeMovePriority: 3,
-		onBeforeMove(source, target, move){
-			if (!source.hasType('Ghost') && !target.hasType('Ghost')) move.flags['snatch'] = 1;
-			if (source.hasType('Ghost') && target.hasType('Ghost')) move.flags['reflectable'] = 1;
-		},
 		onTryHit(target, source, move) {
 			if (!source.hasType('Ghost')) {
 				delete move.volatileStatus;
@@ -1811,7 +1806,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		onHit(target) {
 			if ((target.types.length > 1 && target.types[1] === "Grass") || target.types === ["Grass"]) return false;
 			if (target.types[0] === "Grass"){ //Due to above line, this is true only if the target is dual-typed
-				delete target.types[1];
+				target.types === ["Grass"];
 			} else {
 				target.types[1] = 'Grass';
 			}
@@ -1923,7 +1918,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					this.add('-fieldstart', 'move: Grassy Terrain');
 				}
 			},
-			onAfterHit(source, target, move){
+			onAnyAfterHit(source, target, move){
 				if(['firespin', 'firepledge', 'inferno', 'searingshot', 'napalm', 'burnup', 'overheat', 'blastburn'].includes(move.id)){
 					this.field.removeTerrain();
 					target.side.addSideCondition('firepledge');
@@ -2149,27 +2144,41 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	lockon: {
 		inherit: true,
 		flags: {protect: 1, reflectable: 1, mirror: 1},
+		onTryHit(target, source) {
+			if (source.volatiles['lockon']){
+				if(source.volatiles['lockon'].source === target) return false;
+				source.removeVolatile['lockon']; //delete volatile so it can be re-added with the other source
+			}
+		},
+		onHit(target, source) {
+			source.addVolatile('lockon', target);
+			this.add('-activate', source, 'move: Lock-On', '[of] ' + target);
+		},
 		condition: {
 			noCopy: true, // doesn't get copied by Baton Pass
 			duration: 0,
-			onSourceInvulnerabilityPriority: 1,
-			onSourceInvulnerability(target, source, move) {
+			onInvulnerabilityPriority: 1,
+			onInvulnerability(target, source, move) {
 				if (move && source === this.effectData.target && target === this.effectData.source) return 0;
 			},
-			onSourceAccuracy(accuracy, target, source, move) {
+			onModifyMove(move, source, target) {
 				if (move && source === this.effectData.target && target === this.effectData.source){
+					move.accuracy = true;
 					move.ignoreEvasion = true;
+					delete move.flags['protect'];
 					return true;
 				}
 			},
-			onTryHit(target, source, move){
-				if (move && source === this.effectData.target && target === this.effectData.source) delete move.flags['protect'];
-			},
 			onAfterHit(target, source, move){
-				if (move && source === this.effectData.target && target === this.effectData.source) source.removeVolatile('lockon');
+				source.removeVolatile('lockon');
 			},
+			onSwitchOut(pokemon){
+				if(pokemon === this.effectData.source){
+					this.effectData.target.removeVolatile['lockon'];
+				}
+			}
 		},
-		shortDesc: "User's next attack on target always hits, ignores protection.",
+		shortDesc: "User's next attack on target always hits, ignores protection and semi-invulnerability.",
 	},
 	lovelykiss: {
 		inherit: true,
@@ -2207,7 +2216,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		onHit(target) {
 			if ((target.types.length > 1 && target.types[1] === "Psychic") || target.types === ["Psychic"]) return false;
 			if (target.types[0] === "Psychic"){ //Due to above line, this is true only if the target is dual-typed
-				delete target.types[1];
+				target.types === ["Psychic"];
 			} else {
 				target.types[1] = 'Psychic';
 			}
@@ -2293,16 +2302,12 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		},
 		condition: {
 			duration: 0,
-			onSourceInvulnerabilityPriority: 1,
-			onSourceInvulnerability(target, source, move) {
-				if (move && source === this.effectData.target) return 0;
-			},
-			onModifyMove(move) {
-				move.ignoreEvasion = true;
-				delete move.flags['protect'];
-			},
-			onSourceAccuracy(accuracy, target, source, move) {
-				if (move && source === this.effectData.target) return true;
+			onModifyMove(move, source, target) {
+				if(move && source != target && source === this.effectData.target){
+					move.accuracy = true;
+					move.ignoreEvasion = true;
+					delete move.flags['protect'];
+				}
 			},
 			onAfterHit(target, source, move){
 				source.removeVolatile('mindreader');
@@ -3520,7 +3525,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		onHit(target) {
 			if ((target.types.length > 1 && target.types[1] === "Ghost") || target.types === ["Ghost"]) return false;
 			if (target.types[0] === "Ghost"){ //Due to above line, this is true only if the target is dual-typed
-				delete target.types[1];
+				target.types === ["Ghost"];
 			} else {
 				target.types[1] = 'Ghost';
 			}

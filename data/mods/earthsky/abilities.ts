@@ -693,7 +693,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		name: "Alchemy",
 		rating: 1,
 		num: 223,
-		desc: "This Pokemon copies the Ability of an ally that fainted last turn. Abilities that cannot be copied are \"No Ability\", Alchemy, Comatose, Disguise, Flower Gift, Forecast, Glyphic Spell, Gulp Missile, Hunger Switch, Ice Face, Illusion, Imposter, Multitype, Neutralizing Gas, Power Construct, Rage Mode, Receiver, RKS System, Schooling, Shields Down, Stance Change, Trace, Wonder Guard, and Zen Mode.",
+		desc: "This Pokemon copies the Ability of an ally that fainted this turn. Abilities that cannot be copied are \"No Ability\", Alchemy, Comatose, Disguise, Flower Gift, Forecast, Glyphic Spell, Gulp Missile, Hunger Switch, Ice Face, Illusion, Imposter, Multitype, Neutralizing Gas, Power Construct, Rage Mode, Receiver, RKS System, Schooling, Shields Down, Stance Change, Trace, Wonder Guard, and Zen Mode.",
 		shortDesc: "This Pokemon copies the Ability of an ally that fainted.",
 	},
 	anticipation: {
@@ -719,14 +719,14 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAccuracy(accuracy, target, source, move) {
-			if (accuracy === true || move.ignoreEvasion) return;
+			if (target !== this.effectData.target || typeof(accuracy) !== 'number' || move.ignoreEvasion) return;
 			if (move.twoType){
 				if (this.dex.getImmunity(move, target) && this.dex.getEffectiveness(move, target) >= 2) {
 					this.add('-miss', source, 'ability: Anticipation', '[of] ' + target);
 					return false;
 				}
 			}
-			const moveType = move.id === 'hiddenpower' ? target.hpType : move.type;
+			const moveType = move.id === 'hiddenpower' ? source.hpType : move.type;
 			if (this.dex.getImmunity(moveType, target) && this.dex.getEffectiveness(moveType, target) >= 2) {
 				this.add('-miss', source, 'ability: Anticipation', '[of] ' + target);
 				return false;
@@ -917,8 +917,8 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				if (!this.effectData.warnMoves.length) return;
 			},
 			onAccuracy(accuracy, target, source, move) {
-				if (!target.abilityData.warnMoves.length || typeof(accuracy) !== 'number' || move.ignoreEvasion) return;
-				if ([target, move] in this.effectData.warnMoves){
+				if (target === source || !this.effectData.warnMoves.length || typeof(accuracy) !== 'number' || move.ignoreEvasion) return;
+				if ([source, move] in this.effectData.warnMoves){
 					this.add('-miss', source, `ability: $(this.effectData.source)`, '[of] ' + target); //see above
 					return false;
 				}
@@ -1230,7 +1230,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		name: "Receiver",
 		rating: 1,
 		num: 223,
-		desc: "This Pokemon copies the Ability of an ally that fainted last turn. Abilities that cannot be copied are \"No Ability\", Alchemy, Comatose, Disguise, Flower Gift, Forecast, Glyphic Spell, Gulp Missile, Hunger Switch, Ice Face, Illusion, Imposter, Multitype, Neutralizing Gas, Power Construct, Rage Mode, Receiver, RKS System, Schooling, Shields Down, Stance Change, Trace, Wonder Guard, and Zen Mode.",
+		desc: "This Pokemon copies the Ability of an ally that fainted this turn. Abilities that cannot be copied are \"No Ability\", Alchemy, Comatose, Disguise, Flower Gift, Forecast, Glyphic Spell, Gulp Missile, Hunger Switch, Ice Face, Illusion, Imposter, Multitype, Neutralizing Gas, Power Construct, Rage Mode, Receiver, RKS System, Schooling, Shields Down, Stance Change, Trace, Wonder Guard, and Zen Mode.",
 		shortDesc: "This Pokemon copies the Ability of an ally that fainted.",
 	},
 	runaway: {
@@ -1259,6 +1259,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
+			console.log(weather + " being set, " + pokemon.name + " should activate Sand Veil");
 			if (weather === 'sandstorm' && !('midnight' in this.field.pseudoWeather)){ //AnySetWeather happens before the weather is active, so it will fail with effectiveWeather
 				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 					return;
@@ -1266,7 +1267,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				pokemon.addVolatile('evade', 'sandstorm');
 				pokemon.addVolatile('evadestall');
 				this.add('-singleturn', pokemon, 'ability: Sand Veil');
-			} else if (this.effectData.source === 'sandstorm'){
+			} else if (pokemon.volatiles['evade'] && pokemon.volatiles['evade'].source === 'sandstorm'){
 				pokemon.removeVolatile('evade');
 				this.add('-end', pokemon, 'ability: Sand Veil');
 			}
@@ -1325,14 +1326,16 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
+			console.log(weather + " being set, " + pokemon.name + " should activate Snow Cloak");
 			if(weather === 'hail' && !('midnight' in this.field.pseudoWeather)){
+				console.log("Snow Cloak detects hail");
 				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 					return;
 				}
 				pokemon.addVolatile('evade', 'hail');
 				pokemon.addVolatile('evadestall');
 				this.add('-singleturn', pokemon, 'ability: Snow Cloak');
-			} else if (this.effectData.source === 'hail'){
+			} else if (pokemon.volatiles['evade'] && pokemon.volatiles['evade'].source === 'hail'){
 				pokemon.removeVolatile('evade');
 				this.add('-end', pokemon, 'ability: Snow Cloak');
 			}

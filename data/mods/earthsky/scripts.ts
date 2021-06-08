@@ -1391,10 +1391,10 @@ export const Scripts: ModdedBattleScriptsData = {
 			"agility","airslash","aurasphere","batonpass","beatup","blazekick","bodyslam","bravebird","bugbuzz","bulletseed","closecombat","confide","cosmicpower","covet","crosspoison","crunch","cut","darkestlariat","doubleteam","dragondance","drainingkiss","firefang","firespin","flareblitz","flash","focusenergy","focuspunch","guardswap","heatcrash","heavyslam","highhorsepower","icefang","iciclespear","imprison","leafblade","leafstorm","liquidation","magicalleaf","megakick","megapunch","megahorn","metronome","mudshot","muddywater","mysticalfire","payday","pinmissile","playrough","pollenpuff","powerswap","poweruppunch","powerwhip","psychicfang","psychocut","razorshell","revenge","reversal","rockblast","sandtomb","scaryface","self-destruct","solarblade","speedswap","spikes","storedpower","strugglebug","swagger","swift","tailslap","throatchop","thunderfang","toxicspikes","triattack","venomdrench","weatherball",
 		];
 		const renamedMoves = [
-			"banefulbunker","clangoroussoul","moongeistbeam","stompingtantrum","strangesteam","sunsteelstrike",
+			"banefulbunker","clangoroussoul","moongeistbeam","psychicfangs","stompingtantrum","strangesteam","sunsteelstrike",
 		];
 		const newNameMoves = [
-			"bunkerdown","warriorssoul","lunarray","tantrum","strangesmoke","solarimpact",
+			"bunkerdown","warriorssoul","lunarray","psychicfang","tantrum","strangesmoke","solarimpact",
 		];
 		const noUniversalTMs = [
 			"tynamo", "scatterbug", "spewpa", "cosmog", "cosmoem", "blipbug", "applin"
@@ -5530,25 +5530,27 @@ export const Scripts: ModdedBattleScriptsData = {
 		delete this.modData('Learnsets', 'klefki').learnset.toxic;
 		// Phantump
 		this.modData("Learnsets", "phantump").learnset.irondefense = ["8D"];
-		this.modData("Learnsets", "phantump").learnset.imprison = ["8E"];
-		this.modData("Learnsets", "phantump").learnset.mysticalfire = ["8E"];
 		this.modData("Learnsets", "phantump").learnset.naturalgift = ["8M"];
 		this.modData("Learnsets", "phantump").learnset.nightmare = ["8M"];
 		delete this.modData('Learnsets', 'phantump').learnset.toxic;
 		// Trevenant
 		this.modData("Learnsets", "trevenant").learnset.irondefense = ["8D"];
+		this.modData("Learnsets", "trevenant").learnset.midnight = ["8T"];
 		this.modData("Learnsets", "trevenant").learnset.naturalgift = ["8M"];
 		this.modData("Learnsets", "trevenant").learnset.nightmare = ["8M"];
 		delete this.modData('Learnsets', 'trevenant').learnset.toxic;
 		// Pumpkaboo
 		this.modData("Learnsets", "pumpkaboo").learnset.magicpowder = ["8D"];
 		this.modData("Learnsets", "pumpkaboo").learnset.flash = ["8M"];
+		this.modData("Learnsets", "pumpkaboo").learnset.imprison = ["8E"];
+		this.modData("Learnsets", "pumpkaboo").learnset.mysticalfire = ["8E"];
 		this.modData("Learnsets", "pumpkaboo").learnset.naturalgift = ["8M"];
 		this.modData("Learnsets", "pumpkaboo").learnset.nightmare = ["8M"];
 		delete this.modData('Learnsets', 'pumpkaboo').learnset.toxic;
 		// Gourgeist
 		this.modData("Learnsets", "gourgeist").learnset.magicpowder = ["8D"];
 		this.modData("Learnsets", "gourgeist").learnset.flash = ["8M"];
+		this.modData("Learnsets", "gourgeist").learnset.midnight = ["8T"];
 		this.modData("Learnsets", "gourgeist").learnset.naturalgift = ["8M"];
 		this.modData("Learnsets", "gourgeist").learnset.nightmare = ["8M"];
 		delete this.modData('Learnsets', 'gourgeist').learnset.toxic;
