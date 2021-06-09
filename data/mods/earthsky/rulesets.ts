@@ -26,10 +26,9 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 					for (const moveID of set.moves) {
 						const pokeLearnsMove = this.dex.getLearnsetData(pokemon.id).learnset[moveID];
 						console.log(pokemon + " knows " + moveID + " with means " + pokeLearnsMove);
-						if(pokeLearnsMove === ["8D"]){
-							console.log("This is a Hidden Move");
+						if(pokeLearnsMove === undefined){
+							console.log("This move is not learned by this stage or form");
 							if(pokemon.restrictedHidden){ //Denotes that Pokemon can't learn alt-forme's or prevo's Hidden Move
-								console.log("This is a restricted Hidden Move");
 								if(pokemon.changesFrom) console.log("Base form is " + pokemon.changesFrom + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom).id).learnset[moveID]);
 								if(pokemon.changesFrom && pokemon.name !== pokemon.changesFrom && 
 								this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom).id).learnset[moveID] === ["8D"]) //This move is base forme's Hidden Move
