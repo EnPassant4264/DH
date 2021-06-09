@@ -30,18 +30,18 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 							console.log("This is a Hidden Move");
 							if(pokemon.restrictedHidden){ //Denotes that Pokemon can't learn alt-forme's or prevo's Hidden Move
 								console.log("This is a restricted Hidden Move");
-								if(pokemon.changesFrom) console.log("Base form is " + pokemon.changesFrom + " and its accessibility to " + moveId + " is " + this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom), this.dex.getMove(moveId)));
+								if(pokemon.changesFrom) console.log("Base form is " + pokemon.changesFrom + " and its accessibility to " + moveId + " is " + this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom)).learnset[moveId]);
 								if(pokemon.changesFrom && pokemon.name !== pokemon.changesFrom && 
-								this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom), this.dex.getMove(moveId)) === ["8D"]) //This move is base forme's Hidden Move
+								this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom)).learnset[moveId] === ["8D"]) //This move is base forme's Hidden Move
 									problems.push(`${pokemon} can't learn ${moveId} because it is ${pokemon.baseSpecies}'s exclusive Hidden Move.`);
-								if(pokemon.prevo) console.log("Prevo is " + pokemon.prevo.name + " and its accessibility to " + moveId + " is " + this.dex.getLearnsetData(pokemon.prevo, this.dex.getMove(moveId)));
-								if(pokemon.prevo && this.dex.getLearnsetData(pokemon.prevo, this.dex.getMove(moveId) === ["8D"])) //This move is prevo's Hidden Move
+								if(pokemon.prevo) console.log("Prevo is " + pokemon.prevo.name + " and its accessibility to " + moveId + " is " + this.dex.getLearnsetData(pokemon.prevo).learnset[moveId]);
+								if(pokemon.prevo && this.dex.getLearnsetData(pokemon.prevo).learnset[moveId] === ["8D"]) //This move is prevo's Hidden Move
 									problems.push(`${pokemon} can't learn ${moveId} because it is ${pokemon.prevo}'s exclusive Hidden Move.`);
 							} else if (pokemon.prevo && pokemon.prevo.restrictedHidden){ //This Pokemon is third-stage, and the second stage can't learn the first stage's Hidden Move
 								const prevo = pokemon.prevo;
 								console.log("Prevo has a restricted Hidden Move");
-								if(prevo.prevo) console.log("First stage is " + prevo.prevo.name + " and its accessibility to " + moveId + " is " + this.dex.getLearnsetData(prevo.prevo, this.dex.getMove(moveId)));
-								if(prevo.prevo && this.dex.getLearnsetData(prevo.prevo, this.dex.getMove(moveId)) === ["8D"]) //This move is first stage's Hidden Move
+								if(prevo.prevo) console.log("First stage is " + prevo.prevo.name + " and its accessibility to " + moveId + " is " + this.dex.getLearnsetData(prevo.prevo).learnset[moveId]);
+								if(prevo.prevo && this.dex.getLearnsetData(prevo.prevo).learnset[moveId] === ["8D"]) //This move is first stage's Hidden Move
 									problems.push(`${pokemon} can't learn ${moveId} because it is ${prevo.prevo}'s exclusive Hidden Move.`);
 							}
 							for(const poke of learnedHiddenTable){
