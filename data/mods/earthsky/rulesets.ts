@@ -24,7 +24,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 				if (set.moves) {
 					const pokemon = this.dex.getSpecies(set.species || set.name);
 					for (const moveId of set.moves) {
-						const pokeLearnsMove = this.dex.getLearnsetData(pokemon, this.dex.getMove(moveId));
+						const pokeLearnsMove = this.dex.getLearnsetData(pokemon).learnset[moveID];
 						console.log(pokemon + " knows " + moveId + " with means " + pokeLearnsMove);
 						if(pokeLearnsMove === ["8D"]){
 							console.log("This is a Hidden Move");
