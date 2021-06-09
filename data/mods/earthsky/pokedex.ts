@@ -1742,27 +1742,31 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	rotom: {
 		inherit: true,
 		abilities: {0: "Levitate", H: "Prankster"},
-		exclusiveHidden: true,
 	},
 	rotomwash: {
 		inherit: true,
 		abilities: {0: "Levitate", H: "Motor Drive"},
+		exclusiveHidden: true,
 	},
 	rotomheat: {
 		inherit: true,
 		abilities: {0: "Levitate", H: "Motor Drive"},
+		exclusiveHidden: true,
 	},
 	rotomfrost: {
 		inherit: true,
 		abilities: {0: "Levitate", H: "Motor Drive"},
+		exclusiveHidden: true,
 	},
 	rotomfan: {
 		inherit: true,
 		abilities: {0: "Levitate", H: "Motor Drive"},
+		exclusiveHidden: true,
 	},
 	rotommow: {
 		inherit: true,
 		abilities: {0: "Levitate", H: "Motor Drive"},
+		exclusiveHidden: true,
 	},
 	uxie: {
 		inherit: true,
@@ -1802,12 +1806,12 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		inherit: true,
 		abilities: {0: "Natural Cure", H: "Grass Pelt"},
 		unreleasedHidden: true,
-		exclusiveHidden: true,
 	},
 	shayminsky: {
 		inherit: true,
 		abilities: {0: "Serene Grace", H: "Limber"},
 		unreleasedHidden: true,
+		exclusiveHidden: true,
 	},
 	herdier: {
 		inherit: true,
@@ -2231,15 +2235,19 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		inherit: true,
 		exclusiveHidden: true,
 	},
-	tornadus: {
+	tornadustherian: {
 		inherit: true,
 		exclusiveHidden: true,
 	},
-	thundurus: {
+	thundurustherian: {
 		inherit: true,
 		exclusiveHidden: true,
 	},
-	landorus: {
+	landorustherian: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	timburr: {
 		inherit: true,
 		exclusiveHidden: true,
 	},
@@ -2247,15 +2255,23 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		inherit: true,
 		exclusiveHidden: true,
 	},
-	conkeldurr: {
+	oricoriopompom: {
 		inherit: true,
 		exclusiveHidden: true,
 	},
-	oricorio: {
+	oricoriopau: {
 		inherit: true,
 		exclusiveHidden: true,
 	},
-	necrozma: {
+	oricoriosensu: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	necrozmaduskmane: {
+		inherit: true,
+		exclusiveHidden: true,
+	},
+	necrozmadawnwings: {
 		inherit: true,
 		exclusiveHidden: true,
 	},
