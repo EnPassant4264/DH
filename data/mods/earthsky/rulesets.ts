@@ -32,12 +32,10 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 									problems.push(`${pokemon} can't learn ${moveId} because it is ${pokemon.baseSpecies}'s exclusive Hidden Move.`);
 								if(pokemon.prevo && this.dex.getLearnsetData(pokemon.prevo, this.dex.getMove(moveId) === ["8D"])) //This move is prevo's Hidden Move
 									problems.push(`${pokemon} can't learn ${moveId} because it is ${pokemon.prevo}'s exclusive Hidden Move.`);
-								}
 							} else if (pokemon.prevo && pokemon.prevo.restrictedHidden){ //This Pokemon is third-stage, and the second stage can't learn the first stage's Hidden Move
 								const prevo = pokemon.prevo;
 								if(prevo.prevo && this.dex.getLearnsetData(prevo.prevo, this.dex.getMove(moveId) === ["8D"])) //This move is first stage's Hidden Move
 									problems.push(`${pokemon} can't learn ${moveId} because it is ${prevo.prevo}'s exclusive Hidden Move.`);
-								}
 							}
 							for(const poke of learnedHiddenTable){
 								if(poke.baseSpecies === pokemon.baseSpecies)
