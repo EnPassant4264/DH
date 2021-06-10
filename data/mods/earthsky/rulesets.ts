@@ -95,7 +95,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 								}
 								if(evoMon.otherFormes){
 									for(let evoForme of evoMon.otherFormes) {
-										if(!family.includes(evoFormeFinal)){ //if the evo's alternate forme is already in, it must be also be an evolution of the base, and its family is already accounted for
+										if(!family.includes(evoForme)){ //if the evo's alternate forme is already in, it must be also be an evolution of the base, and its family is already accounted for
 											console.log("Adding " + evoForme);
 											family.push(evoForme);
 											const evoMonForme = this.dex.getSpecies(evoForme);
