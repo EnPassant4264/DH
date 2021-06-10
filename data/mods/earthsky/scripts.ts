@@ -1376,10 +1376,10 @@ export const Scripts: ModdedBattleScriptsData = {
 			"asoneglastrier", "asonespectrier", "battlebond", "chillingneigh", "curiousmedicine", "dragonsmaw", "gorillatactics", "grimneigh", "libero", "mirrorarmor", "perishbody", "punkrock", "steelyspirit", "transistor", "unseenfist",
 		];
 		const renamedAbilities = [
-			"emergencyexit", "wimpout", "minus", "plus", "powerspot", "slushrush", "tanglinghair",
+			"emergencyexit", "wimpout", "minus", "plus", "powerspot", "queenlymajesty", "slushrush", "tanglinghair",
 		];
 		const newNameAbilities = [
-			"escapeplan", "escapeplan", "induction", "induction", "poweraura", "snowplow", "tangling",
+			"escapeplan", "escapeplan", "induction", "induction", "poweraura", "majesty", "snowplow", "tangling",
 		];
 		const deletedMoves = [
 			"appleacid","astralbarrage","burningjealousy","coaching","corrosivegas","decorate","dragonenergy","dualwingbeat","eeriespell","expandingforce","falsesurrender","fierywrath","freezingglare","glaciallance","grassyglide","gravapple","kinesis","mistyexplosion","risingvoltage","scaleshot","scorchingsands","shellsidearm","skittersmack","steelroller","surgingstrikes","terrainpulse","thundercage","thunderouskick","tripleaxel","wickedblow",

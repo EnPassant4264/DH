@@ -28,12 +28,12 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 					for (const moveID of set.moves) {
 						const pokeLearnsMove = this.dex.getLearnsetData(pokemon.id).learnset[moveID];
 						console.log(pokemon + " knows " + moveID + " with means " + pokeLearnsMove);
-						if(pokeLearnsMove === "8D"){
+						if(pokeLearnsMove == "8D"){
 							isHidden = true;
 						} else if(pokeLearnsMove === undefined){
 							console.log("This move is not learned by this stage or form");
 							if(pokemon.changesFrom) console.log("Base form is " + pokemon.changesFrom + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom).id).learnset[moveID]);
-							if(pokemon.changesFrom && pokemon.name !== pokemon.changesFrom && this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom).id).learnset[moveID] === "8D"){ //This move is base forme's Hidden Move
+							if(pokemon.changesFrom && pokemon.name !== pokemon.changesFrom && this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom).id).learnset[moveID] == "8D"){ //This move is base forme's Hidden Move
 								if(pokemon.exclusiveHidden) //and the Pokemon can't learn it
 									problems.push(`${pokemon} can't learn ${moveID} because it is ${pokemon.baseSpecies}'s exclusive Hidden Move.`);
 								else {
@@ -42,7 +42,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 							}
 							if(prevo){
 								console.log("Prevo is " + prevo.name + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(prevo.id).learnset[moveID]);
-								if(this.dex.getLearnsetData(prevo.id).learnset[moveID] === "8D") {//This move is prevo's Hidden Move
+								if(this.dex.getLearnsetData(prevo.id).learnset[moveID] == "8D") {//This move is prevo's Hidden Move
 									if(pokemon.exclusiveHidden) //and the Pokemon can't learn it
 										problems.push(`${pokemon} can't learn ${moveID} because it is ${prevo}'s exclusive Hidden Move.`);
 									else {
@@ -53,7 +53,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 									const first = (prevo.prevo) ? this.dex.getSpecies(prevo.prevo) : undefined; //there must be a first stage
 									if(first){
 										console.log("First stage is " + first.name + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(first.id).learnset[moveID]);
-										if(this.dex.getLearnsetData(first.id).learnset[moveID] === "8D") {//This move is first stage's Hidden Move
+										if(this.dex.getLearnsetData(first.id).learnset[moveID] == "8D") {//This move is first stage's Hidden Move
 											if(pokemon.exclusiveHidden) //and the Pokemon can't learn it
 												problems.push(`${pokemon} can't learn ${moveID} because it is ${first}'s exclusive Hidden Move.`);
 											else {

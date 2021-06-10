@@ -2084,6 +2084,25 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 	},
+	/* Abiltiies edited as part of another element's edit */
+	dazzling: {
+		onFoeTryMove(target, source, move) {
+			const targetAllExceptions = ['perishsong'];
+			if (move.target === 'foeSide' || (move.target === 'all' && !targetAllExceptions.includes(move.id))) {
+				return;
+			}
+
+			const dazzlingHolder = this.effectData.target;
+			if ((source.side === dazzlingHolder.side || move.target === 'all') && move.priority > 0.1) {
+				this.attrLastMove('[still]');
+				this.add('cant', dazzlingHolder, 'ability: Dazzling', move, '[of] ' + target);
+				return false;
+			}
+		},
+		name: "Dazzling",
+		rating: 2.5,
+		num: 219,
+	},
 	/* Ability renames */
 	escapeplan: {
 		onEmergencyExit(target) {
@@ -2148,6 +2167,28 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	powerspot: {
 		name: "Power Spot",
+		isNonstandard: "Past",
+	},
+	majesty: {
+		onFoeTryMove(target, source, move) {
+			const targetAllExceptions = ['perishsong'];
+			if (move.target === 'foeSide' || (move.target === 'all' && !targetAllExceptions.includes(move.id))) {
+				return;
+			}
+
+			const dazzlingHolder = this.effectData.target;
+			if ((source.side === dazzlingHolder.side || move.target === 'all') && move.priority > 0.1) {
+				this.attrLastMove('[still]');
+				this.add('cant', dazzlingHolder, 'ability: Majesty', move, '[of] ' + target);
+				return false;
+			}
+		},
+		name: "Majesty",
+		rating: 2.5,
+		num: 214,
+	},
+	queenlymajesty: {
+		name: "Queenly Majesty",
 		isNonstandard: "Past",
 	},
 	slushrush: {
