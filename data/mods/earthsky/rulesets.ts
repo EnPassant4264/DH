@@ -73,7 +73,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 							if(prevo.prevo) base = this.dex.getSpecies(prevo.prevo);
 							else base = prevo;
 						}
-						if(base.changesFrom) base = base.baseSpecies;
+						if(base.baseSpecies) base = base.baseSpecies;
 						family.push(base.name);
 						console.log("Creating " + base.name + " family");
 						if(base.evos){
@@ -87,7 +87,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 										family.push(evoFinal);
 										const evoFinalMon = this.dex.getSpecies(evoFinal);
 										if(evoFinalMon.otherFormes){
-											for(let evoFinalForme of evoFinal.otherFormes){
+											for(let evoFinalForme of evoFinalMon.otherFormes){
 												console.log("Adding " + evoFinalForme);
 												family.push(evoFinalForme);
 											}
