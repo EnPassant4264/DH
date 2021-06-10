@@ -18,41 +18,134 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 		name: 'Hidden Move Limit',
 		desc: "Ensures that no more than one Hidden Move is known per Pok&eacute;mon family and that forme/evolution-exclusive Hidden Moves are respected.",
 		onValidateTeam(team) {
-			const learnedHiddenTable: Pokemon[] = [];
+			const learnedHiddenTable: Pokemon[] = []; //List of Pokemon on the team with Hidden Moves
 			const problems: string[] = [];
 			for (const set of team) {
 				if (set.moves) {
 					const pokemon = this.dex.getSpecies(set.species || set.name);
+					const prevo = (pokemon.prevo) ? this.dex.getSpecies(pokemon.prevo) : undefined;
+					let isHidden = false;
 					for (const moveID of set.moves) {
 						const pokeLearnsMove = this.dex.getLearnsetData(pokemon.id).learnset[moveID];
 						console.log(pokemon + " knows " + moveID + " with means " + pokeLearnsMove);
-						if(pokeLearnsMove === undefined){
+						if(pokeLearnsMove === ["8D"]){
+							isHidden = true;
+						} else if(pokeLearnsMove === undefined){
 							console.log("This move is not learned by this stage or form");
-							if(pokemon.restrictedHidden){ //Denotes that Pokemon can't learn alt-forme's or prevo's Hidden Move
-								if(pokemon.changesFrom) console.log("Base form is " + pokemon.changesFrom + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom).id).learnset[moveID]);
-								if(pokemon.changesFrom && pokemon.name !== pokemon.changesFrom && 
-								this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom).id).learnset[moveID] === ["8D"]) //This move is base forme's Hidden Move
+							if(pokemon.changesFrom) console.log("Base form is " + pokemon.changesFrom + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom).id).learnset[moveID]);
+							if(pokemon.changesFrom && pokemon.name !== pokemon.changesFrom && this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom).id).learnset[moveID] === ["8D"]){ //This move is base forme's Hidden Move
+								if(pokemon.restrictedHidden) //and the Pokemon can't learn it
 									problems.push(`${pokemon} can't learn ${moveID} because it is ${pokemon.baseSpecies}'s exclusive Hidden Move.`);
-								if(pokemon.prevo) console.log("Prevo is " + pokemon.prevo.name + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(pokemon.prevo.id).learnset[moveID]);
-								if(pokemon.prevo && this.dex.getLearnsetData(pokemon.prevo.id).learnset[moveID] === ["8D"]) //This move is prevo's Hidden Move
-									problems.push(`${pokemon} can't learn ${moveID} because it is ${pokemon.prevo}'s exclusive Hidden Move.`);
-							} else if (pokemon.prevo && pokemon.prevo.restrictedHidden){ //This Pokemon is third-stage, and the second stage can't learn the first stage's Hidden Move
-								const prevo = pokemon.prevo;
-								console.log("Prevo has a restricted Hidden Move");
-								if(prevo.prevo) console.log("First stage is " + prevo.prevo.name + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(prevo.prevo.id).learnset[moveID]);
-								if(prevo.prevo && this.dex.getLearnsetData(prevo.prevo.id).learnset[moveID] === ["8D"]) //This move is first stage's Hidden Move
-									problems.push(`${pokemon} can't learn ${moveID} because it is ${prevo.prevo}'s exclusive Hidden Move.`);
+								else {
+									isHidden = true;
+								}
 							}
-							for(const poke of learnedHiddenTable){
-								if(poke.baseSpecies === pokemon.baseSpecies)
-									problems.push(`No more than one ${pokemon.baseSpecies} can know its Hidden Move.`);
-								if(poke.nfe && (poke.evos.includes(pokemon.baseSpecies) || (pokemon.prevo && poke.evos.includes(pokemon.prevo.baseSpecies))))
-									problems.push(`No more than one Pokemon in ${poke.baseSpecies}'s family can know its Hidden Move.`);
-								if(pokemon.nfe && (pokemon.evos.includes(poke.baseSpecies) || (poke.prevo && pokemon.evos.includes(poke.prevo.baseSpecies))))
-									problems.push(`No more than one Pokemon in ${pokemon.baseSpecies}'s family can know its Hidden Move.`);
+							if(prevo){
+								console.log("Prevo is " + prevo.name + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(prevo.id).learnset[moveID]);
+								if(this.dex.getLearnsetData(prevo.id).learnset[moveID] === ["8D"]) {//This move is prevo's Hidden Move
+									if(pokemon.restrictedHidden) //and the Pokemon can't learn it
+										problems.push(`${pokemon} can't learn ${moveID} because it is ${prevo}'s exclusive Hidden Move.`);
+									else {
+										learnedHiddenTable.push(pokemon);
+										isHidden = true;
+									}
+								} else if (this.dex.getLearnsetData(prevo.id).learnset[moveID] === undefined){ //The prevo can't learn it either, therefore...
+									const first = (prevo.prevo) ? this.dex.getSpecies(prevo.prevo) : undefined; //there must be a first stage
+									if(first){
+										console.log("First stage is " + first.name + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(first.id).learnset[moveID]);
+										if(this.dex.getLearnsetData(first.id).learnset[moveID] === ["8D"]) {//This move is first stage's Hidden Move
+											if(pokemon.restrictedHidden) //and the Pokemon can't learn it
+												problems.push(`${pokemon} can't learn ${moveID} because it is ${first}'s exclusive Hidden Move.`);
+											else {
+												isHidden = true;
+											}
+										}
+									}
+								}
 							}
-							learnedHiddenTable.push(pokemon);
 						}
+					}
+					if(isHidden){ //Pokemon knows a Hidden Move, therefore we must ensure no one else in its family knows one
+						//We start by constructing a family tree
+						const family: Species[] = [];
+						if(prevo){ //Get the base Pokemon in the family
+							if(prevo.prevo) pokemon = this.dex.getSpecies(prevo.prevo);
+							else pokemon = prevo;
+						}
+						family.push(pokemon.name);
+						console.log("Creating " + pokemon.name + " family");
+						if(pokemon.evos || pokemon.otherFormes){
+							for(let evo in pokemon.evos){
+								console.log("Adding " + evo);
+								family.push(evo);
+								evoMon = this.dex.getSpecies(evo);
+								if(evoMon.evos){
+									for(let evoFinal in evoMon.evos){
+										console.log("Adding " + evoFinal);
+										family.push(evoFinal);
+										if(evoFinal.otherFormes){
+											for(let evoFinalForme in evoFinal.otherFormes){
+												console.log("Adding " + evoFinalForme);
+												family.push(evoFinalForme);
+											}
+										}
+									}
+								}
+								if(evoMon.otherFormes){
+									for(let evoForme in evoMon.otherFormes) {
+										console.log("Adding " + evoForm);
+										family.push(evoForm);
+										evoMonForme = this.dex.getSpecies(evoForme);
+										if(evoMonForme.evos){
+											for(let evoFormeFinal in evoMonForm.evos){
+												if(!family.includes(evoFormeFinal)){
+													console.log("Adding " + evoFormeFInal);
+													family.push(evoFormeFinal);
+												}
+											}
+										}
+									}
+								}
+							}
+							for(let forme in pokemon.otherFormes){
+								console.log("Adding " + forme);
+								family.push(forme);
+								formeMon = this.dex.getSpecies(forme);
+								if(formeMon.evos){
+									for(let formeEvo in formeMon.evos){
+										if(!family.includes(formeEvo)){
+											console.log("Adding " + formeEvo);
+											family.push(formeEvo);
+										}
+										if(formeEvo.evos){
+											for(let formeEvoFinal in formeEvo.evos)
+												if(!family.includes(formeEvoFinal)){
+													console.log("Adding " + formeEvoFinal);
+													family.push(formeEvoFinal);
+												}
+										}
+										if(formeEvo.otherFormes){
+											for(let formeEvoForme in formeEvo.otherFormes)
+												if(!family.includes(formeEvoForme)){
+													console.log("Adding " + formeEvoForme);
+													family.push(formeEvoForme);
+												}
+											//There are currently no cases of a Pokemon only evolving in an alternate form into a Pokemon that itself only evolves in an alternate form. Thank goodness.
+										}
+									}
+								}
+							}
+						}
+						console.log("Full family:");
+						console.log(family);
+						//Then we make sure none of them are in this team and know a Hidden Move
+						for(const poke of learnedHiddenTable){
+							if(poke.baseSpecies === pokemon.baseSpecies) //normally useless with Species Clause, but maybe my meta will get popular enough that it will have spinoffs
+								problems.push(`No more than one ${pokemon.baseSpecies} can know its Hidden Move.`);
+							else if(family.includes(poke.name))
+								problems.push(`${poke.name} and {pokemon.name} cannot both know their Hidden Moves because they are in the same family.`);
+						}
+						learnedHiddenTable.push(pokemon);
 					}
 				}
 			}
