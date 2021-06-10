@@ -1364,7 +1364,7 @@ export const Scripts: ModdedBattleScriptsData = {
 	init() {
 		/* Removed/renamed accessibility and other init stuff */
 		const unavailablePokemon = [
-			'Pikachu-Belle', 'Pikachu-Cosplay', 'Pikachu-Libre', 'Pikachu-PhD', 'Pikachu-Pop-Star', 'Pikachu-Rock-Star', 'Pikachu-Starter', "Slowpoke-Galar", "Slowbro-Galar", 'Eevee-Starter', "Articuno-Galar", "Zapdos-Galar", "Moltres-Galar", 'Pichu-Spiky-eared', "Slowking-Galar", "Darmanitan-Galar-Zen", "Greninja-Ash", 'Floette-Eternal', 'Eternatus-Eternamax', "Kubfu", "Urshifu", "Urshifu-Rapid-Strike", "Regieleki", "Regidrago", "Calyrex", "Glastrier", "Spectrier", "Calyrex-Shadow", "Calyrex-Ice",
+			'pikachubelle', 'pikachucosplay', 'pikachulibre', 'pikachuphd', 'pikachupopstar', 'pikachurockstar', 'pikachustarter', "slowpokegalar", "slowbrogalar", 'eeveestarter', "articunogalar", "zapdosgalar", "moltresgalar", 'pichuspikyeared', "slowkinggalar", "darmanitangalarzen", "greninjaash", 'floetteeternal', 'eternatuseternamax', "kubfu", "urshifu", "urshifurapidstrike", "zarudedada", "regieleki", "regidrago", "calyrex", "glastrier", "spectrier", "calyrexshadow", "calyrexice",
 		];
 		const baseEight = [ //Pokemon using their Gen VIII learnsets as a base
 			"charmander", "charmeleon", "charizard", "farfetchd", "farfetchdgalar", "hitmonlee", "hitmonchan", "mrmime", "mrmimegalar", "scyther", "bellossom", "qwilfish", "scizor", "remoraid", "octillery", "tyrogue", "hitmontop", "larvitar", "pupitar", "tyranitar", "zigzagoon", "zigzagoongalar", "linoone", "linoonegalar", "lotad", "lombre", "lunatone", "solrock", "bagon", "shelgon", "salamence", "kyogre", "groudon", "rayquaza", "mimejr", "dialga", "palkia", "giratina", "basculin", "basculinbluestriped", "reshiram", "zekrom", "kyurem", "fletchling", "fletchinder", "talonflame", "swirlix", "slurpuff", "bergmite", "avalugg", "xerneas", "yveltal", "zygarde",
@@ -1406,7 +1406,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			 //Don't do anything with the new Pokemon, Totems, and Pokestar Studios opponents
 			if(pokemon.num >= 1000 || pokemon.num <= -5000 || pokemonID.endsWith('totem')) continue;
 			//Change generational accessibility
-			if(unavailablePokemon.includes(pokemon.name) || pokemonID.endsWith('gmax')){
+			if(unavailablePokemon.includes(pokemonID) || pokemonID.endsWith('gmax')){
 				pokemon.isNonstandard === "Past";
 				continue;
 			} else if(this.data.FormatsData[pokemonID] && this.data.FormatsData[pokemonID].isNonstandard === "Past") {
