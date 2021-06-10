@@ -74,7 +74,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 						}
 						family.push(pokemon.name);
 						console.log("Creating " + pokemon.name + " family");
-						if(pokemon.evos || pokemon.otherFormes){
+						if(pokemon.evos){
 							for(let evo in pokemon.evos){
 								console.log("Adding " + evo);
 								family.push(evo);
@@ -107,6 +107,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 									}
 								}
 							}
+						} if (pokemon.otherFormes){
 							for(let forme in pokemon.otherFormes){
 								console.log("Adding " + forme);
 								family.push(forme);
