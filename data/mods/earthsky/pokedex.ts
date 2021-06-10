@@ -2300,6 +2300,21 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		inherit: true,
 		eggGroups: ["Field", "Monster"],
 	},
+	xerneas: {
+		num: 716,
+		name: "Xerneas",
+		baseForme: "Active", // Neutral is technically the base, but it can't be used in battle
+		types: ["Fairy"],
+		gender: "N",
+		baseStats: {hp: 126, atk: 131, def: 95, spa: 131, spd: 98, spe: 99},
+		abilities: {0: "Fairy Aura"},
+		heightm: 3,
+		weightkg: 215,
+		color: "Blue",
+		eggGroups: ["Undiscovered"],
+		cosmeticFormes: ["Xerneas-Neutral"],
+		formeOrder: ["Xerneas-Neutral", "Xerneas"],
+	},
 	kubfu: {
 		inherit: true,
 		num: 892,

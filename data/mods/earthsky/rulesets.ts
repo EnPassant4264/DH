@@ -95,13 +95,13 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 								}
 								if(evoMon.otherFormes){
 									for(let evoForme of evoMon.otherFormes) {
-										console.log("Adding " + evoForm);
-										family.push(evoForm);
+										console.log("Adding " + evoForme);
+										family.push(evoForme);
 										const evoMonForme = this.dex.getSpecies(evoForme);
 										if(evoMonForme.evos){
-											for(let evoFormeFinal of evoMonForm.evos){
+											for(let evoFormeFinal of evoMonForme.evos){
 												if(!family.includes(evoFormeFinal)){
-													console.log("Adding " + evoFormeFInal);
+													console.log("Adding " + evoFormeFinal);
 													family.push(evoFormeFinal);
 												}
 											}
