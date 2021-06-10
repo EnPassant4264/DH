@@ -71,7 +71,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 						let base = pokemon; //Get the base Pokemon in the family
 						if(prevo){
 							if(prevo.prevo) base = this.dex.getSpecies(prevo.prevo);
-							else species = prevo;
+							else base = prevo;
 						}
 						family.push(base.name);
 						console.log("Creating " + base.name + " family");
