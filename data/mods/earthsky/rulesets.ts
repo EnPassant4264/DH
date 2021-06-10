@@ -73,23 +73,25 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 							if(prevo.prevo) base = this.dex.getSpecies(prevo.prevo);
 							else base = prevo;
 						}
-						if(base.name !== base.baseSpecies) base = base.baseSpecies;
+						if(base.name !== base.baseSpecies) base = this.dex.getSpecies(base.baseSpecies);
 						family.push(base.name);
 						console.log("Creating " + base.name + " family");
 						if(base.evos){
 							for(let evo of base.evos){
-								console.log("Adding " + evo);
-								family.push(evo);
-								const evoMon = this.dex.getSpecies(evo);
-								if(evoMon.evos){
-									for(let evoFinal of evoMon.evos){
-										console.log("Adding " + evoFinal);
-										family.push(evoFinal);
-										const evoFinalMon = this.dex.getSpecies(evoFinal);
-										if(evoFinalMon.otherFormes){
-											for(let evoFinalForme of evoFinalMon.otherFormes){
-												console.log("Adding " + evoFinalForme);
-												family.push(evoFinalForme);
+								if(!family.includes(evo)){
+									console.log("Adding " + evo);
+									family.push(evo);
+									const evoMon = this.dex.getSpecies(evo);
+									if(evoMon.evos){
+										for(let evoFinal of evoMon.evos){
+											console.log("Adding " + evoFinal);
+											family.push(evoFinal);
+											const evoFinalMon = this.dex.getSpecies(evoFinal);
+											if(evoFinalMon.otherFormes){
+												for(let evoFinalForme of evoFinalMon.otherFormes){
+													console.log("Adding " + evoFinalForme);
+													family.push(evoFinalForme);
+												}
 											}
 										}
 									}
