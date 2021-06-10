@@ -68,14 +68,15 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 					if(isHidden){ //Pokemon knows a Hidden Move, therefore we must ensure no one else in its family knows one
 						//We start by constructing a family tree
 						const family: Species[] = [];
-						if(prevo){ //Get the base Pokemon in the family
-							if(prevo.prevo) pokemon = this.dex.getSpecies(prevo.prevo);
-							else pokemon = prevo;
+						let base = pokemon; //Get the base Pokemon in the family
+						if(prevo){
+							if(prevo.prevo) base = this.dex.getSpecies(prevo.prevo);
+							else species = prevo;
 						}
-						family.push(pokemon.name);
-						console.log("Creating " + pokemon.name + " family");
-						if(pokemon.evos){
-							for(let evo of pokemon.evos){
+						family.push(base.name);
+						console.log("Creating " + base.name + " family");
+						if(base.evos){
+							for(let evo of base.evos){
 								console.log("Adding " + evo);
 								family.push(evo);
 								const evoMon = this.dex.getSpecies(evo);
@@ -108,8 +109,8 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 									}
 								}
 							}
-						} if (pokemon.otherFormes){
-							for(let forme of pokemon.otherFormes){
+						} if (base.otherFormes){
+							for(let forme of base.otherFormes){
 								console.log("Adding " + forme);
 								family.push(forme);
 								const formeMon = this.dex.getSpecies(forme);
