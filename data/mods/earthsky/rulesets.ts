@@ -35,7 +35,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 							if(pokemon.changesFrom) console.log("Base form is " + pokemon.changesFrom + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom).id).learnset[moveID]);
 							if(pokemon.changesFrom && pokemon.name !== pokemon.changesFrom && this.dex.getLearnsetData(this.dex.getSpecies(pokemon.changesFrom).id).learnset[moveID] == "8D"){ //This move is base forme's Hidden Move
 								if(pokemon.exclusiveHidden) //and the Pokemon can't learn it
-									problems.push(`${pokemon} can't learn ${moveID} because it is ${pokemon.baseSpecies}'s exclusive Hidden Move.`);
+									problems.push(`${pokemon} can't learn ${this.dex.getMove(moveID)} because it is ${pokemon.baseSpecies}'s exclusive Hidden Move.`);
 								else {
 									isHidden = true;
 								}
@@ -44,7 +44,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 								console.log("Prevo is " + prevo.name + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(prevo.id).learnset[moveID]);
 								if(this.dex.getLearnsetData(prevo.id).learnset[moveID] == "8D") {//This move is prevo's Hidden Move
 									if(pokemon.exclusiveHidden) //and the Pokemon can't learn it
-										problems.push(`${pokemon} can't learn ${moveID} because it is ${prevo}'s exclusive Hidden Move.`);
+										problems.push(`${pokemon} can't learn ${this.dex.getMove(moveID)} because it is ${prevo}'s exclusive Hidden Move.`);
 									else {
 										learnedHiddenTable.push(pokemon);
 										isHidden = true;
@@ -55,7 +55,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 										console.log("First stage is " + first.name + " and its accessibility to " + moveID + " is " + this.dex.getLearnsetData(first.id).learnset[moveID]);
 										if(this.dex.getLearnsetData(first.id).learnset[moveID] == "8D") {//This move is first stage's Hidden Move
 											if(pokemon.exclusiveHidden) //and the Pokemon can't learn it
-												problems.push(`${pokemon} can't learn ${moveID} because it is ${first}'s exclusive Hidden Move.`);
+												problems.push(`${pokemon} can't learn ${this.dex.getMove(moveID)} because it is ${first}'s exclusive Hidden Move.`);
 											else {
 												isHidden = true;
 											}
@@ -122,14 +122,14 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 										}
 										const formeEvoMon = this.dex.getSpecies(formeEvo);
 										if(formeEvoMon.evos){
-											for(let formeEvoFinal of formeEvo.evos)
+											for(let formeEvoFinal of formeEvoMon.evos)
 												if(!family.includes(formeEvoFinal)){
 													console.log("Adding " + formeEvoFinal);
 													family.push(formeEvoFinal);
 												}
 										}
-										if(formeEvo.otherFormes){
-											for(let formeEvoForme of formeEvo.otherFormes)
+										if(formeEvoMon.otherFormes){
+											for(let formeEvoForme of formeEvoMon.otherFormes)
 												if(!family.includes(formeEvoForme)){
 													console.log("Adding " + formeEvoForme);
 													family.push(formeEvoForme);
@@ -147,7 +147,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 							if(poke.baseSpecies === pokemon.baseSpecies) //normally useless with Species Clause, but maybe my meta will get popular enough that it will have spinoffs
 								problems.push(`No more than one ${pokemon.baseSpecies} can know its Hidden Move.`);
 							else if(family.includes(poke.name))
-								problems.push(`${poke.name} and {pokemon.name} cannot both know their Hidden Moves because they are in the same family.`);
+								problems.push(`${poke.name} and ${pokemon.name} cannot both know their Hidden Moves because they are in the same family.`);
 						}
 						learnedHiddenTable.push(pokemon);
 					}
