@@ -78,12 +78,13 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 							for(let evo of pokemon.evos){
 								console.log("Adding " + evo);
 								family.push(evo);
-								evoMon = this.dex.getSpecies(evo);
+								const evoMon = this.dex.getSpecies(evo);
 								if(evoMon.evos){
 									for(let evoFinal of evoMon.evos){
 										console.log("Adding " + evoFinal);
 										family.push(evoFinal);
-										if(evoFinal.otherFormes){
+										const evoFinalMon = this.dex.getSpecies(evoFinal);
+										if(evoFinalMon.otherFormes){
 											for(let evoFinalForme of evoFinal.otherFormes){
 												console.log("Adding " + evoFinalForme);
 												family.push(evoFinalForme);
@@ -95,7 +96,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 									for(let evoForme of evoMon.otherFormes) {
 										console.log("Adding " + evoForm);
 										family.push(evoForm);
-										evoMonForme = this.dex.getSpecies(evoForme);
+										const evoMonForme = this.dex.getSpecies(evoForme);
 										if(evoMonForme.evos){
 											for(let evoFormeFinal of evoMonForm.evos){
 												if(!family.includes(evoFormeFinal)){
@@ -111,14 +112,15 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 							for(let forme of pokemon.otherFormes){
 								console.log("Adding " + forme);
 								family.push(forme);
-								formeMon = this.dex.getSpecies(forme);
+								const formeMon = this.dex.getSpecies(forme);
 								if(formeMon.evos){
 									for(let formeEvo of formeMon.evos){
 										if(!family.includes(formeEvo)){
 											console.log("Adding " + formeEvo);
 											family.push(formeEvo);
 										}
-										if(formeEvo.evos){
+										const formeEvoMon = this.dex.getSpecies(formeEvo);
+										if(formeEvoMon.evos){
 											for(let formeEvoFinal of formeEvo.evos)
 												if(!family.includes(formeEvoFinal)){
 													console.log("Adding " + formeEvoFinal);
