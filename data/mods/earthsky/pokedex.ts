@@ -1861,7 +1861,7 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		inherit: true,
 		otherFormes: ["Darmanitan-Zen", "Darmanitan-Galar", "Darmanitan-Rage"],
 		formeOrder: ["Darmanitan", "Darmanitan-Zen", "Darmanitan-Galar", "Darmanitan-Rage"],
-	}
+	},
 	darmanitangalar: {
 		inherit: true,
 		abilities: {0: "Sheer Force", H: "Rage Mode"},
