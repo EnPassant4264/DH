@@ -95,46 +95,48 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 								}
 								if(evoMon.otherFormes){
 									for(let evoForme of evoMon.otherFormes) {
-										console.log("Adding " + evoForme);
-										family.push(evoForme);
-										const evoMonForme = this.dex.getSpecies(evoForme);
-										if(evoMonForme.evos){
-											for(let evoFormeFinal of evoMonForme.evos){
-												if(!family.includes(evoFormeFinal)){
-													console.log("Adding " + evoFormeFinal);
-													family.push(evoFormeFinal);
+										if(!family.includes(evoFormeFinal)){ //if the evo's alternate forme is already in, it must be also be an evolution of the base, and its family is already accounted for
+											console.log("Adding " + evoForme);
+											family.push(evoForme);
+											const evoMonForme = this.dex.getSpecies(evoForme);
+											if(evoMonForme.evos){
+												for(let evoFormeFinal of evoMonForme.evos){
+													if(!family.includes(evoFormeFinal)){
+														console.log("Adding " + evoFormeFinal);
+														family.push(evoFormeFinal);
+													}
 												}
 											}
 										}
 									}
 								}
 							}
-						} if (base.otherFormes){
-							for(let forme of base.otherFormes){
+						} if (base.otherFormes || base.changesFrom){
+							for(let forme of base.baseSpecies.otherFormes){
 								console.log("Adding " + forme);
 								family.push(forme);
 								const formeMon = this.dex.getSpecies(forme);
 								if(formeMon.evos){
 									for(let formeEvo of formeMon.evos){
-										if(!family.includes(formeEvo)){
+										if(!family.includes(formeEvo)){ //if form's evolution is already in, it must also be an alternate form of the normal evolution, and its family is already accounted for
 											console.log("Adding " + formeEvo);
 											family.push(formeEvo);
-										}
-										const formeEvoMon = this.dex.getSpecies(formeEvo);
-										if(formeEvoMon.evos){
-											for(let formeEvoFinal of formeEvoMon.evos)
-												if(!family.includes(formeEvoFinal)){
-													console.log("Adding " + formeEvoFinal);
-													family.push(formeEvoFinal);
-												}
-										}
-										if(formeEvoMon.otherFormes){
-											for(let formeEvoForme of formeEvoMon.otherFormes)
-												if(!family.includes(formeEvoForme)){
-													console.log("Adding " + formeEvoForme);
-													family.push(formeEvoForme);
-												}
-											//There are currently no cases of a Pokemon only evolving in an alternate form into a Pokemon that itself only evolves in an alternate form. Thank goodness.
+											const formeEvoMon = this.dex.getSpecies(formeEvo);
+											if(formeEvoMon.evos){
+												for(let formeEvoFinal of formeEvoMon.evos)
+													if(!family.includes(formeEvoFinal)){
+														console.log("Adding " + formeEvoFinal);
+														family.push(formeEvoFinal);
+													}
+											}
+											if(formeEvoMon.otherFormes){
+												for(let formeEvoForme of formeEvoMon.otherFormes)
+													if(!family.includes(formeEvoForme)){
+														console.log("Adding " + formeEvoForme);
+														family.push(formeEvoForme);
+													}
+												//There are currently no cases of a Pokemon only evolving in an alternate form into a Pokemon that itself only evolves in an alternate form. Thank goodness.
+											}
 										}
 									}
 								}
