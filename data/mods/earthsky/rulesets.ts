@@ -95,18 +95,18 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 											}
 										}
 									}
-								}
-								if(evoMon.otherFormes){
-									for(let evoForme of evoMon.otherFormes) {
-										if(!family.includes(evoForme)){ //if the evo's alternate forme is already in, it must be also be an evolution of the base, and its family is already accounted for
-											console.log("Adding " + evoForme);
-											family.push(evoForme);
-											const evoMonForme = this.dex.getSpecies(evoForme);
-											if(evoMonForme.evos){
-												for(let evoFormeFinal of evoMonForme.evos){
-													if(!family.includes(evoFormeFinal)){
-														console.log("Adding " + evoFormeFinal);
-														family.push(evoFormeFinal);
+									if(evoMon.otherFormes){
+										for(let evoForme of evoMon.otherFormes) {
+											if(!family.includes(evoForme)){
+												console.log("Adding " + evoForme);
+												family.push(evoForme);
+												const evoMonForme = this.dex.getSpecies(evoForme);
+												if(evoMonForme.evos){
+													for(let evoFormeFinal of evoMonForme.evos){
+														if(!family.includes(evoFormeFinal)){
+															console.log("Adding " + evoFormeFinal);
+															family.push(evoFormeFinal);
+														}
 													}
 												}
 											}
@@ -121,7 +121,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 								const formeMon = this.dex.getSpecies(forme);
 								if(formeMon.evos){
 									for(let formeEvo of formeMon.evos){
-										if(!family.includes(formeEvo)){ //if form's evolution is already in, it must also be an alternate form of the normal evolution, and its family is already accounted for
+										if(!family.includes(formeEvo)){
 											console.log("Adding " + formeEvo);
 											family.push(formeEvo);
 											const formeEvoMon = this.dex.getSpecies(formeEvo);

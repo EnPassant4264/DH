@@ -2151,7 +2151,12 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		color: "Green",
 		eggGroups: ["Undiscovered"],
 	},
-	/* Evo/Form Edits */
+	/* Evo/Mega/Form Edits */
+	butterfree: {
+		inherit: true,
+		otherFormes: ["Butterfree-Mega"],
+		formeOrder: ["Butterfree", "Butterfree-Mega"],
+	},
 	ponyta: {
 		inherit: true,
 		otherFormes: ["Ponyta-Galar", "Ponyta-Egelas"],
@@ -2191,6 +2196,11 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		otherFormes: ["Noctowl-Egelas"],
 		formeOrder: ["Noctowl", "Noctowl-Egelas"],
 	},
+	slowking: {
+		inherit: true,
+		otherFormes: ["Slowking-Mega"],
+		formeOrder: ["Slowking", "Slowking-Mega"],
+	},
 	delibird: {
 		inherit: true,
 		otherFormes: ["Delibird-Egelas"],
@@ -2201,6 +2211,26 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		otherFormes: ["Miltank-Egelas"],
 		formeOrder: ["Miltank", "Miltank-Egelas"],
 	},
+	torkoal: {
+		inherit: true,
+		otherFormes: ["Torkoal-Mega"],
+		formeOrder: ["Torkoal", "Torkoal-Mega"],
+	},
+	milotic: {
+		inherit: true,
+		otherFormes: ["Milotic-Mega"],
+		formeOrder: ["Milotic", "Milotic-Mega"],
+	},
+	electivire: {
+		inherit: true,
+		otherFormes: ["Electivire-Mega"],
+		formeOrder: ["Electivire", "Electivire-Mega"],
+	},
+	magmortar: {
+		inherit: true,
+		otherFormes: ["Magmortar-Mega"],
+		formeOrder: ["Magmortar", "Magmortar-Mega"],
+	},
 	basculin: {
 		inherit: true,
 		evos: ["Pikeral"],
@@ -2208,6 +2238,16 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	basculinbluestriped: {
 		inherit: true,
 		evos: ["Pikeral-Blue-Striped"],
+	},
+	garbodor: {
+		inherit: true,
+		otherFormes: ["Garbodor-Mega"],
+		formeOrder: ["Garbodor", "Garbodor-Mega"],
+	},
+	beheeyem: {
+		inherit: true,
+		otherFormes: ["Beheeyem-Mega"],
+		formeOrder: ["Beheeyem", "Beheeyem-Mega"],
 	},
 	heatmor: {
 		inherit: true,
@@ -2222,6 +2262,16 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	minior: {
 		inherit: true,
 		evos: ["Prominoid"],
+	},
+	sandaconda: {
+		inherit: true,
+		otherFormes: ["Sandaconda-Mega"],
+		formeOrder: ["Sandaconda", "Sandaconda-Mega"],
+	},
+	alcremie: {
+		inherit: true,
+		otherFormes: ["Alcremie-Mega"],
+		formeOrder: ["Alcremie", "Alcremie-Mega"],
 	},
 	/* Evolution/Forme Exclusive Hidden Moves */
 	jynx: {
