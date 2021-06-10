@@ -75,16 +75,16 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 						family.push(pokemon.name);
 						console.log("Creating " + pokemon.name + " family");
 						if(pokemon.evos){
-							for(let evo in pokemon.evos){
+							for(let evo of pokemon.evos){
 								console.log("Adding " + evo);
 								family.push(evo);
 								evoMon = this.dex.getSpecies(evo);
 								if(evoMon.evos){
-									for(let evoFinal in evoMon.evos){
+									for(let evoFinal of evoMon.evos){
 										console.log("Adding " + evoFinal);
 										family.push(evoFinal);
 										if(evoFinal.otherFormes){
-											for(let evoFinalForme in evoFinal.otherFormes){
+											for(let evoFinalForme of evoFinal.otherFormes){
 												console.log("Adding " + evoFinalForme);
 												family.push(evoFinalForme);
 											}
@@ -92,12 +92,12 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 									}
 								}
 								if(evoMon.otherFormes){
-									for(let evoForme in evoMon.otherFormes) {
+									for(let evoForme of evoMon.otherFormes) {
 										console.log("Adding " + evoForm);
 										family.push(evoForm);
 										evoMonForme = this.dex.getSpecies(evoForme);
 										if(evoMonForme.evos){
-											for(let evoFormeFinal in evoMonForm.evos){
+											for(let evoFormeFinal of evoMonForm.evos){
 												if(!family.includes(evoFormeFinal)){
 													console.log("Adding " + evoFormeFInal);
 													family.push(evoFormeFinal);
@@ -108,25 +108,25 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 								}
 							}
 						} if (pokemon.otherFormes){
-							for(let forme in pokemon.otherFormes){
+							for(let forme of pokemon.otherFormes){
 								console.log("Adding " + forme);
 								family.push(forme);
 								formeMon = this.dex.getSpecies(forme);
 								if(formeMon.evos){
-									for(let formeEvo in formeMon.evos){
+									for(let formeEvo of formeMon.evos){
 										if(!family.includes(formeEvo)){
 											console.log("Adding " + formeEvo);
 											family.push(formeEvo);
 										}
 										if(formeEvo.evos){
-											for(let formeEvoFinal in formeEvo.evos)
+											for(let formeEvoFinal of formeEvo.evos)
 												if(!family.includes(formeEvoFinal)){
 													console.log("Adding " + formeEvoFinal);
 													family.push(formeEvoFinal);
 												}
 										}
 										if(formeEvo.otherFormes){
-											for(let formeEvoForme in formeEvo.otherFormes)
+											for(let formeEvoForme of formeEvo.otherFormes)
 												if(!family.includes(formeEvoForme)){
 													console.log("Adding " + formeEvoForme);
 													family.push(formeEvoForme);
