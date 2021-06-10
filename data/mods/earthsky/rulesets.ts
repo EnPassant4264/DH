@@ -73,7 +73,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 							if(prevo.prevo) base = this.dex.getSpecies(prevo.prevo);
 							else base = prevo;
 						}
-						if(base.baseSpecies) base = base.baseSpecies;
+						if(base.name !== base.baseSpecies) base = base.baseSpecies;
 						family.push(base.name);
 						console.log("Creating " + base.name + " family");
 						if(base.evos){
