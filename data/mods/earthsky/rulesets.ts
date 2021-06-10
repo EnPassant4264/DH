@@ -73,6 +73,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 							if(prevo.prevo) base = this.dex.getSpecies(prevo.prevo);
 							else base = prevo;
 						}
+						if(base.changesFrom) base = base.baseSpecies;
 						family.push(base.name);
 						console.log("Creating " + base.name + " family");
 						if(base.evos){
@@ -111,8 +112,8 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 									}
 								}
 							}
-						} if (base.otherFormes || base.changesFrom){
-							for(let forme of base.baseSpecies.otherFormes){
+						} if (base.otherFormes){
+							for(let forme of base.otherFormes){
 								console.log("Adding " + forme);
 								family.push(forme);
 								const formeMon = this.dex.getSpecies(forme);
