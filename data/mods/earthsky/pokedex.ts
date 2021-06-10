@@ -2247,11 +2247,11 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		inherit: true,
 		exclusiveHidden: true,
 	},
-	timburr: {
+	gurdurr: {
 		inherit: true,
 		exclusiveHidden: true,
 	},
-	gurdurr: {
+	conkeldurr: {
 		inherit: true,
 		exclusiveHidden: true,
 	},
