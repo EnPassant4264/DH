@@ -236,12 +236,14 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		priority: 0,
 		flags: {contact: 1, protect: 1},
 		beforeTurnCallback(pokemon) {
-			const execInfo = [ //stores start-of-turn state of anything that could disrupt the move.
+			/*let this.effectData.execInfo = [ //stores start-of-turn state of anything that could disrupt the move.
 				pokemon.status, pokemon.volatiles, pokemon.getMoveData(('fullcollide' as ID)).pp
-			];
+			];*/
+			pokemon.addVolatile('fullcollide');
 		},
-		onBeforeMovePriority: -100,
+		/*onBeforeMovePriority: 100,
 		onBeforeMove(pokemon, target, move) {
+			const execInfo = this.effectData.execInfo;
 			if(
 				//Sleep or freeze inflicted this turn
 				(!(execInfo[0] === 'slp' || execInfo[0] === 'frz') && (pokemon.status === 'slp' || pokemon.status === 'frz')) ||
@@ -250,14 +252,21 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				//Disable/Torment/Encore inflicted this turn
 				(!(execInfo[1].includes('flinch') || execInfo[1].includes('disable') || execInfo[1].includes('encore')) &&
 					(pokemon.volatiles('flinch') || pokemon.volatiles('disable') || pokemon.volatiles.includes('encore')))
-			) return true;
+			) return;
 			//Removes obtained choice lock - it re-adds itself later
 			if (!(execInfo[1].includes('choicelock')) && pokemon.volatiles['choicelock']) pokemon.removeVolatile('choicelock');
 			//If move had PP but doesn't now (because it was drained), give it a temp PP to use this turn.
 			if(execInfo[2] > 0 && move.pp === 0) move.pp = 1;
-		},
+		},*/
 		secondary: null,
-		desc: "Once it is selected, its execution cannot be interrupted. The Pokemon will ignore sleep, freeze, flinch, Disable, Torment, Encore, and PP drain to 0 inflicted earlier in the same turn, and bypass the checks for full paralysis, confusion, and attraction. If given a Choice item earlier in the turn, the move locking will be ignored (but the power boost from a Choice Band will not be).",
+		condition:{
+			duration: 1,
+			//All other implementation done in the other statuses
+			onEnd(pokemon) {
+				this.add('-end', pokemon, 'move: Full Collide', '[silent]');
+			},
+		}
+		desc: "Once it is selected, its execution cannot be interrupted. The Pokemon will ignore sleep, freeze, flinch, Disable, Encore, and PP drain to 0 inflicted earlier in the same turn, and bypass the checks for full paralysis, confusion, and attraction. If given a Choice item earlier in the turn, the move locking will be ignored (but the power boost from a Choice Band will not be).",
 		shortDesc: "If usable when selected, cannot be interrupted.",
 		target: "normal",
 		type: "Steel",
@@ -1421,6 +1430,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					return false;
 				}
 			},
+			onEnd(pokemon){
+				this.add('-end', pokemon, 'move: Double Team', '[silent]');
+			}
 		},
 		secondary: null,
 		target: "self",
@@ -2175,6 +2187,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				if(pokemon === this.effectData.source){
 					this.effectData.target.removeVolatile['lockon'];
 				}
+			},
+			onEnd(pokemon){
+				this.add('-end', pokemon, 'move: Lock-On', '[silent]');
 			}
 		},
 		shortDesc: "User's next attack on target always hits, ignores protection and semi-invulnerability.",
@@ -2303,15 +2318,16 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			duration: 0,
 			onModifyMove(move, source, target) {
-				if(move && source !== target && source === this.effectData.target){
-					move.accuracy = true;
-					move.ignoreEvasion = true;
-					delete move.flags['protect'];
-				}
+				move.accuracy = true;
+				move.ignoreEvasion = true;
+				delete move.flags['protect'];
 			},
 			onAfterHit(target, source, move){
 				source.removeVolatile('mindreader');
 			},
+			onEnd(pokemon){
+				this.add('-end', pokemon, 'move: Mind Reader', '[silent]');
+			}
 		},
 		target: "self",
 		desc: "The user's next move will succeed its accuracy check, even if the target is in the middle of a two-turn move. It will also hit through protection moves.",
@@ -2352,6 +2368,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				if (boostedMoves.includes(move.id)) return true;
 				if(!move.ignoreEvasion && typeof move.accuracy === 'number') return false;
 			},
+			onEnd(pokemon){
+				this.add('-end', pokemon, 'move: Minimize', '[silent]');
+			}
 		},
 		boosts: {},
 		desc: "When used, the Pokemon becomes Evasive until it is time for its next attack. While Evasive, moves that target the user will fail accuracy checks made to hit it unless they ignore the condition. This move has a 1/X chance of being successful, where X starts at 1 and triples each time Evasiveness is successfully gained. X resets to 1 if the user was not Evasive last turn. The moves Body Slam, Body Press, Stomp, Steamroller, and Dragon Rush will not check accuracy and have their damage doubled if used against the user while it is Evasive in this manner.",
@@ -2381,6 +2400,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 				move.pranksterBoosted = false; //Should work to ignore Prankster immunity, since it's called after priority is boosted but before immunity is checked
 			},
+			onEnd(pokemon){
+				this.add('-end', pokemon, 'move: Miracle Eye', '[silent]');
+			}
 		},
 		secondary: null,
 		target: "self",
@@ -3574,6 +3596,10 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		basePower: 80,
 	},
+	waterpulse: {
+		inherit: true,
+		flags: {protect: 1, bullet: 1, mirror: 1, distance: 1},
+	},
 	watersport: {
 		inherit: true,
 		condition: {
@@ -3696,6 +3722,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 			onBeforeMovePriority: 2,
 			onBeforeMove(pokemon, target, move) {
+				if(pokemon.volatiles['fullcollide']) return;
 				this.add('-activate', pokemon, 'move: Attract', '[of] ' + this.effectData.source);
 				if (this.randomChance(1, 2)) {
 					this.add('cant', pokemon, 'Attract');
@@ -3725,6 +3752,62 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				if (move.type === 'Electric' || (move.twoType && move.twoType === 'Electric')) {
 					this.debug('charge boost');
 					return this.chainModify(2);
+				}
+			},
+		},
+	},
+	disable: {
+		inherit: true,
+		condition: {
+			duration: 5,
+			noCopy: true, // doesn't get copied by Baton Pass
+			onStart(pokemon, source, effect) {
+				// The target hasn't taken its turn, or Cursed Body activated and the move was not used through Dancer or Instruct
+				if (
+					this.queue.willMove(pokemon) ||
+					(pokemon === this.activePokemon && this.activeMove && !this.activeMove.isExternal)
+				) {
+					this.effectData.duration--;
+				}
+				if (!pokemon.lastMove) {
+					this.debug('pokemon hasn\'t moved yet');
+					return false;
+				}
+				for (const moveSlot of pokemon.moveSlots) {
+					if (moveSlot.id === pokemon.lastMove.id) {
+						if (!moveSlot.pp) {
+							this.debug('Move out of PP');
+							return false;
+						} else {
+							if (effect.id === 'cursedbody') {
+								this.add('-start', pokemon, 'Disable', moveSlot.move, '[from] ability: Cursed Body', '[of] ' + source);
+							} else {
+								this.add('-start', pokemon, 'Disable', moveSlot.move);
+							}
+							this.effectData.move = pokemon.lastMove.id;
+							return;
+						}
+					}
+				}
+				// this can happen if Disable works on a Z-move
+				return false;
+			},
+			onResidualOrder: 14,
+			onEnd(pokemon) {
+				this.add('-end', pokemon, 'Disable');
+			},
+			onBeforeMovePriority: 7,
+			onBeforeMove(attacker, defender, move) {
+				if (!move.isZ && move.id === this.effectData.move && !pokemon.volatiles['fullcollide']) {
+					this.add('cant', attacker, 'Disable', move);
+					return false;
+				}
+			},
+			onDisableMove(pokemon) {
+				for (const moveSlot of pokemon.moveSlots) {
+					if (moveSlot.id === this.effectData.move) {
+						pokemon.disableMove(moveSlot.id);
+					}
 				}
 			},
 		},
@@ -3772,6 +3855,56 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onResidualSubOrder: 2,
 			onEnd() {
 				this.add('-fieldend', 'move: Electric Terrain');
+			},
+		},
+	},
+	encore: {
+		inherit: true,
+		condition: {
+			duration: 3,
+			noCopy: true, // doesn't get copied by Z-Baton Pass
+			onStart(target) {
+				const noEncore = [
+					'assist', 'copycat', 'encore', 'mefirst', 'metronome', 'mimic', 'mirrormove', 'naturepower', 'sketch', 'sleeptalk', 'struggle', 'transform',
+				];
+				let move: Move | ActiveMove | null = target.lastMove;
+				if (!move || target.volatiles['dynamax']) return false;
+
+				if (move.isMax && move.baseMove) move = this.dex.getMove(move.baseMove);
+				const moveIndex = target.moves.indexOf(move.id);
+				if (move.isZ || noEncore.includes(move.id) || !target.moveSlots[moveIndex] || target.moveSlots[moveIndex].pp <= 0) {
+					// it failed
+					return false;
+				}
+				this.effectData.move = move.id;
+				this.add('-start', target, 'Encore');
+				if (!this.queue.willMove(target)) {
+					this.effectData.duration++;
+				}
+			},
+			onOverrideAction(pokemon, target, move) {
+				if (move.id !== this.effectData.move && !pokemon.volatiles['fullcollide']) return this.effectData.move;
+			},
+			onResidualOrder: 13,
+			onResidual(target) {
+				if (target.moves.includes(this.effectData.move) &&
+					target.moveSlots[target.moves.indexOf(this.effectData.move)].pp <= 0) {
+					// early termination if you run out of PP
+					target.removeVolatile('encore');
+				}
+			},
+			onEnd(target) {
+				this.add('-end', target, 'Encore');
+			},
+			onDisableMove(pokemon) {
+				if (!this.effectData.move || !pokemon.hasMove(this.effectData.move)) {
+					return;
+				}
+				for (const moveSlot of pokemon.moveSlots) {
+					if (moveSlot.id !== this.effectData.move) {
+						pokemon.disableMove(moveSlot.id);
+					}
+				}
 			},
 		},
 	},
@@ -4030,6 +4163,25 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		//Spectral Thief getting blocked by Own Tempo implemented in scripts.ts because that's where stat-stealing is implemented
 		desc: "The target's stat stages greater than 0 are stolen from it and applied to the user before dealing damage. The theft does not occur if the target has the Ability Own Tempo.",
 		contestType: "Clever",
+	},
+	torment: {
+		inherit: true,
+		condition: {
+			noCopy: true,
+			onStart(pokemon) {
+				if (pokemon.volatiles['dynamax']) {
+					delete pokemon.volatiles['torment'];
+					return false;
+				}
+				this.add('-start', pokemon, 'Torment');
+			},
+			onEnd(pokemon) {
+				this.add('-end', pokemon, 'Torment');
+			},
+			onDisableMove(pokemon) {
+				if (pokemon.lastMove && pokemon.lastMove.id !== 'struggle') pokemon.disableMove(pokemon.lastMove.id);
+			},
+		},
 	},
 	transform: {
 		inherit: true,

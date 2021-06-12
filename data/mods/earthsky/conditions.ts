@@ -16,7 +16,7 @@ export const Conditions: {[k: string]: ModdedConditionData} = {
 		},
 		onBeforeMovePriority: 10,
 		onBeforeMove(pokemon, target, move) {
-			if (move.flags['defrost']) return;
+			if (move.flags['defrost'] || pokemon.volatiles['fullcollide']) return;
 			if (this.randomChance(pokemon.statusData.time, 5)) {
 				pokemon.cureStatus();
 				return;
@@ -39,16 +39,6 @@ export const Conditions: {[k: string]: ModdedConditionData} = {
 		},
 		onResidual(pokemon) {
 			this.damage(pokemon.baseMaxhp / 16);
-		},
-	},
-	flinch: {
-		name: 'flinch',
-		duration: 1,
-		onBeforeMovePriority: 8,
-		onBeforeMove(pokemon) {
-			this.add('cant', pokemon, 'flinch');
-			this.runEvent('Flinch', pokemon);
-			return false;
 		},
 	},
 	partiallytrapped: {
@@ -121,6 +111,30 @@ export const Conditions: {[k: string]: ModdedConditionData} = {
 		},
 	},
 	/* Status changes due to other elements */
+	par: {
+		name: 'par',
+		effectType: 'Status',
+		onStart(target, source, sourceEffect) {
+			if (sourceEffect && sourceEffect.effectType === 'Ability') {
+				this.add('-status', target, 'par', '[from] ability: ' + sourceEffect.name, '[of] ' + source);
+			} else {
+				this.add('-status', target, 'par');
+			}
+		},
+		onModifySpe(spe, pokemon) {
+			if (!pokemon.hasAbility('quickfeet')) {
+				return this.chainModify(0.5);
+			}
+		},
+		onBeforeMovePriority: 1,
+		onBeforeMove(pokemon) {
+			if(pokemon.volatiles['fullcollide']) return;
+			if (this.randomChance(1, 4)) {
+				this.add('cant', pokemon, 'par');
+				return false;
+			}
+		},
+	},
 	slp: {
 		inherit: true,
 		onBeforeMove(pokemon, target, move) {
@@ -134,11 +148,97 @@ export const Conditions: {[k: string]: ModdedConditionData} = {
 					return;
 				}
 			}
+			if(pokemon.volatiles['fullcollide']) return;
 			this.add('cant', pokemon, 'slp');
 			if (move.sleepUsable) {
 				return;
 			}
 			return false;
+		},
+	},
+	confusion: {
+		name: 'confusion',
+		// this is a volatile status
+		onStart(target, source, sourceEffect) {
+			if (sourceEffect && sourceEffect.id === 'lockedmove') {
+				this.add('-start', target, 'confusion', '[fatigue]');
+			} else {
+				this.add('-start', target, 'confusion');
+			}
+			this.effectData.time = this.random(2, 6);
+		},
+		onEnd(target) {
+			this.add('-end', target, 'confusion');
+		},
+		onBeforeMovePriority: 3,
+		onBeforeMove(pokemon) {
+			pokemon.volatiles['confusion'].time--;
+			if (!pokemon.volatiles['confusion'].time) {
+				pokemon.removeVolatile('confusion');
+				return;
+			}
+			if(pokemon.volatiles['fullcollide']) return;
+			this.add('-activate', pokemon, 'confusion');
+			if (!this.randomChance(33, 100)) {
+				return;
+			}
+			this.activeTarget = pokemon;
+			const damage = this.getDamage(pokemon, pokemon, 40);
+			if (typeof damage !== 'number') throw new Error("Confusion damage not dealt");
+			const activeMove = {id: this.toID('confused'), effectType: 'Move', type: '???'};
+			this.damage(damage, pokemon, pokemon, activeMove as ActiveMove);
+			return false;
+		},
+	},
+	flinch: {
+		name: 'flinch',
+		duration: 1,
+		onBeforeMovePriority: 8,
+		onBeforeMove(pokemon) {
+			if(pokemon.volatiles['fullcollide']) return;
+			this.add('cant', pokemon, 'flinch');
+			this.runEvent('Flinch', pokemon);
+			return false;
+		},
+	},
+	choicelock: {
+		name: 'choicelock',
+		noCopy: true,
+		onStart(pokemon) {
+			if (!this.activeMove) throw new Error("Battle.activeMove is null");
+			if (!this.activeMove.id || this.activeMove.hasBounced) return false;
+			this.effectData.move = this.activeMove.id;
+		},
+		onBeforeMove(pokemon, target, move) {
+			if (!pokemon.getItem().isChoice) {
+				pokemon.removeVolatile('choicelock');
+				return;
+			}
+			if (
+				!pokemon.ignoringItem() && !pokemon.volatiles['dynamax'] &&
+				move.id !== this.effectData.move && move.id !== 'struggle' && !pokemon.volatiles['fullcollide']
+			) {
+				// Fails unless the Choice item is being ignored, and no PP is lost
+				this.addMove('move', pokemon, move.name);
+				this.attrLastMove('[still]');
+				this.debug("Disabled by Choice item lock");
+				this.add('-fail', pokemon);
+				return false;
+			}
+		},
+		onDisableMove(pokemon) {
+			if (!pokemon.getItem().isChoice || !pokemon.hasMove(this.effectData.move)) {
+				pokemon.removeVolatile('choicelock');
+				return;
+			}
+			if (pokemon.ignoringItem() || pokemon.volatiles['dynamax']) {
+				return;
+			}
+			for (const moveSlot of pokemon.moveSlots) {
+				if (moveSlot.id !== this.effectData.move) {
+					pokemon.disableMove(moveSlot.id, false, this.effectData.sourceEffect);
+				}
+			}
 		},
 	},
 	raindance: {

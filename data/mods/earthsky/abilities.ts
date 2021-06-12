@@ -1125,9 +1125,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	noguard: {
 		inherit: true,
+		onModifyMove(move) {
+			move.ignoreEvasion = true;
+		},
 		onAnyAccuracy(accuracy, target, source, move) {
 			if (move && (source === this.effectData.target || target === this.effectData.target)) {
-				move.ignoreEvasion = true; //Since it returns true instead of changing the accuracy to true, Evasiveness doesn't recognize it. And Evasiveness seems to come after.
 				return true;
 			}
 			return accuracy;
@@ -1378,7 +1380,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	tangledfeet: {
 		onDamage(damage, target, source, effect) {
-			if (effect.id === this.toID('confused')) {
+			if (effect.id === this.toID('confused') && !pokemon.volatiles['odorsleuth']) {
 				target.addVolatile('tangledfeet');
 			}
 		},
@@ -1393,6 +1395,9 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			onAccuracy(accuracy, target, source, move) {
 				if (!move.ignoreEvasion && typeof(move.accuracy) === 'number') return false;
 			},
+			onEnd(pokemon){
+				this.add('-end', pokemon, 'ability: Tangled Feet', '[silent]');
+			}
 		},
 		name: "Tangled Feet",
 		activate: "  [POKEMON] became hard to hit!",
