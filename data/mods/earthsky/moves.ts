@@ -265,7 +265,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onEnd(pokemon) {
 				this.add('-end', pokemon, 'move: Full Collide', '[silent]');
 			},
-		}
+		},
 		desc: "Once it is selected, its execution cannot be interrupted. The Pokemon will ignore sleep, freeze, flinch, Disable, Encore, and PP drain to 0 inflicted earlier in the same turn, and bypass the checks for full paralysis, confusion, and attraction. If given a Choice item earlier in the turn, the move locking will be ignored (but the power boost from a Choice Band will not be).",
 		shortDesc: "If usable when selected, cannot be interrupted.",
 		target: "normal",
