@@ -812,7 +812,7 @@ export const Scripts: ModdedBattleScriptsData = {
 
 			// Tactician allows targeting non-adjacents in any case
 			let canTargetAny = false;
-			for(const ally of source.side.active){
+			for(const ally of pokemon.side.active){
 				if (ally.hasAbility('tactician')){ 
 					canTargetAny = true;
 					break;
