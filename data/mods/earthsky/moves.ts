@@ -625,7 +625,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		priority: 4,
 		flags: {},
 		stallingMove: true,
-		volatileStatus: 'slipaway';
+		volatileStatus: 'slipaway',
 		onPrepareHit(pokemon) {
 			return !!this.queue.willAct() && this.runEvent('StallMove', pokemon);
 		},
