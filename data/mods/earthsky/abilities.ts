@@ -88,7 +88,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return;
 			}
-			if(terrain === 'mistyterrain' && !('midnight' in this.field.pseudoWeather)){
+			if(terrain == "mistyterrain" && !('midnight' in this.field.pseudoWeather)){
 				pokemon.addVolatile('evade', 'mistyterrain');
 				pokemon.addVolatile('evadestall');
 				this.add('-singleturn', pokemon, 'ability: Misty Shroud');
@@ -1014,6 +1014,15 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		shortDesc: "This Pokemon cannot flinch and ignores move-based redirection. Immune to Intimidate.",
 	},
+	insomnia: {
+		inherit: true,
+		onSourceModifyAccuracyPriority: 9,
+		onSourceModifyAccuracy(accuracy) {
+			if (typeof accuracy !== 'number' || !('midnight' in this.field.pseudoWeather)) return;
+			this.debug('insomnia - enhancing accuracy');
+			return accuracy * 1.3;
+		},
+	}
 	ironfist: {
 		inherit: true,
 		onBasePower(basePower, attacker, defender, move) {
@@ -1261,7 +1270,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
-			console.log(weather + " being set, " + pokemon.name + " should activate Sand Veil");
 			if (weather == "Sandstorm" && !('midnight' in this.field.pseudoWeather)){ //AnySetWeather happens before the weather is active, so it will fail with isWeather
 				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 					return;
@@ -1304,7 +1312,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				this.effectData.time = -1; //-1 is truthy, so it doesn't get re-applied in onStart, but won't decrement or re-trigger the ending here either
 				this.add('-end', pokemon, 'Slow Start');
 			}
-			console.log("Slow Start count: " + this.effectData.time);
 		},
 		name: "Slow Start",
 		rating: -1,
@@ -1328,9 +1335,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
-			console.log(weather + " being set, " + pokemon.name + " should activate Snow Cloak");
 			if(weather == "Hail" && !('midnight' in this.field.pseudoWeather)){ //AnySetWeather happens before the weather is active, so it will fail with isWeather
-				console.log("Snow Cloak detects hail");
 				if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 					return;
 				}

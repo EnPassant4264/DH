@@ -20,7 +20,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			if (this.volatiles['roost'] || this.volatiles['dig'] || this.volatiles['dive']) return true;
 			if (this.volatiles['smackdown']) return true;
 			if (!negateImmunity && this.hasType('Flying')) return false; // ???/Flying from Burn Up is no longer typeless.
-			if (this.hasAbility('levitate') && !this.battle.suppressingAttackEvents()) return null;
+			if (this.hasAbility('levitate') && !this.battle.suppressingAttackEvents()) return false;
 			if (this.volatiles['magnetrise'] || this.volatiles['risingchorus'] || this.volatiles['telekinesis']) return false;
 			const item = (this.ignoringItem() ? '' : this.item);
 			return item !== 'airballoon';
@@ -157,8 +157,15 @@ export const Scripts: ModdedBattleScriptsData = {
 			return this.battle.runEvent('TryTerrain', target) ? this.terrain : '';
 		},
 	},
+	side: {
+		randomActive() { //Play Dead exclusion
+			const actives = this.active.filter(active => active && !active.fainted && !active.volatiles['playdead']);
+			if (!actives.length) return null;
+			return this.battle.sample(actives);
+		}
+	},
 	battle: {
-		validTargetLoc(targetLoc: number, source: Pokemon, targetType: string) { //Tactician
+		validTargetLoc(targetLoc: number, source: Pokemon, targetType: string, canTargetAny?: boolean) { //Tactician and Play Dead
 			if (targetLoc === 0) return true;
 			const numSlots = source.side.active.length;
 			if (Math.abs(targetLoc) > numSlots) return false;
@@ -170,15 +177,6 @@ export const Scripts: ModdedBattleScriptsData = {
 				Math.abs(acrossFromTargetLoc - sourceLoc) <= 1 :
 				Math.abs(targetLoc - sourceLoc) === 1);
 			const isSelf = (sourceLoc === targetLoc);
-
-			// Tactician allows targeting non-adjacents in any case
-			let canTargetAny = false;
-			for(const ally of source.side.active){
-				if (ally.hasAbility('tactician')){ 
-					canTargetAny = true;
-					break;
-				}
-			}
 
 			switch (targetType) {
 			case 'randomNormal':
@@ -196,15 +194,15 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 			return false;
 		},
-		getTarget(pokemon: Pokemon, move: string | Move, targetLoc: number, originalTarget?: Pokemon) { //Tactician and Play Dead
+		getTarget(pokemon: Pokemon, move: string | Move, targetLoc: number, originalTarget?: Pokemon, canTargetAny?: boolean) { //Tactician and Play Dead
 			move = this.dex.getMove(move);
 
 			let tracksTarget = move.tracksTarget;
 			// Stalwart sets trackTarget in ModifyMove, but ModifyMove happens after getTarget, so
 			// we need to manually check for Stalwart here
 			if (pokemon.hasAbility(['stalwart', 'propellertail'])) tracksTarget = true;
-			if (tracksTarget && originalTarget && originalTarget.isActive) {
-				// smart-tracking move's original target is on the field: target it
+			if (tracksTarget && originalTarget && originalTarget.isActive && !originalTarget.volatiles['playdead']) {
+				// smart-tracking move's original target is on the field and not Playing Dead: target it
 				return originalTarget;
 			}
 
@@ -214,10 +212,10 @@ export const Scripts: ModdedBattleScriptsData = {
 
 			// Fails if the target is the user and the move can't target its own position
 			if (['adjacentAlly', 'any', 'normal'].includes(move.target) && targetLoc === -(pokemon.position + 1) &&
-					!pokemon.volatiles['twoturnmove'] && !pokemon.volatiles['iceball'] && !pokemon.volatiles['rollout']) {
+					!pokemon.volatiles['twoturnmove'] && !pokemon.volatiles['rollout']) {
 				return move.isFutureMove ? pokemon : null;
 			}
-			if (move.target !== 'randomNormal' && this.validTargetLoc(targetLoc, pokemon, move.target)) {
+			if (move.target !== 'randomNormal' && this.validTargetLoc(targetLoc, pokemon, move.target, canTargetAny)) {
 				const target = this.getAtLoc(pokemon, targetLoc);
 				if (target?.fainted && target.side === pokemon.side) {
 					// Target is a fainted ally: attack shouldn't retarget
@@ -231,7 +229,45 @@ export const Scripts: ModdedBattleScriptsData = {
 				// Chosen target not valid,
 				// retarget randomly with getRandomTarget
 			}
-			return this.getRandomTarget(pokemon, move);
+			return this.getRandomTarget(pokemon, move, canTargetAny);
+		},
+		getRandomTarget(pokemon: Pokemon, move: string | Move, canTargetAny?: boolean) { //Tactician and Play Dead
+			// A move was used without a chosen target
+
+			// For instance: Metronome chooses Ice Beam. Since the user didn't
+			// choose a target when choosing Metronome, Ice Beam's target must
+			// be chosen randomly.
+
+			// The target is chosen randomly from possible targets, EXCEPT that
+			// moves that can target either allies or foes will only target foes
+			// when used without an explicit target.
+
+			move = this.dex.getMove(move);
+			if (move.target === 'adjacentAlly') {
+				const allyActives = pokemon.side.active;
+				let adjacentAllies = [allyActives[pokemon.position - 1], allyActives[pokemon.position + 1]];
+				adjacentAllies = adjacentAllies.filter(active => active && !active.fainted);
+				return adjacentAllies.length ? this.sample(adjacentAllies) : null;
+			}
+			if (move.target === 'self' || move.target === 'all' || move.target === 'allySide' ||
+					move.target === 'allyTeam' || move.target === 'adjacentAllyOrSelf') {
+				return pokemon;
+			}
+			if (pokemon.side.active.length > 2) {
+				if (!canTargetAny && (move.target === 'adjacentFoe' || move.target === 'normal' || move.target === 'randomNormal')) {
+					// even if a move can target an ally, auto-resolution will never make it target an ally
+					// i.e. if both your opponents faint before you use Flamethrower, it will fail instead of targeting your all
+					const foeActives = pokemon.side.foe.active;
+					const frontPosition = foeActives.length - 1 - pokemon.position;
+					let adjacentFoes = foeActives.slice(frontPosition < 1 ? 0 : frontPosition - 1, frontPosition + 2);
+					adjacentFoes = adjacentFoes.filter(active => active && !active.fainted && !active.volatiles['playdead']);
+					if (adjacentFoes.length) return this.sample(adjacentFoes);
+					// no valid target at all, return a foe for any possible redirection
+					return foeActives[frontPosition];
+				}
+			}
+			if(pokemon.side.foe.active.length === 1 && pokemon.side.foe.active[0].volatiles['playdead']) return null; //Ran out of retarget checks, except for randomActive() which will get nothing in Singles
+			return pokemon.side.foe.randomActive() || pokemon.side.foe.active[0];
 		},
 		getDamage( 
 			pokemon: Pokemon, target: Pokemon, move: string | number | ActiveMove, type: string, category: string,
@@ -771,9 +807,19 @@ export const Scripts: ModdedBattleScriptsData = {
 		},
 	},
 	//actions: {
-		runMove(moveOrMoveName, pokemon, targetLoc, sourceEffect, zMove, externalMove, maxMove, originalTarget) { //Full Collide on 0 PP
+		runMove(moveOrMoveName, pokemon, targetLoc, sourceEffect, zMove, externalMove, maxMove, originalTarget) { //Tactician, Full Collide on 0 PP
 			pokemon.activeMoveActions++;
-			let target = this.getTarget(pokemon, maxMove || zMove || moveOrMoveName, targetLoc, originalTarget);
+
+			// Tactician allows targeting non-adjacents in any case
+			let canTargetAny = false;
+			for(const ally of source.side.active){
+				if (ally.hasAbility('tactician')){ 
+					canTargetAny = true;
+					break;
+				}
+			}
+			
+			let target = this.getTarget(pokemon, maxMove || zMove || moveOrMoveName, targetLoc, originalTarget, canTargetAny);
 			let baseMove = this.dex.getActiveMove(moveOrMoveName);
 			const pranksterBoosted = baseMove.pranksterBoosted;
 			if (baseMove.id !== 'struggle' && !zMove && !maxMove && !externalMove) {
@@ -781,7 +827,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				if (changedMove && changedMove !== true) {
 					baseMove = this.dex.getActiveMove(changedMove);
 					if (pranksterBoosted) baseMove.pranksterBoosted = pranksterBoosted;
-					target = this.getRandomTarget(pokemon, baseMove);
+					target = this.getRandomTarget(pokemon, baseMove, canTargetAny);
 				}
 			}
 			let move = baseMove;
@@ -1243,12 +1289,24 @@ export const Scripts: ModdedBattleScriptsData = {
 
 			return damage;
 		},
-		afterMoveSecondaryEvent(targets, pokemon, move) { //Sheer Force post-secondary change
-			this.singleEvent('AfterMoveSecondary', move, null, targets[0], pokemon, move);
-			this.runEvent('AfterMoveSecondary', targets, pokemon, move);
-			return undefined;
-		},
-		hitStepAccuracy(targets, pokemon, move) { //Sheer Cold nerf/Toxic buff reverse
+		hitStepInvulnerabilityEvent(targets, pokemon, move) { //Toxic buff revert
+			if (move.id === 'helpinghand') {
+				return new Array(targets.length).fill(true);
+			}
+			const hitResults = this.runEvent('Invulnerability', targets, pokemon, move);
+			for (const [i, target] of targets.entries()) {
+				if (hitResults[i] === false) {
+					if (move.smartTarget) {
+						move.smartTarget = false;
+					} else {
+						if (!move.spreadHit) this.attrLastMove('[miss]');
+						this.add('-miss', pokemon, target);
+					}
+				}
+			}
+			return hitResults;
+	},
+		hitStepAccuracy(targets, pokemon, move) { //Sheer Cold nerf/Toxic buff revert
 			const hitResults = [];
 			for (const [i, target] of targets.entries()) {
 				this.activeTarget = target;
@@ -1347,6 +1405,11 @@ export const Scripts: ModdedBattleScriptsData = {
 					this.addMove('-anim', pokemon, "Spectral Thief", target);
 				}
 			}
+			return undefined;
+		},
+		afterMoveSecondaryEvent(targets, pokemon, move) { //Sheer Force post-secondary change
+			this.singleEvent('AfterMoveSecondary', move, null, targets[0], pokemon, move);
+			this.runEvent('AfterMoveSecondary', targets, pokemon, move);
 			return undefined;
 		},
 	//},

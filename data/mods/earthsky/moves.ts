@@ -423,7 +423,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onEnd(target) {
 				this.add('-end', target, 'move: Play Dead');
 			}
-			//Redirection implemented in scripts.ts as a modification to getTarget().
+			//Redirection implemented in scripts.ts as a modification to runMove() and related targeting functions.
 		},
 		secondary: null,
 		shortDesc: "Pretends to faint, causing moves to redirect.",
@@ -625,20 +625,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		priority: 4,
 		flags: {},
 		stallingMove: true,
+		volatileStatus: 'slipaway';
 		onPrepareHit(pokemon) {
-			if(!pokemon.volatiles['slipaway']){
-				return !!this.queue.willAct() && this.runEvent('StallMove', pokemon);
-			}
+			return !!this.queue.willAct() && this.runEvent('StallMove', pokemon);
 		},
 		onHit(pokemon, move) {
-			if(pokemon.volatiles['slipaway']){
-				this.add('-end', pokemon, 'move: Slip Away');
-			} else {
-				pokemon.addVolatile('stall');
-				move.priority = 0;
-				move.selfSwitch = true;
-				this.queue.insertChoice({choice: 'move', priority: 0, pokemon: pokemon, speed: pokemon.getStat('spe'), move: move}, true);
-			}
+			pokemon.addVolatile('stall');
+			this.queue.insertChoice({choice: 'switch', order: 200, pokemon: pokemon}, true);
 		},
 		condition: {
 			duration: 1,
@@ -665,10 +658,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 				return this.NOT_FAIL;
 			},
+			onSwitchOut(pokemon){
+				this.add('-end', pokemon, 'move: Slip Away');
+			}
 		},
 		secondary: null,
 		shortDesc: "Protects from attacks, then switches out.",
-		desc: "Applies protection at the beginning of the turn. When it is time for the Pokemon's actual turn, it will switch out.",
+		desc: "Applies protection at +4 Priority. The Pokemon will switch out when it would take a regular turn at +0 Priority.",
 		target: "self",
 		type: "Poison",
 		contestType: "Clever",
@@ -2160,7 +2156,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		onTryHit(target, source) {
 			if (source.volatiles['lockon']){
 				if(source.volatiles['lockon'].source === target) return false;
-				source.removeVolatile['lockon']; //delete volatile so it can be re-added with the other source
+				source.removeVolatile('lockon'); //delete volatile so it can be re-added with the other source
 			}
 		},
 		onHit(target, source) {
@@ -2185,14 +2181,14 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 			onSwitchOut(pokemon){
 				if(pokemon === this.effectData.source){
-					this.effectData.target.removeVolatile['lockon'];
+					this.effectData.target.removeVolatile('lockon');
 				}
 			},
 			onEnd(pokemon){
 				this.add('-end', pokemon, 'move: Lock-On', '[silent]');
 			}
 		},
-		shortDesc: "User's next attack on target always hits, ignores protection and semi-invulnerability.",
+		shortDesc: "User's next attack on target always hits, even through Evasiveness, and ignores semi-invulnerability.",
 	},
 	lovelykiss: {
 		inherit: true,
@@ -2318,6 +2314,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			duration: 0,
 			onModifyMove(move, source, target) {
+				console.log("Mind Reader making move hit");
 				move.accuracy = true;
 				move.ignoreEvasion = true;
 				delete move.flags['protect'];
@@ -2398,7 +2395,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				if (move.ignoreImmunity !== true) {
 					move.ignoreImmunity['Psychic'] = true;
 				}
-				move.pranksterBoosted = false; //Should work to ignore Prankster immunity, since it's called after priority is boosted but before immunity is checked
+				move.pranksterBoosted = false; //Works to ignore Prankster immunity, since it's called after priority is boosted but before immunity is checked
 			},
 			onEnd(pokemon){
 				this.add('-end', pokemon, 'move: Miracle Eye', '[silent]');
@@ -2825,7 +2822,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	roost: {
 		inherit: true,
 		onTryMove(pokemon){
-			if(!pokemon.isGrounded() && !(pokemon.hasType('Flying') || pokemon.hasAbility('levitate'))) return false;
+			if(!pokemon.isGrounded() && (this.volatiles['magnetrise'] || this.volatiles['risingchorus'] || this.volatiles['telekinesis'] || (!pokemon.ignoringItem() && pokemon.getItem() === 'airballoon'))) return false;
 		},
 		//Grounding mechanic change implemented in script.ts as a change to sim/pokemon.ts.
 		desc: "The user restores 1/2 of its maximum HP, rounded half up. Until the end of the turn, Flying-type users lose their Flying type. Does nothing if the user's HP is full. Fails if the user is floating but is not a Flying type and doesn't have the Ability Levitate.",
@@ -2840,11 +2837,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			];
 			for (const sideCondition of removeAll) {
 				if (source.side.removeSideCondition(sideCondition)) {
-					this.add('-sideend', source.side, this.dex.getEffect(sideCondition).name, '[from] move: Defog', '[of] ' + source);
+					this.add('-sideend', source.side, this.dex.getEffect(sideCondition).name, '[from] move: Rototiller', '[of] ' + source);
 					success = true;
 				}
 				if (target.side.removeSideCondition(sideCondition)) {
-					this.add('-sideend', target.side, this.dex.getEffect(sideCondition).name, '[from] move: Defog', '[of] ' + source);
+					this.add('-sideend', target.side, this.dex.getEffect(sideCondition).name, '[from] move: Rototiller', '[of] ' + source);
 					success = true;
 				}
 			}
@@ -3697,7 +3694,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			noCopy: true, // doesn't get copied by Baton Pass
 			onStart(pokemon, source, effect) {
-				if (!(pokemon.hasAbility("Irresistable") && !(pokemon.gender === 'M' && source.gender === 'F') && !(pokemon.gender === 'F' && source.gender === 'M'))) {
+				if (!(source.hasAbility("Irresistable") || (!(pokemon.gender === 'M' && source.gender === 'F') && !(pokemon.gender === 'F' && source.gender === 'M')))) {
 					this.debug('incompatible gender');
 					return false;
 				}
