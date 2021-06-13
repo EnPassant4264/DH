@@ -27,7 +27,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		},
 		canFloat(){ //New method. Not all effects that ground a Pokemon force it to stay grounded. Pokemon immune to Telekinesis are now immune to all floating.
 			if (['Burrorm', 'Burryrm', 'Diglett', 'Dugtrio', 'Palossand', 'Sandygast'].includes(this.baseSpecies.baseSpecies)){
-				this.hint("The Burrorm, Diglett, and Sandygast families are unable to float.");
+				this.battle.hint("The Burrorm, Diglett, and Sandygast families are unable to float.");
 				return false;
 			}
 			if ('gravity' in this.battle.field.pseudoWeather) return false;

@@ -222,6 +222,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		type: "Flying",
 		contestType: "Cool",
 		onPrepareHit: function(target, source, move) {
+			if(!source.canFloat()) return false;
 			this.attrLastMove('[still]');
 			this.add('-anim', source, "Fly", target);
 		},
@@ -513,7 +514,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		flags: {snatch: 1},
 		stallingMove: true,
 		onTryHit(pokemon) {
-			return !!this.queue.willAct() && this.runEvent('StallMove', source);
+			return !!this.queue.willAct() && this.runEvent('StallMove', pokemon);
 		},
 		onHit(pokemon) {
 			this.add("-start", pokemon, 'move: Rebound');
@@ -1111,8 +1112,10 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	bounce: {
 		inherit: true,
+		onPrepareHit(target, source, move){
+			if (!source.canFloat()) return false;
+		}
 		onTryMove(pokemon, move) {
-			if(!pokemon.canFloat()) return false;
 			if (pokemon.removeVolatile(move.id)) {
 				return;
 			}
@@ -1726,8 +1729,10 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	fly: {
 		inherit: true,
+		onPrepareHit(target, source, move){
+			if (!source.canFloat()) return false;
+		}
 		onTryMove(attacker, defender, move) {
-			if (!attacker.canFloat()) return false;
 			if (attacker.removeVolatile(move.id)) {
 				return;
 			}
@@ -1762,9 +1767,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		category: "Physical",
 		priority: 0,
 		secondary: null,
-		onTryMove(pokemon) {
-			if(!pokemon.canFloat()) return false;
-		},
+		onPrepareHit(target, source, move){
+			if (!source.canFloat()) return false;
+		}
 		name: "Flying Press",
 		target: "any",
 		type: "Fighting",
@@ -2022,9 +2027,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	highjumpkick: {
 		inherit: true,
 		accuracy: 70,
-		onTryMove(pokemon) {
-			if(!pokemon.canFloat()) return false;
-		},
+		onPrepareHit(target, source, move){
+			if (!source.canFloat()) return false;
+		}
 	},
 	hydrocannon: {
 		inherit: true,
@@ -2127,9 +2132,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	jumpkick: {
 		inherit: true,
 		accuracy: 90,
-		onTryMove(pokemon) {
-			if(!pokemon.canFloat()) return false;
-		},
+		onPrepareHit(target, source, move){
+			if (!source.canFloat()) return false;
+		}
 	},
 	knockoff: {
 		inherit: true,
@@ -2225,7 +2230,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		onHit(target) {
 			const targetTypes = target.getTypes();
-			if ((targetTypes.length > 1 && targetTypes[1] === "Psychic") || targetTypes === ["Psychic"]) return false;
+			console.log(targetTypes);
+			if ((targetTypes.length > 1 && targetTypes[1] === "Psychic") || targetTypes === "Psychic") return false;
 			if (targetTypes[0] === "Psychic"){ //Due to above line, this is true only if the target is dual-typed
 				target.setType("Psychic");
 			} else {
@@ -2303,18 +2309,24 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		shortDesc: "Lowers the target(s)' Sp. Def by 2.",
 	},
 	mindreader: {
-		inherit: true,
-		flags: {protect: 1, snatch: 1},
+		num: 170,
+		accuracy: true,
+		basePower: 0,
+		category: "Status",
+		name: "Mind Reader",
+		pp: 5,
+		priority: 0,
+		flags: {snatch: 1, mirror: 1},
+		volatileStatus: 'mindreader',
 		onTryHit(pokemon) {
 			if (pokemon.volatiles['mindreader']) return false;
 		},
-		onHit(pokemon){
-			this.add('-start', pokemon, 'move: Mind Reader');
-		},
 		condition: {
 			duration: 0,
+			onStart(pokemon){
+				this.add('-start', pokemon, 'move: Mind Reader');
+			},
 			onModifyMove(move, source, target) {
-				console.log("Mind Reader making move hit");
 				move.accuracy = true;
 				move.ignoreEvasion = true;
 				delete move.flags['protect'];
@@ -2326,7 +2338,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				this.add('-end', pokemon, 'move: Mind Reader', '[silent]');
 			}
 		},
+		secondary: null,
 		target: "self",
+		type: "Normal",
+		zMove: {boost: {spa: 1}},
+		contestType: "Clever",
 		desc: "The user's next move will succeed its accuracy check, even if the target is in the middle of a two-turn move. It will also hit through protection moves.",
 		shortDesc: "User's next attack always hits, ignores protection.",
 		start: "  [POKEMON] is sensing the movements of the battlefield...",
@@ -2822,7 +2838,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	roost: {
 		inherit: true,
 		onTryMove(pokemon){
-			if(!pokemon.isGrounded() && (this.volatiles['magnetrise'] || this.volatiles['risingchorus'] || this.volatiles['telekinesis'] || (!pokemon.ignoringItem() && pokemon.getItem() === 'airballoon'))) return false;
+			if(!pokemon.isGrounded() && (pokemon.volatiles['magnetrise'] || pokemon.volatiles['risingchorus'] || pokemon.volatiles['telekinesis'] || (!pokemon.ignoringItem() && pokemon.getItem() === 'airballoon'))) return false;
 		},
 		//Grounding mechanic change implemented in script.ts as a change to sim/pokemon.ts.
 		desc: "The user restores 1/2 of its maximum HP, rounded half up. Until the end of the turn, Flying-type users lose their Flying type. Does nothing if the user's HP is full. Fails if the user is floating but is not a Flying type and doesn't have the Ability Levitate.",
@@ -3000,8 +3016,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	skydrop: {
 		inherit: true,
 		//Not removing gravity flag because that appears to be where the glitch is patched
+		onPrepareHit(target, source, move){
+			if (!source.canFloat() || !target.canFloat()) return false;
+		}
 		onTryHit(target, source, move) {
-			if (target.fainted || !target.canFloat()) return false;
+			if (target.fainted) return false;
 			if (source.removeVolatile(move.id)) {
 				if (target !== source.volatiles['twoturnmove'].source) return false;
 
@@ -3239,9 +3258,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	splash: {
 		inherit: true,
-		onTryMove(pokemon, move){
-			if(!pokemon.canFloat()) return false;
-		},
+		onPrepareHit(target, source, move){
+			if (!source.canFloat()) return false;
+		}
 	},
 	spore: {
 		inherit: true,
@@ -3795,7 +3814,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 			onBeforeMovePriority: 7,
 			onBeforeMove(attacker, defender, move) {
-				if (!move.isZ && move.id === this.effectData.move && !pokemon.volatiles['fullcollide']) {
+				if (!move.isZ && move.id === this.effectData.move && !defender.volatiles['fullcollide']) {
 					this.add('cant', attacker, 'Disable', move);
 					return false;
 				}
