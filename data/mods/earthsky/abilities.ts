@@ -1022,7 +1022,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			this.debug('insomnia - enhancing accuracy');
 			return accuracy * 1.3;
 		},
-	}
+	},
 	ironfist: {
 		inherit: true,
 		onBasePower(basePower, attacker, defender, move) {
