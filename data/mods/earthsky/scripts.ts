@@ -2535,6 +2535,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		this.modData("Learnsets", "magmar").learnset.pelletshot = ["8D"];
 		this.modData("Learnsets", "magmar").learnset.amnesia = ["8M"];
 		this.modData("Learnsets", "magmar").learnset.flash = ["8M"];
+		this.modData("Learnsets", "magmar").learnset.sludgebomb = ["8M"];
 		delete this.modData('Learnsets', 'magmar').learnset.toxic;
 		// Pinsir
 		this.modData("Learnsets", "pinsir").learnset.furycutter = ["8D"];
@@ -3178,6 +3179,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		this.modData("Learnsets", "magby").learnset.pelletshot = ["8D"];
 		this.modData("Learnsets", "magby").learnset.amnesia = ["8M"];
 		this.modData("Learnsets", "magby").learnset.flash = ["8M"];
+		this.modData("Learnsets", "magby").learnset.sludgebomb = ["8M"];
 		delete this.modData('Learnsets', 'magby').learnset.toxic;
 		// Miltank
 		this.modData("Learnsets", "miltank").learnset.megakick = ["8D"];
@@ -4288,6 +4290,8 @@ export const Scripts: ModdedBattleScriptsData = {
 		this.modData("Learnsets", "magmortar").learnset.napalm = ["8L69"];
 		this.modData("Learnsets", "magmortar").learnset.amnesia = ["8M"];
 		this.modData("Learnsets", "magmortar").learnset.flash = ["8M"];
+		this.modData("Learnsets", "magmortar").learnset.flashcannon = ["8M"];
+		this.modData("Learnsets", "magmortar").learnset.sludgebomb = ["8M"];
 		delete this.modData('Learnsets', 'magmortar').learnset.toxic;
 		// Togekiss
 		this.modData("Learnsets", "togekiss").learnset.softboiled = ["8D"];

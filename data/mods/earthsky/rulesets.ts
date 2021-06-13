@@ -46,7 +46,6 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 									if(pokemon.exclusiveHidden) //and the Pokemon can't learn it
 										problems.push(`${pokemon} can't learn ${this.dex.getMove(moveID)} because it is ${prevo}'s exclusive Hidden Move.`);
 									else {
-										learnedHiddenTable.push(pokemon);
 										isHidden = true;
 									}
 								} else if (this.dex.getLearnsetData(prevo.id).learnset[moveID] === undefined){ //The prevo can't learn it either, therefore...
