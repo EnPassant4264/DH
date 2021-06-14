@@ -536,8 +536,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onTryHitPriority: 2,
 			onTryHit(target, source, move) {
 				if(target === this.effectData.target){
-					this.add('-activate', target, 'move: Rebound');
 					const damage = this.getDamage(source, target, move);
+					if(!damage) return;
+					this.add('-activate', target, 'move: Rebound');
 					this.damage(damage, source, target);
 					target.removeVolatile('rebound');
 					return this.NOT_FAIL;
@@ -2191,7 +2192,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 			},
 			onSourceHit(target, source, move){
-				source.removeVolatile('lockon');
+				if(move.id !== 'lockon') source.removeVolatile('lockon');
 			},
 			onSwitchOut(pokemon){
 				if(pokemon === this.effectData.source){
@@ -2342,7 +2343,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				delete move.flags['protect'];
 			},
 			onSourceHit(target, source, move){
-				source.removeVolatile('mindreader');
+				if(move.id !== 'mindreader') source.removeVolatile('mindreader');
 			},
 			onEnd(pokemon){
 				this.add('-end', pokemon, 'move: Mind Reader', '[silent]');
@@ -3125,7 +3126,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			noCopy: true,
 			onStart(pokemon) {
-				let applies = !(pokemon.isGrounded());
+				let applies = !(pokemon.isGrounded(smackDownCheck: true));
 				console.log("Smack Down grounded assessment: " + !applies);
 				if (pokemon.removeVolatile('fly') || pokemon.removeVolatile('bounce')) {
 					applies = true;

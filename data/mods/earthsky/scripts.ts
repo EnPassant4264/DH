@@ -15,13 +15,13 @@ export const Scripts: ModdedBattleScriptsData = {
 			if (types.length) return types;
 			return '???';
 		},
-		isGrounded(negateImmunity = false) { //Has additional conditions. See also canFloat() below
-			if(!this.canFloat()) return true;
+		isGrounded(negateImmunity = false, smackDownCheck = false) { //Has additional conditions. See also canFloat() below
+			if (!this.canFloat()) return true;
 			if (this.volatiles['roost'] || this.volatiles['dig'] || this.volatiles['dive']) return true;
-			if (this.volatiles['smackdown']) return true;
+			if (this.volatiles['magnetrise'] || this.volatiles['risingchorus'] || this.volatiles['telekinesis']) return false;
+			if (!smackDownCheck && this.volatiles['smackdown']) return true; //Smack Down checks this to see if it should stay applied, so this fixes it seeing itself and saying no
 			if (!negateImmunity && this.hasType('Flying')) return false; // ???/Flying from Burn Up is no longer typeless.
 			if (this.hasAbility('levitate') && !this.battle.suppressingAttackEvents()) return false;
-			if (this.volatiles['magnetrise'] || this.volatiles['risingchorus'] || this.volatiles['telekinesis']) return false;
 			const item = (this.ignoringItem() ? '' : this.item);
 			return item !== 'airballoon';
 		},
