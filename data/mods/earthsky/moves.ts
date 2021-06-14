@@ -240,7 +240,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			/*let this.effectData.execInfo = [ //stores start-of-turn state of anything that could disrupt the move.
 				pokemon.status, pokemon.volatiles, pokemon.getMoveData(('fullcollide' as ID)).pp
 			];*/
-			pokemon.addVolatile('fullcollide');
+			if(!['slp', 'frz'].includes(pokemon.status)) pokemon.addVolatile('fullcollide');
 		},
 		/*onBeforeMovePriority: 100,
 		onBeforeMove(pokemon, target, move) {
@@ -1114,7 +1114,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		onPrepareHit(target, source, move){
 			if (!source.canFloat()) return false;
-		}
+		},
 		onTryMove(pokemon, move) {
 			if (pokemon.removeVolatile(move.id)) {
 				return;
