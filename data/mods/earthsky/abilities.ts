@@ -117,10 +117,13 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		num: 1007,
 	},
 	potency: {
-		onSetStatus(status, target, source, effect) {
-			if (source === this.abilityData.target && status.id === 'psn'){
+		onModifyMove(move, source, target) {
+			if (move.status === "psn"){
 				this.debug("Potency upgrading poison to bad poison");
-				status.id = 'tox';
+				move.status = 'tox';
+			} else if (move.secondary && move.secondary.status === "psn"){
+				this.debug("Potency upgrading poison to bad poison");
+				move.secondary.status = 'tox';
 			}
 		},
 		name: "Potency",
@@ -1487,10 +1490,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		inherit: true,
 		onBoost(boost, target, source, effect) {
 			if (source && target === source) return;
-			if (boost.speed && boost.speed < 0) {
-				delete boost.speed;
+			if (boost.spe && boost.spe < 0) {
+				delete boost.spe;
 				if (!(effect as ActiveMove).secondaries) {
-					this.add("-fail", target, "unboost", "speed", "[from] ability: Vital Spirit", "[of] " + target);
+					this.add("-fail", target, "unboost", "Speed", "[from] ability: Vital Spirit", "[of] " + target);
 				}
 			}
 		},

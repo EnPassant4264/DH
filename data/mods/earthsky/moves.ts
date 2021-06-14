@@ -524,18 +524,14 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			duration: 1,
 			noCopy: true,
-			onRedirectTargetPriority: -1,
-			onRedirectTarget(target, source, source2) {
-				if (source !== this.effectData.target) return;
-				return source.side.foe.active[this.effectData.position];
-			},
-			onDamagingHitPriority: 2,
-			onDamagingHit(target, source, move) {
-				this.effectData.position = source.position;
-				this.add('-activate', target, 'move: Rebound');
-				this.damage(move.damage, source, target);
-				target.removeVolatile('rebound');
-				return this.NOT_FAIL;
+			onTryHitPriority: 2,
+			onTryHit(target, source, move) {
+				if(target === this.effectData.target){
+					this.add('-activate', target, 'move: Rebound');
+					this.damage(move.damage, source, target);
+					target.removeVolatile('rebound');
+					return this.NOT_FAIL;
+				}
 			},
 		},
 		secondary: null,
@@ -1112,10 +1108,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	bounce: {
 		inherit: true,
-		onPrepareHit(target, source, move){
-			if (!source.canFloat()) return false;
-		},
 		onTryMove(pokemon, move) {
+			if (!source.canFloat()){
+				this.attrLastMove('[still]');
+				return false;
+			}
 			if (pokemon.removeVolatile(move.id)) {
 				return;
 			}
@@ -1729,10 +1726,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	fly: {
 		inherit: true,
-		onPrepareHit(target, source, move){
-			if (!source.canFloat()) return false;
-		},
 		onTryMove(attacker, defender, move) {
+			if (!source.canFloat()){
+				this.attrLastMove('[still]');
+				return false;
+			}
 			if (attacker.removeVolatile(move.id)) {
 				return;
 			}
@@ -3015,7 +3013,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	skydrop: {
 		inherit: true,
-		//Not removing gravity flag because that appears to be where the glitch is patched
 		onPrepareHit(target, source, move){
 			if (!source.canFloat() || !target.canFloat()) return false;
 		},
@@ -3814,7 +3811,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 			onBeforeMovePriority: 7,
 			onBeforeMove(attacker, defender, move) {
-				if (!move.isZ && move.id === this.effectData.move && !defender.volatiles['fullcollide']) {
+				if (!move.isZ && move.id === this.effectData.move && !attacker.volatiles['fullcollide']) {
 					this.add('cant', attacker, 'Disable', move);
 					return false;
 				}
