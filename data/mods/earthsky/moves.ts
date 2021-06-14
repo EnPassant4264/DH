@@ -42,6 +42,12 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		pp: 15,
 		priority: 0,
 		flags: {protect: 1, mirror: 1},
+		onBeforeMove(source, target, move){
+			if(target.volatiles['evade'] && ['hail','sandstorm','mistyterrain'].includes(target.volatiles['evade'].source)){
+				this.debug("Aerate removing Veil-based Evasiveness so it can hit");
+				target.removeVolatile('evade');
+			}
+		}
 		onHit(target, source, move){
 			const veilAbilities = [
 				'aromaveil', 'flowerveil', 'pastelveil', 'slumberveil', 'sweetveil', 'waterveil', 'sandveil', 'snowcloak', 'mistyshroud'
@@ -528,7 +534,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onTryHit(target, source, move) {
 				if(target === this.effectData.target){
 					this.add('-activate', target, 'move: Rebound');
-					this.damage(move.damage, source, target);
+					const damage = this.getDamage(source, target, move);
+					this.damage(damage, source, target);
 					target.removeVolatile('rebound');
 					return this.NOT_FAIL;
 				}
@@ -2229,7 +2236,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		onHit(target) {
 			const targetTypes = target.getTypes();
 			console.log(targetTypes);
-			if ((targetTypes.length > 1 && targetTypes[1] === "Psychic") || targetTypes === "Psychic") return false;
+			if ((targetTypes.length > 1 && targetTypes[1] === "Psychic") || targetTypes == ['Psychic']) return false;
 			if (targetTypes[0] === "Psychic"){ //Due to above line, this is true only if the target is dual-typed
 				target.setType("Psychic");
 			} else {
@@ -3114,6 +3121,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			noCopy: true,
 			onStart(pokemon) {
 				let applies = !(pokemon.isGrounded());
+				console.log("Smack Down grounded assessment: " + !applies);
 				if (pokemon.removeVolatile('fly') || pokemon.removeVolatile('bounce')) {
 					applies = true;
 					this.queue.cancelMove(pokemon);
@@ -3123,6 +3131,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					applies = true;
 					delete pokemon.volatiles['magnetrise'];
 				}
+				console.log("Smack Down final application: " + applies);
 				if (!applies) return false;
 				this.add('-start', pokemon, 'Smack Down');
 			},

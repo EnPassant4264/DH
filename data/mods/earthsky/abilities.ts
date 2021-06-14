@@ -118,10 +118,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	potency: {
 		onModifyMove(move, source, target) {
-			if (move.status === "psn"){
+			if (move.status === 'psn'){
 				this.debug("Potency upgrading poison to bad poison");
 				move.status = 'tox';
-			} else if (move.secondary && move.secondary.status === "psn"){
+			} else if (move.secondary && move.secondary.status === 'psn'){
 				this.debug("Potency upgrading poison to bad poison");
 				move.secondary.status = 'tox';
 			}

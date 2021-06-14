@@ -1787,7 +1787,7 @@ export const Formats: FormatList = [
 			'Team Preview', 'Cancel Mod', 'Data Mod', 'Mega Data Mod',],
 		mod: 'earthsky',
 		banlist: [
-			'Alakazam-Mega', 'Arceus', 'Blaziken', 'Blastoise-Mega', 'Darkrai', 'Deoxys-Attack', 'Deoxys-Base', 'Deoxys-Speed',
+			'Alakazam-Mega', 'Arceus', 'Blaziken', 'Blastoise-Mega', 'Darkrai', 'Deoxys-Attack', /*'Deoxys-Base',*/ 'Deoxys-Speed',
 			'Dialga', 'Eternatus', 'Genesect', 'Gengar-Mega', 'Giratina', 'Groudon', 'Ho-Oh', 'Kangaskhan-Mega', 'Kyogre',
 			'Kyurem-Black', 'Kyurem-White', 'Landorus-Base', 'Lucario-Mega', 'Lugia', 'Lunala', 'Marshadow', 'Mewtwo',
 			'Naganadel', 'Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane', 'Palkia', 'Pheromosa', 'Rayquaza', 'Reshiram',
