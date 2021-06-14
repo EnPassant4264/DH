@@ -1731,7 +1731,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		onPrepareHit(target, source, move){
 			if (!source.canFloat()) return false;
-		}
+		},
 		onTryMove(attacker, defender, move) {
 			if (attacker.removeVolatile(move.id)) {
 				return;
@@ -1769,7 +1769,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		secondary: null,
 		onPrepareHit(target, source, move){
 			if (!source.canFloat()) return false;
-		}
+		},
 		name: "Flying Press",
 		target: "any",
 		type: "Fighting",
@@ -2029,7 +2029,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		accuracy: 70,
 		onPrepareHit(target, source, move){
 			if (!source.canFloat()) return false;
-		}
+		},
 	},
 	hydrocannon: {
 		inherit: true,
@@ -2134,7 +2134,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		accuracy: 90,
 		onPrepareHit(target, source, move){
 			if (!source.canFloat()) return false;
-		}
+		},
 	},
 	knockoff: {
 		inherit: true,
@@ -3018,7 +3018,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		//Not removing gravity flag because that appears to be where the glitch is patched
 		onPrepareHit(target, source, move){
 			if (!source.canFloat() || !target.canFloat()) return false;
-		}
+		},
 		onTryHit(target, source, move) {
 			if (target.fainted) return false;
 			if (source.removeVolatile(move.id)) {
@@ -3260,7 +3260,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		onPrepareHit(target, source, move){
 			if (!source.canFloat()) return false;
-		}
+		},
 	},
 	spore: {
 		inherit: true,
