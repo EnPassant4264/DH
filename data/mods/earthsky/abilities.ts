@@ -121,9 +121,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if (move.status === 'psn'){
 				this.debug("Potency upgrading poison to bad poison");
 				move.status = 'tox';
-			} else if (move.secondary && move.secondary.status === 'psn'){
-				this.debug("Potency upgrading poison to bad poison");
-				move.secondary.status = 'tox';
+			} else for (const secondary of move.secondaries){
+				if(secondary.status === 'psn'){
+					this.debug("Potency upgrading poison to bad poison");
+					secondary.status = 'tox';
+				}
 			}
 		},
 		name: "Potency",

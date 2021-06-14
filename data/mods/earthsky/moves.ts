@@ -42,6 +42,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		pp: 15,
 		priority: 0,
 		flags: {protect: 1, mirror: 1},
+		onBeforeMovePriority: -1,
 		onBeforeMove(source, target, move){
 			console.log(target.volatiles['evade'].source);
 			console.log(target.volatiles['evade'].effectData.source);
@@ -1825,13 +1826,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		onHit(target) {
 			const targetTypes = target.getTypes();
-			if ((targetTypes.length > 1 && targetTypes[1] === "Grass") || targetTypes === ["Grass"]) return false;
+			if ((targetTypes.length > 1 && targetTypes[1] === "Grass") || targetTypes.join() === "Grass") return false;
 			if (targetTypes[0] === "Grass"){ //Due to above line, this is true only if the target is dual-typed
 				target.setType("Grass");
 			} else {
 				target.setType([targetTypes[0],"Grass"]);
 			}
-			this.add('-start', target, 'typechange', 'Grass', '[from] move: Forest\'s Curse');
+			this.add('-start', target, 'typeadd', 'Grass', '[from] move: Forest\'s Curse');
 		},
 		shortDesc: "Changes the target's secondary type to Grass.",
 		desc: "The target's second typing is replaced with the Grass type. If the target's first typing is Grass and it has a second typing, it will become pure Grass. If the target is already a pure Grass-type, the move fails.",
@@ -2189,7 +2190,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					move.ignoreEvasion = true;
 				}
 			},
-			onAfterHit(target, source, move){
+			onSourceHit(target, source, move){
 				source.removeVolatile('lockon');
 			},
 			onSwitchOut(pokemon){
@@ -2246,7 +2247,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			} else {
 				target.setType([targetTypes[0],"Psychic"]);
 			}
-			this.add('-start', target, 'typechange', 'Psychic', '[from] move: Magic Powder');
+			this.add('-start', target, 'typeadd', 'Psychic', '[from] move: Magic Powder');
 		},
 		desc: "The target's second typing is replaced with the Psychic type. If the target's first typing is Psychic and it has a second typing, it will become pure Psychic. If the target is already a pure Psychic-type, the move fails.",
 		shortDesc: "Changes the target's secondary typing to Psychic.",
@@ -2340,7 +2341,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				move.ignoreEvasion = true;
 				delete move.flags['protect'];
 			},
-			onAfterHit(target, source, move){
+			onSourceHit(target, source, move){
 				source.removeVolatile('mindreader');
 			},
 			onEnd(pokemon){
@@ -3189,13 +3190,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		onHit(target) {
 			const targetTypes = target.getTypes();
-			if ((targetTypes.length > 1 && targetTypes[1] === "Water") || targetTypes === ["Water"]) return false;
+			if ((targetTypes.length > 1 && targetTypes[1] === "Water") || targetTypes.join() === "Water") return false;
 			if (targetTypes[0] === "Water"){ //Due to above line, this is true only if the target is dual-typed
 				target.setType("Water");
 			} else {
 				target.setType([targetTypes[0],"Water"]);
 			}
-			this.add('-start', target, 'typechange', 'Water', '[from] move: Soak');
+			this.add('-start', target, 'typeadd', 'Water', '[from] move: Soak');
 		},
 		shortDesc: "Changes the target's secondary typing to Water.",
 		desc: "The target's second typing is replaced with the Water type. If the target's first typing is Water and it has a second typing, it will become pure Water. If the target is already a pure Water-type, the move fails.",
@@ -3573,13 +3574,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		onHit(target) {
 			const targetTypes = target.getTypes();
-			if ((targetTypes.length > 1 && targetTypes[1] === "Ghost") || targetTypes === ["Ghost"]) return false;
+			if ((targetTypes.length > 1 && targetTypes[1] === "Ghost") || targetTypes.join() === "Ghost") return false;
 			if (targetTypes[0] === "Ghost"){ //Due to above line, this is true only if the target is dual-typed
 				target.setType("Ghost");
 			} else {
 				target.setType([targetTypes[0],"Ghost"]);
 			}
-			this.add('-start', target, 'typechange', 'Ghost', '[from] move: Trick-or-Treat');
+			this.add('-start', target, 'typeadd', 'Ghost', '[from] move: Trick-or-Treat');
 		},
 		shortDesc: "Changes the target's secondary typing to Ghost.",
 		desc: "The target's second typing is replaced with the Ghost type. If the target's first typing is Ghost and it has a second typing, it will become pure Ghost. If the target is already a pure Ghost-type, the move fails.",
@@ -3723,7 +3724,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			noCopy: true, // doesn't get copied by Baton Pass
 			onStart(pokemon, source, effect) {
-				if (!(source.hasAbility("Irresistable") || (!(pokemon.gender === 'M' && source.gender === 'F') && !(pokemon.gender === 'F' && source.gender === 'M')))) {
+				if (!(source.hasAbility('irresistable') || (pokemon.gender === 'M' && source.gender === 'F') || (pokemon.gender === 'F' && source.gender === 'M'))) {
 					this.debug('incompatible gender');
 					return false;
 				}
