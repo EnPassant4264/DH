@@ -43,6 +43,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		priority: 0,
 		flags: {protect: 1, mirror: 1},
 		onBeforeMove(source, target, move){
+			console.log(target.volatiles['evade'].source);
+			console.log(target.volatiles['evade'].effectData.source);
 			if(target.volatiles['evade'] && ['hail','sandstorm','mistyterrain'].includes(target.volatiles['evade'].source)){
 				this.debug("Aerate removing Veil-based Evasiveness so it can hit");
 				target.removeVolatile('evade');
@@ -1115,19 +1117,19 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	bounce: {
 		inherit: true,
-		onTryMove(pokemon, move) {
-			if (!source.canFloat()){
+		onTryMove(attacker, defender, move) {
+			if (!attacker.canFloat()){
 				this.attrLastMove('[still]');
 				return false;
 			}
-			if (pokemon.removeVolatile(move.id)) {
+			if (attacker.removeVolatile(move.id)) {
 				return;
 			}
 			this.add('-prepare', attacker, move.name);
 			if (!this.runEvent('ChargeMove', attacker, defender, move)) {
 				return;
 			}
-			pokemon.addVolatile('twoturnmove', defender);
+			attacker.addVolatile('twoturnmove', defender);
 			return null;
 		},
 		condition: {
@@ -1734,7 +1736,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	fly: {
 		inherit: true,
 		onTryMove(attacker, defender, move) {
-			if (!source.canFloat()){
+			if (!attacker.canFloat()){
 				this.attrLastMove('[still]');
 				return false;
 			}
@@ -2167,6 +2169,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			if (source.volatiles['lockon']){
 				if(source.volatiles['lockon'].source === target) return false;
 				source.removeVolatile('lockon'); //delete volatile so it can be re-added with the other source
+				console.log("Lock-On ended");
 			}
 		},
 		onHit(target, source) {
@@ -2236,7 +2239,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		onHit(target) {
 			const targetTypes = target.getTypes();
 			console.log(targetTypes);
-			if ((targetTypes.length > 1 && targetTypes[1] === "Psychic") || targetTypes == ['Psychic']) return false;
+			console.log("Joined: " + targetTypes.join());
+			if ((targetTypes.length > 1 && targetTypes[1] === "Psychic") || targetTypes.join() === "Psychic") return false;
 			if (targetTypes[0] === "Psychic"){ //Due to above line, this is true only if the target is dual-typed
 				target.setType("Psychic");
 			} else {
@@ -3756,6 +3760,64 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 		},
 	},
+	bunkerdown: {
+		num: 661,
+		accuracy: true,
+		basePower: 0,
+		category: "Status",
+		name: "Bunker Down",
+		pp: 10,
+		priority: 4,
+		flags: {},
+		stallingMove: true,
+		volatileStatus: 'bunkerdown',
+		onTryHit(target, source, move) {
+			return !!this.queue.willAct() && this.runEvent('StallMove', target);
+		},
+		onHit(pokemon) {
+			pokemon.addVolatile('stall');
+		},
+		condition: {
+			duration: 1,
+			onStart(target) {
+				this.add('-singleturn', target, 'move: Protect');
+			},
+			onTryHitPriority: 3,
+			onTryHit(target, source, move) {
+				if (!move.flags['protect']) {
+					if (move.isZ || (move.isMax && !move.breaksProtect)) target.getMoveHitData(move).zBrokeProtect = true;
+					return;
+				}
+				if (move.smartTarget) {
+					move.smartTarget = false;
+				} else {
+					this.add('-activate', target, 'move: Protect');
+				}
+				const lockedmove = source.getVolatile('lockedmove');
+				if (lockedmove) {
+					// Outrage counter is reset
+					if (source.volatiles['lockedmove'].duration === 2) {
+						delete source.volatiles['lockedmove'];
+					}
+				}
+				if (move.flags['contact']) {
+					if(target.hasAbility('potency')) source.trySetStatus('tox', target);
+					else source.trySetStatus('psn', target);
+				}
+				return this.NOT_FAIL;
+			},
+			onHit(target, source, move) {
+				if (move.isZOrMaxPowered && move.flags['contact']) {
+					source.trySetStatus('psn', target);
+				}
+			},
+		},
+		secondary: null,
+		target: "self",
+		type: "Poison",
+		zMove: {boost: {def: 1}},
+		contestType: "Clever",
+	},
 	captivate: {
 		inherit: true,
 		onTryImmunity(pokemon, source) {
@@ -4218,63 +4280,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	
 	/* Renamed moves */
 	//For the record, the only reason editing anything other than the field name is necessary is because of Lash Out being used by a new move. If I'm doing one, might as well do them all for consistency.
-	bunkerdown: {
-		num: 661,
-		accuracy: true,
-		basePower: 0,
-		category: "Status",
-		name: "Bunker Down",
-		pp: 10,
-		priority: 4,
-		flags: {},
-		stallingMove: true,
-		volatileStatus: 'bunkerdown',
-		onTryHit(target, source, move) {
-			return !!this.queue.willAct() && this.runEvent('StallMove', target);
-		},
-		onHit(pokemon) {
-			pokemon.addVolatile('stall');
-		},
-		condition: {
-			duration: 1,
-			onStart(target) {
-				this.add('-singleturn', target, 'move: Protect');
-			},
-			onTryHitPriority: 3,
-			onTryHit(target, source, move) {
-				if (!move.flags['protect']) {
-					if (move.isZ || (move.isMax && !move.breaksProtect)) target.getMoveHitData(move).zBrokeProtect = true;
-					return;
-				}
-				if (move.smartTarget) {
-					move.smartTarget = false;
-				} else {
-					this.add('-activate', target, 'move: Protect');
-				}
-				const lockedmove = source.getVolatile('lockedmove');
-				if (lockedmove) {
-					// Outrage counter is reset
-					if (source.volatiles['lockedmove'].duration === 2) {
-						delete source.volatiles['lockedmove'];
-					}
-				}
-				if (move.flags['contact']) {
-					source.trySetStatus('psn', target);
-				}
-				return this.NOT_FAIL;
-			},
-			onHit(target, source, move) {
-				if (move.isZOrMaxPowered && move.flags['contact']) {
-					source.trySetStatus('psn', target);
-				}
-			},
-		},
-		secondary: null,
-		target: "self",
-		type: "Poison",
-		zMove: {boost: {def: 1}},
-		contestType: "Clever",
-	},
 	banefulbunker: {
 		name: "Baneful Bunker",
 	},
