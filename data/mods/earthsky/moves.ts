@@ -47,7 +47,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				this.debug("Aerate removing Veil-based Evasiveness so it can hit");
 				target.removeVolatile('evade');
 			}
-		}
+		},
 		onHit(target, source, move){
 			const veilAbilities = [
 				'aromaveil', 'flowerveil', 'pastelveil', 'slumberveil', 'sweetveil', 'waterveil', 'sandveil', 'snowcloak', 'mistyshroud'
