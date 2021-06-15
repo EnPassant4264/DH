@@ -139,7 +139,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	ragemode: {
 		onResidualOrder: 27,
 		onResidual(pokemon) {
-			if (pokemon.baseSpecies !== 'Darmanitan-Galar' || pokemon.transformed) {
+			if (!['Darmanitan-Galar', 'Darmanitan-Rage'].includes(pokemon.species) || pokemon.transformed) {
 				return;
 			}
 			if (pokemon.hp <= pokemon.maxhp / 2 && !['Rage'].includes(pokemon.species.forme)) {
@@ -1242,12 +1242,17 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	pickpocket: {
 		inherit: true,
+		onTakeItem(item, pokemon){
+			this.effectData.takenThisTurn = true;
+		}
 		onAfterMoveSecondary(target, source, move) {
 			if (source && source !== target && move?.flags['contact']) {
 				if (target.item || target.switchFlag || target.forceSwitchFlag || source.switchFlag === true) {
 					return;
 				}
-				if(['bugbite','knockoff','pluck'].includes(move.id)){
+				if(['bugbite','knockoff','pluck'].includes(move.id) && this.effectData.takenThisTurn){
+					this.debug("Pickpocket not recovering item after getting Knocked Off or eaten");
+					delete this.effectData.takenThisTurn;
 					return;
 				}
 				const yourItem = source.takeItem(target);

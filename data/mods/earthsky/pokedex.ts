@@ -1873,7 +1873,7 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	darmanitanrage: {
 		num: 555,
 		name: "Darmanitan-Rage",
-		baseSpecies: "Darmanitan",
+		baseSpecies: "Darmanitan-Galar",
 		forme: "Rage",
 		types: ["Ice", "Fire"],
 		baseStats: {hp: 105, atk: 140, def: 35, spa: 130, spd: 35, spe: 95},

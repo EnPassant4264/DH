@@ -42,8 +42,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		pp: 15,
 		priority: 0,
 		flags: {protect: 1, mirror: 1},
-		onBeforeMovePriority: -1,
-		onBeforeMove(source, target, move){
+		onSourceBeforeMove(source, target, move){
 			console.log(target.volatiles['evade'].source);
 			console.log(target.volatiles['evade'].effectData.source);
 			if(target.volatiles['evade'] && ['hail','sandstorm','mistyterrain'].includes(target.volatiles['evade'].source)){
@@ -1941,6 +1940,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 			},
 			onAnyAfterHit(source, target, move){
+				console.log("Checking for terrain conversion");
 				if(['firespin', 'firepledge', 'inferno', 'searingshot', 'napalm', 'burnup', 'overheat', 'blastburn'].includes(move.id)){
 					this.field.removeTerrain();
 					target.side.addSideCondition('firepledge');
