@@ -139,7 +139,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	ragemode: {
 		onResidualOrder: 27,
 		onResidual(pokemon) {
-			if (!['Darmanitan-Galar', 'Darmanitan-Rage'].includes(pokemon.species) || pokemon.transformed) {
+			if (!['Darmanitan-Galar', 'Darmanitan-Rage'].includes(pokemon.species.name) || pokemon.transformed) {
 				return;
 			}
 			if (pokemon.hp <= pokemon.maxhp / 2 && !['Rage'].includes(pokemon.species.forme)) {

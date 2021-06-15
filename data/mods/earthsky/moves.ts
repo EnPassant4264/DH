@@ -42,7 +42,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		pp: 15,
 		priority: 0,
 		flags: {protect: 1, mirror: 1},
-		onSourceBeforeMove(source, target, move){
+		onTryMove(source, target, move){
 			console.log(target.volatiles['evade'].source);
 			console.log(target.volatiles['evade'].effectData.source);
 			if(target.volatiles['evade'] && ['hail','sandstorm','mistyterrain'].includes(target.volatiles['evade'].source)){
@@ -1939,15 +1939,15 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					this.add('-fieldstart', 'move: Grassy Terrain');
 				}
 			},
-			onAnyAfterHit(source, target, move){
+			onAfterMoveSecondary(target, source, move){
 				console.log("Checking for terrain conversion");
 				if(['firespin', 'firepledge', 'inferno', 'searingshot', 'napalm', 'burnup', 'overheat', 'blastburn'].includes(move.id)){
-					this.field.removeTerrain();
 					target.side.addSideCondition('firepledge');
+					this.field.removeTerrain();
 				}
 				if(['whirlpool', 'waterpledge', 'muddywater', 'surf', 'originpulse', 'tidalwave', 'hydrocannon', 'waterspout'].includes(move.id)){
-					this.field.removeTerrain();
 					target.side.addSideCondition('grasspledge');
+					this.field.removeTerrain();
 				}
 			},
 			onResidualOrder: 5,
