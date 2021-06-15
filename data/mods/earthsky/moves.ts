@@ -1736,9 +1736,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	fly: {
 		inherit: true,
-		onBeforeMove(pokemon){
-			
-		}
 		onTryMove(attacker, defender, move) {
 			if (!attacker.canFloat()){
 				this.attrLastMove('[still]');
