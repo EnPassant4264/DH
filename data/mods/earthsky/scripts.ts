@@ -1673,7 +1673,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				}
 				// Gen VIII Level 1 moves for most Stone evolutions
 				if(startGen === 7 && pokemon.prevo && pokemon.prevo !== "Eevee" && pokemon.evoType && 
-				["Fire Stone", "Water Stone", "Thunder Stone", "Leaf Stone", "Moon Stone", "Sun Stone", "Shiny Stone", "Dusk Stone", "Dawn Stone", "Ice Stone"].includes(pokemon.evoType){
+					["Fire Stone", "Water Stone", "Thunder Stone", "Leaf Stone", "Moon Stone", "Sun Stone", "Shiny Stone", "Dusk Stone", "Dawn Stone", "Ice Stone"].includes(pokemon.evoType)){
 					if(moveLearn.includes("8L1") && !moveMeans.length){
 						if(learnsetTest) console.log("This Pokemon uses a Stone to evolve and can relearn the move in Gen VIII");
 						moveMeans.push("8L1");
