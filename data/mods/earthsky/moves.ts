@@ -737,7 +737,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition:{
 			duration: 3,
 			affectedStatuses: ['confuse','disable','electrify','encore','imprison','laserfocus','leechseed','magnetrise','minimize','nightmare','partiallytrapped','perishsong','risingchorus','strongpartialtrap','taunt','telekinesis','throatchop','torment','yawn'], //Volatiles with timers to freeze
-			noStart: ['aquaring','attract','charge','curse','destinybond','flashfire','focusenergy','followme','foresight','grudge','ingrain','lockon','magiccoat','miracleeye','mindreader','odorsleuth','powder','powertrick','preheat','rage','ragepowder','snatch','spite','spotlight','substitute','tarshot'], //Volatiles that can't be added, but either have no duration or have to be removable to prevent breaking things
+			noStart: ['aquaring','attract','charge','curse','destinybond','flashfire','focusenergy','followme','foresight','grudge','ingrain','lockon','magiccoat','miracleeye','mindreader','odorsleuth','powder','powertrick','preheat','rage','ragepowder','snatch','spotlight','substitute','tarshot'], //Volatiles that can't be added, but either have no duration or have to be removable to prevent breaking things
 			onStart(target){
 				this.add('-start', target, 'move: Stasis');
 			},

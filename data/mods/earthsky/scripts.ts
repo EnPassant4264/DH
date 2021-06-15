@@ -2685,12 +2685,15 @@ export const Scripts: ModdedBattleScriptsData = {
 		delete this.modData('Learnsets', 'mewtwo').learnset.toxic;
 		// Mew
 		this.modData("Learnsets", "mew").learnset.hypnosis = ["8D"];
+		this.modData("Learnsets", "mew").learnset.chipaway = ["8M"];
 		this.modData("Learnsets", "mew").learnset.flash = ["8M"];
 		this.modData("Learnsets", "mew").learnset.fullcollide = ["8M"];
-		this.modData("Learnsets", "mew").learnset.midnight = ["8M"];
+		this.modData("Learnsets", "mew").learnset.midnight = ["8T"];
+		this.modData("Learnsets", "mew").learnset.naturalgift = ["8M"];
 		this.modData("Learnsets", "mew").learnset.nightmare = ["8M"];
-		this.modData("Learnsets", "mew").learnset.stasis = ["8M"];
+		this.modData("Learnsets", "mew").learnset.stasis = ["8T"];
 		this.modData("Learnsets", "mew").learnset.teleport = ["8L1"];
+		this.modData("Learnsets", "mew").learnset.vitaldrain = ["8M"];
 		// Chikorita
 		this.modData("Learnsets", "chikorita").learnset.flowershield = ["8D"];
 		this.modData("Learnsets", "chikorita").learnset.amnesia = ["8M"];
@@ -3262,6 +3265,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		this.modData("Learnsets", "celebi").learnset.forestscurse = ["8D"];
 		this.modData("Learnsets", "celebi").learnset.flash = ["8M"];
 		this.modData("Learnsets", "celebi").learnset.nightmare = ["8M"];
+		this.modData("Learnsets", "celebi").learnset.stasis = ["8T"];
 		delete this.modData('Learnsets', 'celebi').learnset.toxic;
 		// Treecko
 		this.modData("Learnsets", "treecko").learnset.dragondance = ["8D"];
