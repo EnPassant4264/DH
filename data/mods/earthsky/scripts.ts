@@ -1671,6 +1671,14 @@ export const Scripts: ModdedBattleScriptsData = {
 					if(learnsetTest) console.log("This move is taught by tutor");
 					moveMeans.push("8T");
 				}
+				// Gen VIII Level 1 moves for most Stone evolutions
+				if(startGen === 7 && pokemon.prevo && pokemon.prevo !== "Eevee" && pokemon.evoType && 
+				["Fire Stone", "Water Stone", "Thunder Stone", "Leaf Stone", "Moon Stone", "Sun Stone", "Shiny Stone", "Dusk Stone", "Dawn Stone", "Ice Stone"].includes(pokemon.evoType){
+					if(moveLearn.includes("8L1") && !moveMeans.length){
+						if(learnsetTest) console.log("This Pokemon uses a Stone to evolve and can relearn the move in Gen VIII");
+						moveMeans.push("8L1");
+					}
+				}
 				if(learnsetTest) console.log("Compiled: " + moveMeans);
 				/* drops removed teachables */
 				if(droppedMachines.includes(moveID) && moveMeans.includes("8M")){
@@ -1707,7 +1715,6 @@ export const Scripts: ModdedBattleScriptsData = {
 				}
 				if(!moveDropped) this.modData('Learnsets', pokemonID).learnset[moveID] = moveMeans;
 				else{
-					
 					moveDropped = false;
 				}
 			}
@@ -1723,7 +1730,7 @@ export const Scripts: ModdedBattleScriptsData = {
 					}
 				}
 			}
-			if(learnsetTest) console.log(this.modData('Learnsets', pokemonID).learnset);
+			if(learnsetTest) console.log("Final: " + this.modData('Learnsets', pokemonID).learnset);
 		}
 		
 		/* Delete stuff */

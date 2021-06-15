@@ -1022,7 +1022,12 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	heavymetal: {
 		inherit: true,
-		//Heavy Metal floating block implemented in scripts.ts as part of pokemon.canFloat()
+		onStart(pokemon){
+			pokemon.removeVolatile('magnetrise');
+			pokemon.removeVolatile('telekinesis');
+			pokemon.removeVolatile('risingchorus');
+		}
+		//Rest of floating block implemented in scripts.ts as part of pokemon.canFloat()
 		shortDesc: "This Pokemon's weight is doubled. It is unable to float in the air.",
 		block: "  [POKEMON] is weighed down with heavy metal!"
 	},
@@ -1422,6 +1427,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	suctioncups: {
 		inherit: true,
+		onStart(pokemon){
+			pokemon.removeVolatile('magnetrise');
+			pokemon.removeVolatile('telekinesis');
+			pokemon.removeVolatile('risingchorus');
+		}
 		//Suction Cups floating block implemented in scripts.ts as part of pokemon.canFloat()
 		shortDesc: "This Pokemon cannot be forced out by another Pokemon's attack/item. Also prevents floating.",
 	},

@@ -1488,6 +1488,10 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 		inherit: true,
 		abilities: {0: "Run Away", 1: "Adaptability", H: "Fluffy"},
 	},
+	meganium: {
+		inherit: true,
+		abilities: {0: "Overgrow", H: "Grassy Surge"},
+	},
 	ledian: {
 		inherit: true,
 		abilities: {0: "Swarm", 1: "Early Bird", H: "Super Luck"},
@@ -1608,7 +1612,7 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	},
 	tropius: {
 		inherit: true,
-		abilities: {0: "Chlorophyll", 1: "Ripen", H: "Harvest"},
+		abilities: {0: "Ripen", 1: "Solar Power", H: "Harvest"},
 	},
 	chimecho: {
 		inherit: true,
@@ -1943,6 +1947,14 @@ export const Pokedex: {[speciesid: string]: ModdedSpeciesData} = {
 	hydreigon: {
 		inherit: true,
 		abilities: {0: "Levitate", H: "Competitive"},
+	},
+	spritzee: {
+		inherit: true,
+		abilities: {0: "Healer", 1: "Aroma Veil", H: "Misty Surge"},
+	},
+	aromatisse: {
+		inherit: true,
+		abilities: {0: "Healer", 1: "Aroma Veil", H: "Misty Surge"},
 	},
 	furfrou: {
 		inherit: true,

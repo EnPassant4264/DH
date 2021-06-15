@@ -55,13 +55,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			const veilAbilities = [
 				'aromaveil', 'flowerveil', 'pastelveil', 'slumberveil', 'sweetveil', 'waterveil', 'sandveil', 'snowcloak', 'mistyshroud'
 			];
-			if(veilAbilities.includes(target.getAbility())) target.addVolatile('gastroacid');
-			if (target.side.removeSideCondition('mist')) {
-				this.add('-sideend', target.side, this.dex.getEffect('mist').name, '[from] move: Aerate', '[of] ' + source);
-			}
-			if (target.side.removeSideCondition('auroraveil')) {
-				this.add('-sideend', target.side, this.dex.getEffect('auroraveil').name, '[from] move: Aerate', '[of] ' + source);
-			}
+			if(veilAbilities.includes(target.ability)) target.addVolatile('gastroacid');
+			target.side.removeSideCondition('mist');
+			target.side.removeSideCondition('auroraveil');
 		},
 		shortDesc: "Disables Veil Abilities, Aurora Veil, and Mist.",
 		desc: "When this move hits an opponent, if their Ability is Aroma Veil, Flower Veil, Misty Shroud, Pastel Veil, Sand Veil, Slumber Veil, Snow Cloak, Sweet Veil, or Water Veil, it is suppressed until it switches out. The move will also remove Mist and Aurora Veil from their side of the field.",
@@ -544,10 +540,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					return this.NOT_FAIL;
 				}
 			},
+			onEnd(pokemon){
+				this.add('-end', pokemon, 'move: Rebound', '[silent]');
+			}
 		},
 		secondary: null,
 		shortDesc: "Reflects damage from an attack this turn.",
-		desc: "The first attack to hit this Pokemon this turn has its damage reflected to the attacker. The full calculation is run, and then the damage is applied as fixed damage to the attacker. All other effects of the move are ignored.",
+		desc: "The first damaging attack to hit this Pokemon this turn has its damage reflected to the attacker. The full calculation is run, and then the damage is applied as fixed damage to the attacker. All other effects of the move are ignored. This move has a 1/X chance of being successful, where X starts at 1 and triples each time this move or any of the moves Baneful Bunker, Detect, Endure, King's Shield, Obstruct, Protect, Play Dead, Quick Guard, Slip Away, Spiky Shield, or Wide Guard is used successfully. X resets to 1 if any of these moves fail or was broken. Fails if the user moves last this turn.",
 		target: "self",
 		type: "Normal",
 		contestType: "Clever",
@@ -639,7 +638,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		},
 		onHit(pokemon, move) {
 			pokemon.addVolatile('stall');
-			this.queue.insertChoice({choice: 'switch', order: 200, pokemon: pokemon}, true);
+			this.queue.insertChoice({choice: 'switch', order: 200, pos: pokemon.position}, true);
 		},
 		condition: {
 			duration: 1,
@@ -1737,6 +1736,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	fly: {
 		inherit: true,
+		onBeforeMove(pokemon){
+			
+		}
 		onTryMove(attacker, defender, move) {
 			if (!attacker.canFloat()){
 				this.attrLastMove('[still]');
@@ -2171,7 +2173,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			if (source.volatiles['lockon']){
 				if(source.volatiles['lockon'].source === target) return false;
 				source.removeVolatile('lockon'); //delete volatile so it can be re-added with the other source
-				console.log("Lock-On ended");
 			}
 		},
 		onHit(target, source) {
@@ -2192,7 +2193,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 			},
 			onSourceHit(target, source, move){
-				if(move.id !== 'lockon') source.removeVolatile('lockon');
+				if(source !== target) source.removeVolatile('lockon');
 			},
 			onSwitchOut(pokemon){
 				if(pokemon === this.effectData.source){
@@ -2343,7 +2344,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				delete move.flags['protect'];
 			},
 			onSourceHit(target, source, move){
-				if(move.id !== 'mindreader') source.removeVolatile('mindreader');
+				if(source !== target) source.removeVolatile('mindreader');
 			},
 			onEnd(pokemon){
 				this.add('-end', pokemon, 'move: Mind Reader', '[silent]');
@@ -3126,7 +3127,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			noCopy: true,
 			onStart(pokemon) {
-				let applies = !(pokemon.isGrounded(smackDownCheck: true));
+				let applies = !(pokemon.isGrounded(false, true));
 				console.log("Smack Down grounded assessment: " + !applies);
 				if (pokemon.removeVolatile('fly') || pokemon.removeVolatile('bounce')) {
 					applies = true;

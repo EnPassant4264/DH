@@ -209,6 +209,11 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 	},
 	ironball: {
 		inherit: true,
+		onStart(pokemon){
+			pokemon.removeVolatile('magnetrise');
+			pokemon.removeVolatile('telekinesis');
+			pokemon.removeVolatile('risingchorus');
+		}
 		fling: {
 			basePower: 130,
 			volatileStatus: 'smackdown',
