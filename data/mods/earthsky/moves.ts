@@ -736,8 +736,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		volatileStatus: 'stasis',
 		condition:{
 			duration: 3,
-			affectedStatuses: ['confuse','disable','electrify','encore','imprison','laserfocus','leechseed','magnetrise','mindreader','minimize','nightmare','lockon','partiallytrapped','perishsong','risingchorus','strongpartialtrap','taunt','telekinesis','throatchop','torment','yawn'], //Volatiles with timers to freeze
-			noStart: ['aquaring','attract','charge','curse','destinybond','flashfire','focusenergy','followme','foresight','grudge','ingrain','magiccoat','miracleeye','odorsleuth','powder','powertrick','preheat','rage','ragepowder','snatch','spite','spotlight','substitute','tarshot'], //Volatiles that can't be added, but either have no duration or have to be removable to prevent breaking things
+			affectedStatuses: ['confuse','disable','electrify','encore','imprison','laserfocus','leechseed','magnetrise','minimize','nightmare','partiallytrapped','perishsong','risingchorus','strongpartialtrap','taunt','telekinesis','throatchop','torment','yawn'], //Volatiles with timers to freeze
+			noStart: ['aquaring','attract','charge','curse','destinybond','flashfire','focusenergy','followme','foresight','grudge','ingrain','lockon','magiccoat','miracleeye','mindreader','odorsleuth','powder','powertrick','preheat','rage','ragepowder','snatch','spite','spotlight','substitute','tarshot'], //Volatiles that can't be added, but either have no duration or have to be removable to prevent breaking things
 			onStart(target){
 				this.add('-start', target, 'move: Stasis');
 			},
@@ -4011,7 +4011,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		},
 		desc: "Causes the target's Ability to become the same as the user's. Fails if the target's Ability is Alchemy, Disguise, Gulp Missile, Ice Face, Multitype, Power Construct, Rage Mode, RKS System, Schooling, Shields Down, Stance Change, Truant, or Zen Mode, or the same Ability as the user, or if the user's Ability is Alchemy, Disguise, Flower Gift, Forecast, Gulp Missile, Hunger Switch, Ice Face, Illusion, Imposter, Multitype, Neutralizing Gas, Power Construct, Rage Mode, Receiver, RKS System, Schooling, Shields Down, Stance Change, Trace, Wonder Guard, or Zen Mode.",
 	},
-	fellstinger: {
+	/*fellstinger: {
 		num: 565,
 		accuracy: 100,
 		basePower: 50,
@@ -4020,7 +4020,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		pp: 25,
 		priority: 0,
 		flags: {contact: 1, protect: 1, mirror: 1},
-		onSourceAfterFaint(target, source, effect) {
+		onSourceAfterFaint(length, target, source, effect) {
 			if (effect && effect === 'fellstinger' && source === this.effectData.target) {
 				this.boost({atk: 3}, source);
 			}
@@ -4029,7 +4029,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		target: "normal",
 		type: "Bug",
 		contestType: "Cool",
-	},
+	},*/
 	mirrormove: {
 		inherit: true,
 		onTryHit(target, pokemon) {
