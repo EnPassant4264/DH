@@ -1105,14 +1105,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		onDamage(damage, target, source, effect) {
 			console.log("Magic Guard examining " + effect);
 			console.log(effect.effectType);
-			switch(effect.effectType){
-				case('Move'):
-				case('recoil'):
-				case(this.dex.getItem('lifeorb')):
-					return;
+			if (effect.effectType !== 'Move' && effect !== 'Recoil' && effect !== this.dex.getItem(lifeorb)) {
+				if (effect.effectType === 'Ability') this.add('-activate', source, 'ability: ' + effect.name);
+				return false;
 			}
-			if (effect.effectType === 'Ability') this.add('-activate', source, 'ability: ' + effect.name);
-			return false;
 		},
 		name: "Magic Guard",
 		desc: "This Pokemon can only be damaged by direct attacks. Curse and Substitute on use, Belly Drum, Pain Split, recoil, and confusion damage are considered direct damage.",

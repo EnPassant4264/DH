@@ -756,7 +756,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 			onTryAddVolatile(volatile, pokemon) {
 				console.log("Stasis checking " + volatile);
-				if(pokemon.volatiles['stasis'].affectedStatuses.includes(volatile) || pokemon.volatiles['stasis'].noStart.includes(volatile)){
+				if(pokemon.volatiles['stasis'].affectedStatuses.includes(volatile.id) || pokemon.volatiles['stasis'].noStart.includes(volatile.id)){
 					this.add('fail', target, 'move: Stasis');
 					return false;
 				}
@@ -1600,6 +1600,32 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		shortDesc: "50% chance to lower the target's Defense by 1.",
 		contestType: "Beautiful",
 	},
+	firepledge: {
+		inherit: true,
+		condition: {
+			duration: 4,
+			onStart(targetSide) {
+				this.add('-sidestart', targetSide, 'Fire Pledge');
+			},
+			onEnd(targetSide) {
+				for (const pokemon of targetSide.active) {
+					if (pokemon && pokemon.isGrounded() && !pokemon.hasType('Fire')) {
+						this.damage(pokemon.baseMaxhp / 8, pokemon);
+					}
+				}
+				this.add('-sideend', targetSide, 'Fire Pledge');
+			},
+			onResidualOrder: 5,
+			onResidualSubOrder: 1,
+			onResidual(side) {
+				for (const pokemon of side.active) {
+					if (pokemon && pokemon.isGrounded() && !pokemon.hasType('Fire')) {
+						this.damage(pokemon.baseMaxhp / 8, pokemon);
+					}
+				}
+			},
+		},
+	},
 	fishiousrend: {
 		inherit: true,
 		basePower: 60,
@@ -1903,7 +1929,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				this.add('-sideend', targetSide, 'Grass Pledge');
 			},
 			onModifySpe(spe, pokemon) {
-				return this.chainModify(0.5);
+				if(pokemon.isGrounded()){
+					return this.chainModify(0.5);
+				}
 			},
 		},
 	},
@@ -1941,7 +1969,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 			},
 			onAfterMoveSecondary(target, source, move){
-				console.log("Checking for terrain conversion");
 				if(['firespin', 'firepledge', 'inferno', 'searingshot', 'napalm', 'burnup', 'overheat', 'blastburn'].includes(move.id)){
 					target.side.addSideCondition('firepledge');
 					this.field.clearTerrain();
