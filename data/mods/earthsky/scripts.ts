@@ -131,7 +131,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				this.removeLinkedVolatiles(linkedStatus, linkedPokemon);
 			}
 			return true;
-		}
+		},
 		ignoringAbility() { //Added Glyphic Spell's Negate to this.
 			// Check if any active pokemon have the ability Neutralizing Gas (MODDED: or Glyphic Spell's Negate
 			let neutralizinggas = false;
