@@ -736,40 +736,40 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		volatileStatus: 'stasis',
 		condition:{
 			duration: 3,
-			onStart(target){
+			onStart(pokemon){
 				this.effectData.affectedStatuses = ['confuse','disable','electrify','encore','imprison','laserfocus','leechseed','magnetrise','minimize','nightmare','partiallytrapped','perishsong','risingchorus','strongpartialtrap','taunt','telekinesis','throatchop','torment','yawn'], //Volatiles with timers to freeze
 				this.effectData.noStart = ['aquaring','attract','charge','curse','destinybond','flashfire','focusenergy','followme','foresight','grudge','ingrain','lockon','magiccoat','miracleeye','mindreader','odorsleuth','powder','powertrick','preheat','rage','ragepowder','snatch','spotlight','substitute','tarshot'], //Volatiles that can't be added, but either have no duration or have to be removable to prevent breaking things
-				this.add('-start', target, 'move: Stasis');
+				this.add('-start', pokemon, 'move: Stasis');
 			},
-			onBoost(boost, target, source, effect) {
+			onBoost(boost, pokemon) {
 				boost = {};
-				this.add('fail', target, 'move: Stasis');
+				this.add('fail', pokemon, 'move: Stasis');
 				return false;
 			},
-			onSetStatus(status, target, source, effect) {
-				this.add('fail', target, 'move: Stasis');
+			onSetStatus(status, pokemon) {
+				this.add('fail', pokemon, 'move: Stasis');
 				return false;
 			},
-			onRemoveStatus(status, target, source, effect) {
-				this.add('fail', target, 'move: Stasis');
+			onRemoveStatus(status, pokemon) {
+				this.add('fail', pokemon, 'move: Stasis');
 				return false;
 			},
 			onTryAddVolatile(volatile, pokemon) {
 				console.log("Stasis checking " + volatile);
 				if(pokemon.volatiles['stasis'].affectedStatuses.includes(volatile.id) || pokemon.volatiles['stasis'].noStart.includes(volatile.id)){
-					this.add('fail', target, 'move: Stasis');
+					this.add('fail', pokemon, 'move: Stasis');
 					return false;
 				}
 			},
 			onTryRemoveVolatile(volatile, pokemon) {
 				if(pokemon.volatiles['stasis'] && pokemon.volatiles['stasis'].affectedStatuses.includes(volatile)){
-					this.add('fail', target, 'move: Stasis');
+					this.add('fail', pokemon, 'move: Stasis');
 					return false;
 				}
 			},
 			//Locks on other timers implemented in scripts.ts as an edit to battle.residualEvent(), and in conditions.ts as edits to sleep and freeze.
-			onEnd(target){
-				this.add('-end', target, 'move: Stasis');
+			onEnd(pokemon){
+				this.add('-end', pokemon, 'move: Stasis');
 			}
 		},
 		secondary: null,

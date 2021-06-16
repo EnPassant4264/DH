@@ -31,21 +31,22 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	deepterror: {
 		onFoeEmergencyExitPriority: 2,
 		onFoeEmergencyExit(target, source) {
-			if (!(source === this.abilityData.target) || !this.canSwitch(target.side) || target.forceSwitchFlag || target.switchFlag) return;
+			if (!(source === this.effectData.target) || !this.canSwitch(target.side) || target.forceSwitchFlag || target.switchFlag) return;
 			for (const side of this.sides) {
 				for (const active of side.active) {
 					active.forceSwitchFlag = false;
 				}
 			}
 			target.forceSwitchFlag = true;
-			this.add('-activate', target, '[from] ability: Deep Terror', '[of] ' + source);
+			this.add('-activate-', source, 'ability: Deep Terror');
+			this.add('-switch', target, 'ability: Deep Terror', '[of] ' + source);
 		},
 		name: "Deep Terror",
 		desc: "When a Pokemon has more than 1/2 its maximum HP and damage from this Pokemon's attack brings it to 1/2 or less of its maximum HP, it is forced to switch out and be replaced with a random unfainted ally, assuming such an ally exists. This effect applies after all hits from a multi-hit move; This effect applies to both direct and indirect damage, except Curse and Substitute on use, Belly Drum, Pain Split, and confusion damage.",
 		shortDesc: "If this Pokemon brings a foe under 50% HP, it scares them out.",
 		rating: 2,
 		num: 1003,
-		activate: "  [POKEMON] was scared off of the battlefield!"
+		switch: "  [POKEMON] was scared off of the battlefield!"
 	},
 	icebreaker: {
 		onBasePowerPriority: 21,
@@ -1105,7 +1106,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		onDamage(damage, target, source, effect) {
 			console.log("Magic Guard examining " + effect);
 			console.log(effect.effectType);
-			if (effect.effectType !== 'Move' && effect !== 'Recoil' && effect !== this.dex.getItem(lifeorb)) {
+			if (effect.effectType !== 'Move' && effect !== 'Recoil' && effect !== this.dex.getItem('lifeorb')) {
 				if (effect.effectType === 'Ability') this.add('-activate', source, 'ability: ' + effect.name);
 				return false;
 			}
