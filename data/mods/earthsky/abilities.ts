@@ -1103,6 +1103,8 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	magicguard: {
 		onDamage(damage, target, source, effect) {
+			console.log("Magic Guard examining " + effect);
+			console,log(effect.effectType);
 			switch(effect.effectType){
 				case('Move'):
 				case('recoil'):
