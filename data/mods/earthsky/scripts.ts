@@ -6479,6 +6479,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		// Scorbunny
 		this.modData("Learnsets", "scorbunny").learnset.detect = ["8D"];
 		this.modData("Learnsets", "scorbunny").learnset.afteryou = ["8M"];
+		this.modData("Learnsets", "scorbunny").learnset.blazekick = ["8E"];
 		this.modData("Learnsets", "scorbunny").learnset.echoedvoice = ["8M"];
 		this.modData("Learnsets", "scorbunny").learnset.endeavor = ["8M"];
 		this.modData("Learnsets", "scorbunny").learnset.incinerate = ["8M"];

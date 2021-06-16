@@ -736,7 +736,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			duration: 3,
 			onStart(pokemon){
 				this.effectData.affectedStatuses = ['confuse','disable','electrify','encore','imprison','laserfocus','leechseed','magnetrise','minimize','nightmare','partiallytrapped','perishsong','powertrick','risingchorus','strongpartialtrap','taunt','telekinesis','throatchop','torment','yawn'], //Volatiles with timers to freeze
-				this.effectData.noStart = ['aquaring','attract','charge','curse','destinybond','doubleteam','flashfire','focusenergy','followme','foresight','grudge','ingrain','lockon','magiccoat','miracleeye','mindreader','odorsleuth','powder','preheat','rage','ragepowder','snatch','spotlight','substitute','tarshot'], //Volatiles that can't be added, but either have no duration or have to be removable to prevent breaking things/being broken
+				this.effectData.noStart = ['aquaring','attract','charge','curse','destinybond','doubleteam','endure','flashfire','focusenergy','followme','foresight','grudge','ingrain','lockon','miracleeye','mindreader','odorsleuth','powder','preheat','ragepowder','rebound','snatch','spotlight','substitute','tarshot'], //Volatiles that can't be added, but either have no duration or have to be removable to prevent breaking things/being broken
 				this.add('-start', pokemon, 'move: Stasis');
 			},
 			onBoost(boost, pokemon) {

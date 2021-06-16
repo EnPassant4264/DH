@@ -175,50 +175,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		rating: 0,
 		num: 1009,
 	},
-	schooling: {
-		onStart(pokemon) {
-			if (['Wishiwashi', 'Tynamo'].includes(pokemon.baseSpecies.baseSpecies) || pokemon.level < 20 || pokemon.transformed) return;
-			if (pokemon.hp > pokemon.maxhp / 4) {
-				if (pokemon.species.id === 'wishiwashi') {
-					pokemon.formeChange('Wishiwashi-School');
-				} else if (pokemon.species.id === 'tynamo') {
-					pokemon.formeChange('Tynamo-School');
-				}
-			} else {
-				if (pokemon.species.id === 'wishiwashischool') {
-					pokemon.formeChange('Wishiwashi');
-				} else if (pokemon.species.id === 'tynamoschool') {
-					pokemon.formeChange('Tynamo');
-				}
-			}
-		},
-		onResidualOrder: 27,
-		onResidual(pokemon) {
-			if (
-				['Wishiwashi', 'Tynamo'].includes(pokemon.baseSpecies.baseSpecies) || pokemon.level < 20 ||
-				pokemon.transformed || !pokemon.hp
-			) return;
-			if (pokemon.hp > pokemon.maxhp / 4) {
-				if (pokemon.species.id === 'wishiwashi') {
-					pokemon.formeChange('Wishiwashi-School');
-				} else if (pokemon.species.id === 'tynamo') {
-					pokemon.formeChange('Tynamo-School');
-				}
-			} else {
-				if (pokemon.species.id === 'wishiwashischool') {
-					pokemon.formeChange('Wishiwashi');
-				} else if (pokemon.species.id === 'tynamoschool') {
-					pokemon.formeChange('Tynamo');
-				}
-			}
-		},
-		isPermanent: true,
-		name: "Schooling",
-		rating: 3,
-		num: 208,
-		desc: "On switch-in, if this Pokemon is a Wishiwashi or Tynamo that is level 20 or above and has more than 1/4 of its maximum HP left, it changes to School Form. If it is in School Form and its HP drops to 1/4 of its maximum HP or less, it changes to Solo Form at the end of the turn. If it is in Solo Form and its HP is greater than 1/4 its maximum HP at the end of the turn, it changes to School Form.",
-		shortDesc: "If user is Wishiwashi/Tynamo, changes to School Form if it has > 1/4 max HP, else Solo Form.",
-	},
 	slumberveil: {
 		onDamagingHit(damage, target, source, move) {
 			if (move.flags['contact']) {
@@ -1106,7 +1062,9 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		onDamage(damage, target, source, effect) {
 			console.log("Magic Guard examining " + effect);
 			console.log(effect.effectType);
-			if (effect.effectType !== 'Move' && effect.name !== 'Recoil' && effect !== this.dex.getItem('lifeorb')) {
+			if (effect.effectType !== 'Move' && effect.name !== 'Recoil' && 
+				![this.dex.getItem('lifeorb'), this.dex.getMove('highjumpkick'), this.dex.getMove('jumpkick')].includes(effect)
+			) {
 				if (effect.effectType === 'Ability') this.add('-activate', source, 'ability: ' + effect.name);
 				return false;
 			}
@@ -1349,6 +1307,50 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		shortDesc: "This Pokemon becomes Evasive when it encounters a Sandstorm; immunity to it.",
 		start: "  [POKEMON] disappeared into the sandstorm!",
 		end: "  [POKEMON] became visible again."
+	},
+	schooling: {
+		onStart(pokemon) {
+			if (!['Wishiwashi', 'Tynamo'].includes(pokemon.baseSpecies.baseSpecies) || pokemon.level < 20 || pokemon.transformed) return;
+			if (pokemon.hp > pokemon.maxhp / 4) {
+				if (pokemon.species.id === 'wishiwashi') {
+					pokemon.formeChange('Wishiwashi-School');
+				} else if (pokemon.species.id === 'tynamo') {
+					pokemon.formeChange('Tynamo-School');
+				}
+			} else {
+				if (pokemon.species.id === 'wishiwashischool') {
+					pokemon.formeChange('Wishiwashi');
+				} else if (pokemon.species.id === 'tynamoschool') {
+					pokemon.formeChange('Tynamo');
+				}
+			}
+		},
+		onResidualOrder: 27,
+		onResidual(pokemon) {
+			if (
+				!['Wishiwashi', 'Tynamo'].includes(pokemon.baseSpecies.baseSpecies) || pokemon.level < 20 ||
+				pokemon.transformed || !pokemon.hp
+			) return;
+			if (pokemon.hp > pokemon.maxhp / 4) {
+				if (pokemon.species.id === 'wishiwashi') {
+					pokemon.formeChange('Wishiwashi-School');
+				} else if (pokemon.species.id === 'tynamo') {
+					pokemon.formeChange('Tynamo-School');
+				}
+			} else {
+				if (pokemon.species.id === 'wishiwashischool') {
+					pokemon.formeChange('Wishiwashi');
+				} else if (pokemon.species.id === 'tynamoschool') {
+					pokemon.formeChange('Tynamo');
+				}
+			}
+		},
+		isPermanent: true,
+		name: "Schooling",
+		rating: 3,
+		num: 208,
+		desc: "On switch-in, if this Pokemon is a Wishiwashi or Tynamo that is level 20 or above and has more than 1/4 of its maximum HP left, it changes to School Form. If it is in School Form and its HP drops to 1/4 of its maximum HP or less, it changes to Solo Form at the end of the turn. If it is in Solo Form and its HP is greater than 1/4 its maximum HP at the end of the turn, it changes to School Form.",
+		shortDesc: "If user is Wishiwashi/Tynamo, changes to School Form if it has > 1/4 max HP, else Solo Form.",
 	},
 	slowstart: {
 		onStart(pokemon) {
