@@ -777,20 +777,24 @@ export const Scripts: ModdedBattleScriptsData = {
 				handlers = handlers.concat(this.findSideEventHandlers(side, callbackName, 'duration'));
 				for (const active of side.active) {
 					if (!active) continue;
-					if(active.hasVolatile['stasis']){
+					if(active.volatiles['stasis']){
 						stasisMons.push(active); //this is probably broken assuming active isn't permanent
 					}
 					handlers = handlers.concat(this.findPokemonEventHandlers(active, callbackName, 'duration'));
 				}
 			}
+			console.log("Stasised mons: " + stasisMons);
 			this.speedSort(handlers);
 			while (handlers.length) {
 				const handler = handlers[0];
 				handlers.shift();
 				const effect = handler.effect;
-				if ((handler.effectHolder as Pokemon).fainted) continue;
+				const pokemon = (handler.effectHolder as Pokemon);
+				if (pokemon.fainted) continue;
 				if (handler.state && handler.state.duration) {
-					if(stasisMons.includes(handler.effectHolder as Pokemon) && !handler.state.affectedStatuses.includes[handler.state]){
+					console.log(pokemon.name + " has " + effect);
+					if(stasisMons.includes(pokemon) && pokemon.volatiles['stasis'].affectedStatuses.includes[effect.id]){
+						console.log("Stasis suppressing handler duration passing");
 						continue;
 					}
 					handler.state.duration--;

@@ -3037,7 +3037,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				factor = 0.25;
 				break;
 			case 'sandstorm':
-				factor: .75;
+				factor = 0.75;
 				break;
 			}
 			return !!this.heal(this.modify(pokemon.maxhp, factor));
