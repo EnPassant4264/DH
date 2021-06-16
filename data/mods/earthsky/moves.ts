@@ -476,12 +476,10 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		priority: 0,
 		flags: {snatch: 1},
 		volatileStatus: 'preheat',
-		onHit(pokemon) {
-			this.add('-activate', pokemon, 'move: Preheat');
-		},
 		condition: {
 			duration: 2,
 			onRestart(pokemon) {
+				this.add('-start', pokemon, 'move: Preheat');
 				this.effectData.duration = 2;
 			},
 			onBasePowerPriority: 9,
@@ -737,33 +735,33 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition:{
 			duration: 3,
 			onStart(pokemon){
-				this.effectData.affectedStatuses = ['confuse','disable','electrify','encore','imprison','laserfocus','leechseed','magnetrise','minimize','nightmare','partiallytrapped','perishsong','risingchorus','strongpartialtrap','taunt','telekinesis','throatchop','torment','yawn'], //Volatiles with timers to freeze
-				this.effectData.noStart = ['aquaring','attract','charge','curse','destinybond','flashfire','focusenergy','followme','foresight','grudge','ingrain','lockon','magiccoat','miracleeye','mindreader','odorsleuth','powder','powertrick','preheat','rage','ragepowder','snatch','spotlight','substitute','tarshot'], //Volatiles that can't be added, but either have no duration or have to be removable to prevent breaking things
+				this.effectData.affectedStatuses = ['confuse','disable','electrify','encore','imprison','laserfocus','leechseed','magnetrise','minimize','nightmare','partiallytrapped','perishsong','powertrick','risingchorus','strongpartialtrap','taunt','telekinesis','throatchop','torment','yawn'], //Volatiles with timers to freeze
+				this.effectData.noStart = ['aquaring','attract','charge','curse','destinybond','doubleteam','flashfire','focusenergy','followme','foresight','grudge','ingrain','lockon','magiccoat','miracleeye','mindreader','odorsleuth','powder','preheat','rage','ragepowder','snatch','spotlight','substitute','tarshot'], //Volatiles that can't be added, but either have no duration or have to be removable to prevent breaking things/being broken
 				this.add('-start', pokemon, 'move: Stasis');
 			},
 			onBoost(boost, pokemon) {
 				boost = {};
-				this.add('fail', pokemon, 'move: Stasis');
+				this.add('-fail', pokemon, 'move: Stasis');
 				return false;
 			},
 			onSetStatus(status, pokemon) {
-				this.add('fail', pokemon, 'move: Stasis');
+				this.add('-fail', pokemon, 'move: Stasis');
 				return false;
 			},
 			onRemoveStatus(status, pokemon) {
-				this.add('fail', pokemon, 'move: Stasis');
+				this.add('-fail', pokemon, 'move: Stasis');
 				return false;
 			},
 			onTryAddVolatile(volatile, pokemon) {
 				console.log("Stasis checking " + volatile);
 				if(pokemon.volatiles['stasis'].affectedStatuses.includes(volatile.id) || pokemon.volatiles['stasis'].noStart.includes(volatile.id)){
-					this.add('fail', pokemon, 'move: Stasis');
+					this.add('-fail', pokemon, 'move: Stasis');
 					return false;
 				}
 			},
 			onTryRemoveVolatile(volatile, pokemon) {
 				if(pokemon.volatiles['stasis'] && pokemon.volatiles['stasis'].affectedStatuses.includes(volatile)){
-					this.add('fail', pokemon, 'move: Stasis');
+					this.add('-fail', pokemon, 'move: Stasis');
 					return false;
 				}
 			},
@@ -3849,7 +3847,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	captivate: {
 		inherit: true,
 		onTryImmunity(pokemon, source) {
-			return (pokemon.hasAbility("Irresistable")) || (pokemon.gender === 'M' && source.gender === 'F') || (pokemon.gender === 'F' && source.gender === 'M');
+			return source.hasAbility('irresistable') || (pokemon.gender === 'M' && source.gender === 'F') || (pokemon.gender === 'F' && source.gender === 'M');
 		},
 	},
 	charge: {
@@ -4120,6 +4118,30 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 		},
 	},
+	perishsong: {
+		inherit: true,
+		onHitField(target, source, move) {
+			let result = false;
+			let message = false;
+			for (const pokemon of this.getAllActive()) {
+				if (this.runEvent('Invulnerability', pokemon, source, move) === false) {
+					this.add('-miss', source, pokemon);
+					result = true;
+				} else if (this.runEvent('TryHit', pokemon, source, move) === null) {
+					result = true;
+				} else if(pokemon.volatiles['stasis']){
+					this.add('-fail', target, 'move: Stasis'); //Stasis won't activate because this fails adding the status to begin with.
+				} else if (!pokemon.volatiles['perishsong']) {
+					pokemon.addVolatile('perishsong');
+					this.add('-start', pokemon, 'perish3', '[silent]');
+					result = true;
+					message = true;
+				}
+			}
+			if (!result) return false;
+			if (message) this.add('-fieldactivate', 'move: Perish Song');
+		},
+	},
 	pluck: {
 		inherit: true,
 		onHit(target, source) {
@@ -4275,6 +4297,23 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		//Spectral Thief getting blocked by Own Tempo implemented in scripts.ts because that's where stat-stealing is implemented
 		desc: "The target's stat stages greater than 0 are stolen from it and applied to the user before dealing damage. The theft does not occur if the target has the Ability Own Tempo.",
 		contestType: "Clever",
+	},
+	substitute: {
+		inherit: true,
+		onTryHit(target) {
+			if (target.volatiles['stasis']){
+				this.add('-fail', target, 'move: Stasis'); //Stasis won't activate because this fails adding the status (and removing HP) to begin with.
+				return null;
+			}
+			if (target.volatiles['substitute']) {
+				this.add('-fail', target, 'move: Substitute');
+				return null;
+			}
+			if (target.hp <= target.maxhp / 4 || target.maxhp === 1) { // Shedinja clause
+				this.add('-fail', target, 'move: Substitute', '[weak]');
+				return null;
+			}
+		},
 	},
 	torment: {
 		inherit: true,

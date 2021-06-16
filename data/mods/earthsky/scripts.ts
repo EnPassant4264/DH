@@ -37,7 +37,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			if (this.hasAbility('suctioncups') || this.hasAbility('heavymetal')) return false;
 			return true;
 		},
-		cureStatus(silent = false) { //Adds a runEvent to curing status for effects (namely, Stasis) that prevent it.
+		cureStatus(silent = false) { //Adds a runEvent to the cure for effects (namely, Stasis) that prevent it.
 			if (!this.hp || !this.status) return false;
 			const result: boolean = this.battle.runEvent('RemoveStatus', this, null, null, this.status);
 			if (!result) {
@@ -115,6 +115,23 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 			return true;
 		},
+		removeVolatile(status: string | Effect) { //Adds a runEvent to the removal for effects (namely, Stasis) that prevent it.
+			if (!this.hp) return false;
+			status = this.battle.dex.getEffect(status) as Effect;
+			if (!this.volatiles[status.id]) return false;
+			if(!this.battle.singleEvent('TryRemoveVolatile', this, null, null, status)){
+				this.battle.debug('remove volatile [' + status.id + '] interrupted');
+				return false;
+			}
+			this.battle.singleEvent('End', status, this.volatiles[status.id], this);
+			const linkedPokemon = this.volatiles[status.id].linkedPokemon;
+			const linkedStatus = this.volatiles[status.id].linkedStatus;
+			delete this.volatiles[status.id];
+			if (linkedPokemon) {
+				this.removeLinkedVolatiles(linkedStatus, linkedPokemon);
+			}
+			return true;
+		}
 		ignoringAbility() { //Added Glyphic Spell's Negate to this.
 			// Check if any active pokemon have the ability Neutralizing Gas (MODDED: or Glyphic Spell's Negate
 			let neutralizinggas = false;
