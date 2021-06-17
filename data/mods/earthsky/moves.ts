@@ -2943,7 +2943,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				console.log("Safeguard examining " + effect);
 				console.log(effect.effectType);
 				if(effect === 'firepledge') return false;
-			}
+			},
 			onImmunity(type, pokemon) {
 				if (['sandstorm', 'hail'].includes(type)) return false;
 			},
