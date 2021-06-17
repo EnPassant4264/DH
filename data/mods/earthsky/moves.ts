@@ -1631,17 +1631,31 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	flameburst: {
 		inherit: true,
-		onTryHit(target, source, move){ //MODDED: Flame Burst explodes if move is blocked.
-			if(target.getVolatile('evade')) return false; //Detect adds 'protect' volatile, but should dodge instead, so this check makes sure of that.
+		onTryHitPriority: 4,
+		onTryHit(target, source, move){ //Checks for protection to explode on the shield
+			if(!move.flags['protect']) return; //Don't check if it ignores the effect. Only applies if boosted by Mind Reader
 			let blocked = false;
 			for (const effectid of ['bunkerdown', 'kingsshield', 'obstruct', 'protect', 'slipaway', 'spikyshield']) {
-				if (target.volatiles[effectid]) blocked = true;
+				if (target.volatiles[effectid]){
+					blocked = true;
+					break;
+				}
 			}
 			if(blocked && target.side.active.length > 1){
 				for (const ally of target.side.active) {
 					if (ally && this.isAdjacent(target, ally)) {
+						let allyBlock = false;
+						for (const effectid of ['bunkerdown', 'kingsshield', 'obstruct', 'protect', 'slipaway', 'spikyshield']) {
+							if (ally.volatiles[effectid]){
+								allyBlock = true;
+							}
+						}
+						if(allyBlock){
+							this.add('-activate', ally, 'move: Protect');
+							continue;
+						}
 						const damage = this.getDamage(source, ally, 60, 'Fire', 'Special');
-						const activeMove = {name: 'burst', effectType: 'Move', type: 'Fire'};
+						const activeMove = {name: 'Burst', effectType: 'Move', type: 'Fire'};
 						this.damage(damage, ally, source, activeMove as ActiveMove);
 					}
 				}
@@ -1653,9 +1667,19 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			}
 			for (const ally of target.side.active) {
 				if (ally && this.isAdjacent(target, ally)) {
+					let allyBlock = false;
+					for (const effectid of ['bunkerdown', 'kingsshield', 'obstruct', 'protect', 'slipaway', 'spikyshield']) {
+						if (ally.volatiles[effectid]){
+							allyBlock = true;
+						}
+					}
+					if(allyBlock){
+						this.add('-activate', ally, 'move: Protect');
+						continue;
+					}
 					const damage = this.getDamage(source, ally, 60, 'Fire', 'Special');
-						const activeMove = {name: 'burst', effectType: 'Move', type: 'Fire'};
-						this.damage(damage, ally, source, activeMove as ActiveMove);
+					const activeMove = {name: 'Burst', effectType: 'Move', type: 'Fire'};
+					this.damage(damage, ally, source, activeMove as ActiveMove);
 				}
 			}
 		},
@@ -1665,9 +1689,19 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			}
 			for (const ally of target.side.active) {
 				if (ally && this.isAdjacent(target, ally)) {
+					let allyBlock = false;
+					for (const effectid of ['bunkerdown', 'kingsshield', 'obstruct', 'protect', 'slipaway', 'spikyshield']) {
+						if (ally.volatiles[effectid]){
+							allyBlock = true;
+						}
+					}
+					if(allyBlock){
+						this.add('-activate', ally, 'move: Protect');
+						continue;
+					}
 					const damage = this.getDamage(source, ally, 60, 'Fire', 'Special');
-						const activeMove = {name: 'burst', effectType: 'Move', type: 'Fire'};
-						this.damage(damage, ally, source, activeMove as ActiveMove);
+					const activeMove = {name: 'Burst', effectType: 'Move', type: 'Fire'};
+					this.damage(damage, ally, source, activeMove as ActiveMove);
 				}
 			}
 		},
@@ -3288,9 +3322,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		beforeTurnCallback(pokemon){
 			if (pokemon.volatiles['stockpile'] && pokemon.volatiles['stockpile'].layers === 3){
-				move.target = 'allAdjacentFoes';
+				this.target = 'allAdjacentFoes';
 			} else {
-				move.target = 'normal';
+				this.target = 'normal';
 			}
 		},
 		onTry(pokemon, move) {

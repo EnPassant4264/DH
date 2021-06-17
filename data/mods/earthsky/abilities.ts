@@ -1020,11 +1020,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	innerfocus: {
 		inherit: true,
-		onSourceRedirectTargetPriority: 0,
-		onSourceRedirectTarget(target, source, source2, move) {
+		onRedirectTargetPriority: 0,
+		onRedirectTarget(target, source, source2, move) {
 			console.log("Inner Focus examining redirection of " + source + "'s " + move + " targeting " + target + " because of " + source2);
-			//if(target.volatiles['followme'] || target.volatiles['playdead'] || target.volatiles['ragepowder'] || target.volatiles['spotlight']){
-			if(['followme', 'playdead', 'ragepowder', 'spotlight'].includes(source2)){
+			if(source2.volatiles['followme'] || source2.volatiles['playdead'] || source2.volatiles['ragepowder'] || source2.volatiles['spotlight']){
 				return target;
 			}
 		},
