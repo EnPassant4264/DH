@@ -1801,7 +1801,7 @@ export const Formats: FormatList = [
 			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
 			`&bullet; <a href="https://drive.google.com/file/d/1N_kSuPC2XifKplZ9huLVlxmkYv3fCmt2/view?usp=sharing">Egelan Pokedex</a>`,
 		],
-		ruleset: [ '[Gen 8] Earth & Sky', 'Egelas Pokedex',],
+		ruleset: [ '[Gen 8] Earth & Sky OU', 'Egelas Pokedex',],
 		mod: 'earthsky',
 	},
 	{
@@ -1809,7 +1809,7 @@ export const Formats: FormatList = [
 		threads: [
 			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
 		],
-		ruleset: [ '[Gen 8] Earth & Sky',],
+		ruleset: [ '[Gen 8] Earth & Sky OU',],
 		banlist: [],
 		mod: 'earthsky',
 		teambuilderFormat: 'Ubers',
@@ -1821,7 +1821,7 @@ export const Formats: FormatList = [
 			`&bullet; <a href="https://drive.google.com/file/d/1N_kSuPC2XifKplZ9huLVlxmkYv3fCmt2/view?usp=sharing">Egelan Pokedex</a>`,
 		],
 		gameType: 'triples',
-		ruleset: [ '[Gen 8] Earth & Sky',],
+		ruleset: [ '[Gen 8] Earth & Sky OU',],
 		mod: 'earthsky',
 	},
 	{
