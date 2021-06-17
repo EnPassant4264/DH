@@ -89,7 +89,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if (pokemon.volatiles['odorsleuth'] || pokemon.volatiles['evade'] || pokemon.volatiles['minimize'] || pokemon.volatiles['doubleteam'] || pokemon.volatiles['tangledfeet']){
 				return;
 			}
-			if(terrain == "mistyterrain" && !('midnight' in this.field.pseudoWeather)){
+			if(terrain == "Misty Terrain" && !('midnight' in this.field.pseudoWeather)){
 				pokemon.addVolatile('evade', 'mistyterrain');
 				pokemon.addVolatile('evadestall');
 				this.add('-singleturn', pokemon, 'ability: Misty Shroud');
@@ -1063,7 +1063,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			console.log("Magic Guard examining " + effect);
 			console.log(effect.effectType);
 			if (effect.effectType !== 'Move' && effect.name !== 'Recoil' && 
-				![this.dex.getItem('lifeorb'), this.dex.getMove('highjumpkick'), this.dex.getMove('jumpkick')].includes(effect)
+				![this.dex.getItem('lifeorb'), this.dex.getEffect('High Jump Kick'), this.dex.getEffect('Jump Kick'), this.dex.getEffect('Steel Beam'), this.dex.getEffect('Mind Bown')].includes(effect)
 			) {
 				if (effect.effectType === 'Ability') this.add('-activate', source, 'ability: ' + effect.name);
 				return false;

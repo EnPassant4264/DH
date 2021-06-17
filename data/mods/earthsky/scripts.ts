@@ -447,12 +447,16 @@ export const Scripts: ModdedBattleScriptsData = {
 				//MODDED: Tactician removes spread reduction
 				let canTargetAny = false;
 				for(const ally of pokemon.side.active){
+					console.log("Looking for Tactician of " + ally.name);
+					console.log("Found " + ally.getAbility());
+					console.log("This is " + (ally.hasAbility('tactician')) ? "not" : "" + " Tactician");
 					if (ally.hasAbility('tactician')){ 
 						canTargetAny = true;
 						break;
 					}
 				}
 				if(canTargetAny){
+					console.log('Tactician preventing spread damage reduction');
 					this.debug('Tactician preventing spread damage reduction');
 				} else {
 					const spreadModifier = move.spreadModifier || (this.gameType === 'free-for-all' ? 0.5 : 0.75);
