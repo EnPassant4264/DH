@@ -3292,7 +3292,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			} else {
 				move.target = 'normal';
 			}
-		}
+		},
 		onTry(pokemon, move) {
 			if (!pokemon.volatiles['stockpile']) {
 				return false;
