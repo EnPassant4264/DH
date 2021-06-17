@@ -953,7 +953,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		basePower: 100,
 		critRatio: 1,
-		target: "any",
 		shortDesc: "No additional effect.",
 	},
 	aurasphere: {
@@ -1259,8 +1258,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	defog: {
 		inherit: true,
 		onHitField(target, source, move) {
+			const enemySide = source.side.foe;
 			let success = false;
-			for (const mon of target.side.active) {
+			for (const mon of enemySide.active) {
 				if (!mon.volatiles['substitute'] || move.infiltrates) success = !!this.boost({evasion: -1});
 			}
 			const removeTarget = [
@@ -1270,9 +1270,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				'spikes', 'toxicspikes', 'stealthrock', 'stickyweb', 'gmaxsteelsurge',
 			];
 			for (const targetCondition of removeTarget) {
-				if (target.side.removeSideCondition(targetCondition)) {
+				if (enemySide.removeSideCondition(targetCondition)) {
 					if (!removeAll.includes(targetCondition)) continue;
-					this.add('-sideend', target.side, this.dex.getEffect(targetCondition).name, '[from] move: Defog', '[of] ' + source);
+					this.add('-sideend', enemySide, this.dex.getEffect(targetCondition).name, '[from] move: Defog', '[of] ' + source);
 					success = true;
 				}
 			}
@@ -1640,9 +1640,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			if(blocked && target.side.active.length > 1){
 				for (const ally of target.side.active) {
 					if (ally && this.isAdjacent(target, ally)) {
-						const damage = this.getDamage(pokemon, ally, 60, 'Fire', 'Special');
+						const damage = this.getDamage(source, ally, 60, 'Fire', 'Special');
 						const activeMove = {name: 'burst', effectType: 'Move', type: 'Fire'};
-						this.damage(damage, ally, pokemon, activeMove as ActiveMove);
+						this.damage(damage, ally, source, activeMove as ActiveMove);
 					}
 				}
 			}
@@ -1653,9 +1653,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			}
 			for (const ally of target.side.active) {
 				if (ally && this.isAdjacent(target, ally)) {
-					const damage = this.getDamage(pokemon, ally, 60, 'Fire', 'Special');
+					const damage = this.getDamage(source, ally, 60, 'Fire', 'Special');
 						const activeMove = {name: 'burst', effectType: 'Move', type: 'Fire'};
-						this.damage(damage, ally, pokemon, activeMove as ActiveMove);
+						this.damage(damage, ally, source, activeMove as ActiveMove);
 				}
 			}
 		},
@@ -1665,9 +1665,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			}
 			for (const ally of target.side.active) {
 				if (ally && this.isAdjacent(target, ally)) {
-					const damage = this.getDamage(pokemon, ally, 60, 'Fire', 'Special');
+					const damage = this.getDamage(source, ally, 60, 'Fire', 'Special');
 						const activeMove = {name: 'burst', effectType: 'Move', type: 'Fire'};
-						this.damage(damage, ally, pokemon, activeMove as ActiveMove);
+						this.damage(damage, ally, source, activeMove as ActiveMove);
 				}
 			}
 		},
@@ -3286,12 +3286,16 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	spitup: {
 		inherit: true,
+		beforeTurnCallback(pokemon){
+			if (pokemon.volatiles['stockpile'] && pokemon.volatiles['stockpile'].layers === 3){
+				move.target = 'allAdjacentFoes';
+			} else {
+				move.target = 'normal';
+			}
+		}
 		onTry(pokemon, move) {
 			if (!pokemon.volatiles['stockpile']) {
 				return false;
-			}
-			if (pokemon.volatiles['stockpile'].layers === 3){
-				move.target = 'allAdjacentFoes';
 			}
 		},
 		desc: "Power is equal to 100 times the user's Stockpile count. If the user's Stockpile count is 3, the move will target all adjacent foes. Fails if the Stockpile count is 0. Whether or not this move is successful, the user's Defense and Special Defense decrease by as many stages as Stockpile had increased them, and the user's Stockpile count resets to 0.",

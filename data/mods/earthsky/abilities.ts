@@ -216,7 +216,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	tactician: {
 		//Implemented in scripts.ts as edits to battle.validTargetLoc() and battle.modifyDamage()
 		name: "Tactician",
-		desc: "All moves used by this Pokemon and its allies can target non-adjacent Pokemon. When this Pokemon or its ally uses a move that hits multiple targets, the move does not have the 25% damage reduction.",
+		desc: "All single-target moves used by this Pokemon and its allies can target non-adjacent Pokemon. When this Pokemon or its ally uses a move that hits multiple targets, the move does not have the 25% damage reduction.",
 		shortDesc: "This Pokemon and its allies ignore spread damage drops and can target anyone.",
 		rating: 2,
 		num: 1013,
@@ -1020,10 +1020,12 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	innerfocus: {
 		inherit: true,
-		onFoeRedirectTargetPriority: 0,
-		onFoeRedirectTarget(target, source, source2, move) {
-			if('followme' in target.volatiles || 'playdead' in target.volatiles || 'ragepowder' in target.volatiles || 'spotlight' in target.volatiles){
-				return;
+		onSourceRedirectTargetPriority: 0,
+		onSourceRedirectTarget(target, source, source2, move) {
+			console.log("Inner Focus examining redirection of " + source + "'s " + move + " targeting " + target + " because of " + source2);
+			//if(target.volatiles['followme'] || target.volatiles['playdead'] || target.volatiles['ragepowder'] || target.volatiles['spotlight']){
+			if(['followme', 'playdead', 'ragepowder', 'spotlight'].includes(source2)){
+				return target;
 			}
 		},
 		shortDesc: "This Pokemon cannot flinch and ignores move-based redirection. Immune to Intimidate.",
@@ -1506,13 +1508,13 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	telepathy: {
 		inherit: true,
 		onTryHit(target, source, move) {
-			if (target !== source && target.side === source.side) {
+			if (['any', 'normal', 'allAdjacent'].includes(move.target) && target !== source && target.side === source.side) {
 				this.add('-activate', target, 'ability: Telepathy');
 				return null;
 			}
 		},
 		onAllyTryHit(target, source, move) {
-			if (target !== source && target.side === source.side) {
+			if (['any', 'normal', 'allAdjacent'].includes(move.target) && target !== source && target.side === source.side) {
 				this.add('-activate', target, 'ability: Telepathy');
 				return null;
 			}
