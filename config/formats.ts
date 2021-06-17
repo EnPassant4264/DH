@@ -1803,7 +1803,6 @@ export const Formats: FormatList = [
 		],
 		ruleset: [ '[Gen 8] Earth & Sky', 'Egelas Pokedex',],
 		mod: 'earthsky',
-		banlist: [/*'ES Uber', */'Oceides', 'Hatar', 'Zuros', 'Norphaval', 'Lucario-Mega'],
 	},
 	{
 		name: "[Gen 8] Earth & Sky Ubers",
@@ -1814,6 +1813,16 @@ export const Formats: FormatList = [
 		banlist: [],
 		mod: 'earthsky',
 		teambuilderFormat: 'Ubers',
+	},
+	{
+		name: "[Gen 8] Earth & Sky Triples",
+		threads: [
+			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
+			`&bullet; <a href="https://drive.google.com/file/d/1N_kSuPC2XifKplZ9huLVlxmkYv3fCmt2/view?usp=sharing">Egelan Pokedex</a>`,
+		],
+		gameType: 'triples',
+		ruleset: [ '[Gen 8] Earth & Sky',],
+		mod: 'earthsky',
 	},
 	{
 		name: "[Gen 8] GPT2mons",

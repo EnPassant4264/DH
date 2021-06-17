@@ -2916,6 +2916,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 				return 5;
 			},
+			onStart(side) {
+				this.add('-sidestart', side, 'Safeguard');
+			},
 			onSetStatus(status, target, source, effect) {
 				if (!effect || !source) return;
 				if (effect.id === 'yawn') return;
@@ -2936,11 +2939,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					return null;
 				}
 			},
-			onStart(side) {
-				this.add('-sidestart', side, 'Safeguard');
-			},
+			onDamage(damage, target, source, effect){
+				console.log("Safeguard examining " + effect);
+				console.log(effect.effectType);
+				if(effect === 'firepledge') return false;
+			}
 			onImmunity(type, pokemon) {
-				if (['sandstorm', 'hail', 'firepledge'].includes(type)) return false;
+				if (['sandstorm', 'hail'].includes(type)) return false;
 			},
 			onResidualOrder: 21,
 			onResidualSubOrder: 2,
