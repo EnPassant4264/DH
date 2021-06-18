@@ -4,7 +4,6 @@
 	export type Doubles = "DUber" | "(DUber)" | "DOU" | "(DOU)" | "DBL" | "DUU" | "(DUU)" | "NFE" | "LC Uber" | "LC";
 	export type Other = "Unreleased" | "Illegal" | "ES Uber" | "ES OU" | "ES NFE" | "ES LC" | "CAP" | "CAP NFE" | "CAP LC";
 };*/
-import {toID} from './dex'; //apparently this is necessary for pokemon.getMoves. Why? No clue
 export const Scripts: ModdedBattleScriptsData = {
 	teambuilderConfig: {
 		customTiers: ['earthsky'/*, 'esuber', 'esou', 'esnfe', 'eslc'*/],
@@ -16,7 +15,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			target?: string, pp?: number, maxpp?: number,
 		}[] {
 			if (lockedMove) {
-				lockedMove = toID(lockedMove);
+				lockedMove = this.toID(lockedMove);
 				this.trapped = true;
 				if (lockedMove === 'recharge') {
 					return [{
@@ -1562,7 +1561,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 		},
 		validateBanRule(rule: string) { //Allowing my tiers
-			let id = toID(rule);
+			let id = this.toID(rule);
 			if (id === 'unreleased') return 'unreleased';
 			if (id === 'nonexistent') return 'nonexistent';
 			const matches = [];
@@ -1575,7 +1574,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				}
 			}
 			const ruleid = id;
-			if (this.data.Aliases.hasOwnProperty(id)) id = toID(this.data.Aliases[id]);
+			if (this.data.Aliases.hasOwnProperty(id)) id = this.toID(this.data.Aliases[id]);
 			for (const matchType of matchTypes) {
 				let table;
 				switch (matchType) {
@@ -1608,7 +1607,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				if (table.hasOwnProperty(id)) {
 					if (matchType === 'pokemon') {
 						const species: Species = table[id] as Species;
-						if (species.otherFormes && ruleid !== species.id + toID(species.baseForme)) {
+						if (species.otherFormes && ruleid !== species.id + this.toID(species.baseForme)) {
 							matches.push('basepokemon:' + id);
 							continue;
 						}
@@ -1796,7 +1795,7 @@ export const Scripts: ModdedBattleScriptsData = {
 					continue;
 				}
 				//Other
-				for(let i = 0; i < 6; i++){
+				for(let i = 0; i < 7; i++){
 					if(moveID === renamedMoves[i]){
 						//console.log("Renaming " + move.name);
 						this.modData('Learnsets', pokemonID).learnset[this.toID(newNameMoves[i])] = moveMeans;
