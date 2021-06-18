@@ -256,7 +256,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		spritenum: 374,
 		fling: {
 			basePower: 0,
-			boost: {speed: 1},
+			boosts: {speed: 1},
 			flags: {powder: 1},
 		},
 		num: 274,

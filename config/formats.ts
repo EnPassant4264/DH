@@ -1783,8 +1783,7 @@ export const Formats: FormatList = [
 		threads: [
 			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
 		],
-		ruleset: [ 'Hidden Move Limit', 'Obtainable', 'Gen 8 Sketch', 'Species Clause', 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', 'OHKO Clause', 'Z-Move Clause', 'Dynamax Clause',
-			'Team Preview', 'Cancel Mod', 'Data Mod', 'Mega Data Mod',],
+		ruleset: [ 'Earth & Sky',],
 		mod: 'earthsky',
 		banlist: [
 			'Alakazam-Mega', 'Arceus', 'Blaziken', 'Blastoise-Mega', 'Darkrai', 'Deoxys-Attack', /*'Deoxys-Base',*/ 'Deoxys-Speed',
@@ -1809,7 +1808,7 @@ export const Formats: FormatList = [
 		threads: [
 			`&bullet; <a href="https://docs.google.com/spreadsheets/d/1CL_DALzaisaMwr2709KMleWU6ntxBPnzfHukN0SR5Ss/edit?usp=sharing">Competitive Cheat Sheet</a>`,
 		],
-		ruleset: [ '[Gen 8] Earth & Sky OU',],
+		ruleset: [ 'Earth & Sky',],
 		banlist: [],
 		mod: 'earthsky',
 		teambuilderFormat: 'Ubers',
