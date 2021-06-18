@@ -10,28 +10,6 @@ sound: Power is multiplied by 1.2 when used by a Pokemon with the Cacophony Abil
 */
 
 export const Moves: {[moveid: string]: ModdedMoveData} = {
-	freezetest: {
-		num: 1030,
-		basePower: 0,
-		accuracy: true,
-		category: "Status",
-		name: "Freeze Test",
-		pp: 15,
-		priority: 0,
-		flags: {protect: 1, mirror: 1},
-		secondary:{
-			chance: 100,
-			status: 'frz',
-		},
-		shortDesc: "Freezes the target. OP,used for testing freeze.",
-		target: "normal",
-		type: "Ice",
-		contestType: "Cute",
-		onPrepareHit: function(target, source, move) {
-			this.attrLastMove('[still]');
-			this.add('-anim', source, "Icy Wind", target);
-		},
-	},
 	/* New Moves */
 	aerate: {
 		num: 1000,
@@ -920,6 +898,22 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		},
 	},
 	/* Edited Moved */
+	acupressure: {
+		inherit: true,
+		pp: 10,
+		onHit(target) {
+			let statName = 'atk';
+			let worstStat = 3000; //The highest possible stat number (with boosts) is 2,676
+			let s: StatNameExceptHP;
+			for (s in target.storedStats) {
+				if (target.storedStats[s] < worstStat) {
+					statName = s;
+					bestStat = target.storedStats[s];
+				}
+			}
+			this.boost({[statName]: 2}, target);
+		},
+	},
 	aeroblast: {
 		inherit: true,
 		accuracy: 100,
@@ -1261,7 +1255,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			const enemySide = source.side.foe;
 			let success = false;
 			for (const mon of enemySide.active) {
-				if (!mon.volatiles['substitute'] || move.infiltrates) success = !!this.boost({evasion: -1});
+				if (!mon.volatiles['substitute'] || move.infiltrates) success = !!this.boost({evasion: -1}, mon);
 			}
 			const removeTarget = [
 				'reflect', 'lightscreen', 'auroraveil', 'safeguard', 'mist', 'spikes', 'toxicspikes', 'stealthrock', 'stickyweb', 'gmaxsteelsurge',

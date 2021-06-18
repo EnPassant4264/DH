@@ -1020,7 +1020,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	innerfocus: {
 		inherit: true,
-		onRedirectTargetPriority: 0,
+		onRedirectTargetPriority: 3,
 		onRedirectTarget(target, source, source2, move) {
 			console.log("Inner Focus examining redirection of " + source + "'s " + move + " targeting " + target + " because of " + source2);
 			if(source2.volatiles['followme'] || source2.volatiles['playdead'] || source2.volatiles['ragepowder'] || source2.volatiles['spotlight']){
@@ -1514,7 +1514,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAllyTryHit(target, source, move) {
 			if (['any', 'normal', 'allAdjacent'].includes(move.target) && target !== source && target.side === source.side) {
-				this.add('-activate', target, 'ability: Telepathy');
+				this.add('-activate', this.effectData.target, 'ability: Telepathy');
 				return null;
 			}
 		},

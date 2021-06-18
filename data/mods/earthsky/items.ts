@@ -17,14 +17,11 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		},
 		onBeforeMovePriority: 10,
 		onBeforeMove(pokemon) {
-			if (pokemon.volatiles['flinch']) {
-				pokemon.eatItem();
+			if (pokemon.volatiles['flinch'] && pokemon.eatItem()) {
+				pokemon.removeVolatile('flinch');
 			}
 		},
 		onEat(pokemon) {
-			if (pokemon.volatiles['flinch']) {
-				pokemon.removeVolatile('flinch');
-			}
 		},
 		desc: "Cures flinching. Single use.",
 		num: 1002,
@@ -168,7 +165,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		spritenum: 51,
 		fling: {
 			basePower: 0,
-			effects(pokemon){
+			onHit(pokemon){
 				if(!this.dex.getImmunity('powder', pokemon)) {
 					this.debug('natural powder immunity');
 					this.add('-immune', target);
@@ -179,9 +176,11 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			},
 		},
 		onFoeTryMove(target, source, move) {
-			if (move.target === 'foeSide' || (move.target === 'all' && move.id !== 'perishsong')) {
+			console.log(source + " using " + move + " on " + target);
+			if (move.target === 'foeSide' || (move.target === 'all' && move.id !== 'perishsong') || target !== this.effectData.target) {
 				return;
 			}
+			console.log("Move priority is " + move.priority);
 			if (move.priority > 0.1	&& this.dex.getImmunity('powder', source) && target.useItem())
 			{
 				this.attrLastMove('[still]');
@@ -235,7 +234,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		name: "Metal Powder",
 		fling: {
 			basePower: 0,
-			effects(pokemon){
+			onHit(pokemon){
 				if(!this.dex.getImmunity('powder', pokemon)) {
 					this.debug('natural powder immunity');
 					this.add('-immune', target);
@@ -271,7 +270,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		spritenum: 374,
 		fling: {
 			basePower: 0,
-			effects(pokemon){
+			onHit(pokemon){
 				if(!this.dex.getImmunity('powder', pokemon)) {
 					this.debug('natural powder immunity');
 					this.add('-immune', target);
@@ -337,7 +336,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		inherit: true,
 		fling: {
 			basePower: 0,
-			effects(pokemon){
+			onHit(pokemon){
 				if(!this.dex.getImmunity('powder', pokemon)) {
 					this.debug('natural powder immunity');
 					this.add('-immune', target);
@@ -348,6 +347,21 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			},
 		},
 		desc: "When Flung, applies Powder to the target. Fails if target is immune to powder.",
+	},
+	starfberry: {
+		inherit: true,
+		onEat(pokemon) {
+			let statName = 'atk';
+			let worstStat = 3000; //The highest possible stat number (with boosts) is 2,676
+			let s: StatNameExceptHP;
+			for (s in pokemon.storedStats) {
+				if (pokemon.storedStats[s] < worstStat) {
+					statName = s;
+					bestStat = pokemon.storedStats[s];
+				}
+			}
+			this.boost({[statName]: 2}, pokemon);
+		},
 	},
 	ultranecroziumz: {
 		name: "Ultranecrozium Z",
