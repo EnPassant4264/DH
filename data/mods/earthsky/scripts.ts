@@ -1841,7 +1841,11 @@ export const Scripts: ModdedBattleScriptsData = {
 			const ability = this.modData('Abilities', abilityID);
 			ability.isNonstandard = "Past";
 		}
-		for(const itemID of deletedItems) {
+		for(let itemID in this.data.Items) { //marks all items as current gen
+			const item = this.modData('Items', itemID);
+			if(item.isNonstandard === "Past") delete item.isNonstandard;
+		}
+		for(const itemID of deletedItems) { //then drops removed items as past-gen so they can't be used
 			const item = this.modData('Items', itemID);
 			item.isNonstandard = "Past";
 		}
