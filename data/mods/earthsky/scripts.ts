@@ -53,7 +53,7 @@ export const Scripts: ModdedBattleScriptsData = {
 						target = this.battle.dex.getMove('curse').nonGhostTarget || moveSlot.target;
 					}
 				}
-				if(pokemon.tacticianBoosted && target === 'normal'){
+				if(this.tacticianBoosted && target === 'normal'){
 					target = 'any';
 				}
 				let disabled = moveSlot.disabled;

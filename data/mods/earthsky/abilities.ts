@@ -215,7 +215,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	tactician: {
 		onStart(pokemon){
-			for(const ally in pokemon.side.active){
+			for(const ally of pokemon.side.active){
 				ally.tacticianBoosted = true;
 			}
 		},
@@ -227,7 +227,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			delete pokemon.tacticianBoosted;
 		},
 		onEnd(pokemon){
-			for(const ally in pokemon.side.active){
+			for(const ally of pokemon.side.active){
 				delete ally.tacticianBoosted;
 			}
 		},
