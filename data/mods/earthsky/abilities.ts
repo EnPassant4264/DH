@@ -678,8 +678,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	//Changed Abilities
 	airlock: {
 		onStart(pokemon) {
-			// Air Lock does not activate when Skill Swapped or when Neutralizing Gas leaves the field
-			if (!this.effectData.switchingIn) return;
 			this.add('-ability', pokemon, 'ability: Air Lock');
 			const strongWeathers = ['desolateland', 'primordialsea', 'deltastream'];
 			if (!strongWeathers.includes(this.field.weather)){
@@ -800,7 +798,21 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			this.add('-ability', pokemon, 'ability: Cloud Nine');
 		},
 		onAnySetWeather(target, source, weather) {
+			this.add('-ability', pokemon, 'ability: Cloud Nine');
 			return false;
+		},
+		onEnd(pokemon) {
+			let returningWeather = '';
+			for (const target of this.speedSort(this.getAllActive())) {
+				if (target.hasAbility('desolateland')) {
+					returningWeather = 'desolateland';
+				} else if (target.hasAbility('primordialsea')) {
+					returningWeather = 'primordialsea';
+				} else if (target.hasAbility('deltastream')) {
+					returningWeather = 'deltastream';
+				}
+			}
+			if(returningWeather) this.field.setWeather(returningWeather);
 		},
 		suppressWeather: true,
 		name: "Cloud Nine",

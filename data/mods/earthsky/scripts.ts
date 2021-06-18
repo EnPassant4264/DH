@@ -5,6 +5,7 @@
 	export type Other = "Unreleased" | "Illegal" | "ES Uber" | "ES OU" | "ES NFE" | "ES LC" | "CAP" | "CAP NFE" | "CAP LC";
 };*/
 export const Scripts: ModdedBattleScriptsData = {
+	import {toID} from './././sim/dex';
 	teambuilderConfig: {
 		customTiers: ['earthsky'/*, 'esuber', 'esou', 'esnfe', 'eslc'*/],
 	},

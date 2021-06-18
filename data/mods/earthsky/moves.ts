@@ -3742,6 +3742,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			case 'hail':
 				move.type = 'Ice';
 				break;
+			case 'deltastream':
+				move.type = 'Flying';
+				break;
 			}
 		},
 		onModifyMove(move, pokemon) {
@@ -3751,16 +3754,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			switch (pokemon.effectiveWeather()) {
 			case 'sunnyday':
 			case 'desolateland':
-				move.basePower *= 2;
-				break;
 			case 'raindance':
 			case 'primordialsea':
-				move.basePower *= 2;
-				break;
 			case 'sandstorm':
-				move.basePower *= 2;
-				break;
 			case 'hail':
+			case 'deltastream':
 				move.basePower *= 2;
 				break;
 			}
