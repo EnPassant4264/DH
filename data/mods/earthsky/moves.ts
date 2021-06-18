@@ -4109,7 +4109,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 			}
 			if(item.fling.flags){
-				for(const flag of item.fling.flags.keys){
+				for(const flagNum in item.fling.flags.keys){
+					const flag = item.fling.flags.keys[flag];
 					move.flags[flag] = item.fling.flags[flag];
 				}
 			}
