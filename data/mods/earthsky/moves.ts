@@ -771,8 +771,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		basePower: 60,
 		basePowerCallback(pokemon, target, move) {
 			const item = pokemon.getItem();
-			if (item && !this.battle.runEvent('UseItem', pokemon, item)) {
-				this.debug("Power increase for held item");
+			if (item && !this.battle.singleEvent('UseItem', pokemon, null, null, item)) {
+				this.debug("Swing power increase for held item");
 				return move.basePower * 1.5;
 			}
 			return move.basePower;
@@ -1633,10 +1633,10 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			for (const effectid of ['bunkerdown', 'kingsshield', 'obstruct', 'protect', 'slipaway', 'spikyshield']) {
 				if (target.volatiles[effectid]){
 					blocked = true;
-					break;
 				}
 			}
-			console.log("Flame Burst does " + (blocked) ? "" : "not" + " see a shield");
+			if(blocked) console.log("Flame Burst does see a shield");
+			else console.log("Flame Burst does not see a shield");
 			if(blocked && target.side.active.length > 1){
 				console.log("Flame Burst exploding on shield");
 				for (const ally of target.side.active) {
@@ -2156,9 +2156,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		basePower: 65,
 		onHit(pokemon, source) {
 			const item = pokemon.getItem();
-			if (item && this.battle.runEvent('UseItem', pokemon, item)) {
+			if (item && this.battle.singleEvent('UseItem', pokemon, null, null, item)) {
+				pokemon.takeItem();
 				this.add('-enditem', pokemon, item.name, '[from] move: Incinerate');
-				pokemon.lastItem = item.id;
 			}
 		},
 		shortDesc: "Destroys foe(s)' consumable items.",
