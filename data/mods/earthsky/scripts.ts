@@ -4,6 +4,7 @@
 	export type Doubles = "DUber" | "(DUber)" | "DOU" | "(DOU)" | "DBL" | "DUU" | "(DUU)" | "NFE" | "LC Uber" | "LC";
 	export type Other = "Unreleased" | "Illegal" | "ES Uber" | "ES OU" | "ES NFE" | "ES LC" | "CAP" | "CAP NFE" | "CAP LC";
 };*/
+import {toID} from './dex'; //apparently this is necessary for pokemon.getMoves. Why? No clue
 export const Scripts: ModdedBattleScriptsData = {
 	teambuilderConfig: {
 		customTiers: ['earthsky'/*, 'esuber', 'esou', 'esnfe', 'eslc'*/],
