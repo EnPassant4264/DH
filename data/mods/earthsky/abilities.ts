@@ -744,6 +744,24 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				}
 			}
 		},
+		onFoeSwitchIn(target) {
+			const pokemon = this.effectData.target;
+			for (const moveSlot of target.moveSlots) {
+				const move = this.dex.getMove(moveSlot.move);
+				if (move.category === 'Status') continue;
+				if (move.twoType){
+					if (this.dex.getImmunity(move, pokemon) && this.dex.getEffectiveness(move, pokemon) >= 2) {
+						this.add('-ability', pokemon, 'ability: Anticipation');
+						return;
+					}
+				}
+				const moveType = move.id === 'hiddenpower' ? target.hpType : move.type;
+				if (this.dex.getImmunity(moveType, pokemon) && this.dex.getEffectiveness(moveType, pokemon) >= 2) {
+					this.add('-ability', pokemon, 'ability: Anticipation');
+					return;
+				}
+			}
+		},
 		onAccuracy(accuracy, target, source, move) {
 			if (target !== this.effectData.target || typeof(accuracy) !== 'number' || move.ignoreEvasion) return;
 			if (move.twoType){
