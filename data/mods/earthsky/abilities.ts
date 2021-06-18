@@ -1037,13 +1037,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	innerfocus: {
 		inherit: true,
-		onRedirectTargetPriority: 3,
-		onRedirectTarget(target, source, source2, move) {
-			console.log("Inner Focus examining redirection of " + source + "'s " + move + " targeting " + target + " because of " + source2);
-			if(source2.volatiles['followme'] || source2.volatiles['playdead'] || source2.volatiles['ragepowder'] || source2.volatiles['spotlight']){
-				return target;
-			}
-		},
+		//Implemented in the move-based redirections themselves
 		shortDesc: "This Pokemon cannot flinch and ignores move-based redirection. Immune to Intimidate.",
 	},
 	insomnia: {

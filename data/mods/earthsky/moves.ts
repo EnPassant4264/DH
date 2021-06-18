@@ -4109,11 +4109,33 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 			}
 			if(item.fling.flags){
-				for(const flag of item.fling.flags){
+				for(const flag of item.fling.flags.keys){
 					move.flags[flag] = item.fling.flags[flag];
 				}
 			}
 			source.addVolatile('fling');
+		},
+	},
+	followme: {
+		inherit: true,
+		condition: {
+			duration: 1,
+			onStart(target, source, effect) {
+				if (effect?.id === 'zpower') {
+					this.add('-singleturn', target, 'move: Follow Me', '[zeffect]');
+				} else {
+					this.add('-singleturn', target, 'move: Follow Me');
+				}
+			},
+			onFoeRedirectTargetPriority: 1,
+			onFoeRedirectTarget(target, source, source2, move) {
+				if(source.hasAbility('innerfocus')) return target;
+				if (!this.effectData.target.isSkyDropped() && this.validTarget(this.effectData.target, source, move.target)) {
+					if (move.smartTarget) move.smartTarget = false;
+					this.debug("Follow Me redirected target of move");
+					return this.effectData.target;
+				}
+			},
 		},
 	},
 	mirrormove: {
@@ -4276,6 +4298,27 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		},
 		desc: "The user copies all of the target's current stat stage changes. This move fails if the target has the Ability Own Tempo.",
 	},
+	ragepowder: {
+		inherit: true,
+		condition: {
+			duration: 1,
+			onStart(pokemon) {
+				this.add('-singleturn', pokemon, 'move: Rage Powder');
+			},
+			onFoeRedirectTargetPriority: 1,
+			onFoeRedirectTarget(target, source, source2, move) {
+				if(source.hasAbility('innerfocus')) return target;
+				const ragePowderUser = this.effectData.target;
+				if (ragePowderUser.isSkyDropped()) return;
+
+				if (source.runStatusImmunity('powder') && this.validTarget(ragePowderUser, source, move.target)) {
+					if (move.smartTarget) move.smartTarget = false;
+					this.debug("Rage Powder redirected target of move");
+					return ragePowderUser;
+				}
+			},
+		},
+	},
 	reflecttype: {
 		inherit: true,
 		onTryHit(target, pokemon) {
@@ -4357,6 +4400,23 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		//Spectral Thief getting blocked by Own Tempo implemented in scripts.ts because that's where stat-stealing is implemented
 		desc: "The target's stat stages greater than 0 are stolen from it and applied to the user before dealing damage. The theft does not occur if the target has the Ability Own Tempo.",
 		contestType: "Clever",
+	},
+	spotlight: {
+		inherit: true,
+		condition: {
+			duration: 1,
+			onStart(pokemon) {
+				this.add('-singleturn', pokemon, 'move: Spotlight');
+			},
+			onFoeRedirectTargetPriority: 2,
+			onFoeRedirectTarget(target, source, source2, move) {
+				if(source.hasAbility('innerfocus')) return target;
+				if (this.validTarget(this.effectData.target, source, move.target)) {
+					this.debug("Spotlight redirected target of move");
+					return this.effectData.target;
+				}
+			},
+		},
 	},
 	substitute: {
 		inherit: true,
