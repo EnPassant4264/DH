@@ -26,7 +26,9 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 					const prevo = (pokemon.prevo) ? this.dex.getSpecies(pokemon.prevo) : undefined;
 					let isHidden = false;
 					for (const moveID of set.moves) {
-						const pokeLearnsMove = this.dex.getLearnsetData(pokemon.id).learnset[moveID];
+						const pokeLearnset = this.dex.getLearnsetData(pokemon.id);
+						if(!pokeLearnset) pokeLearnset = this.dex.getLearnsetData(this.dex.getSpecies(pokemon.baseSpecies).id);
+						const pokeLearnsMove = pokeLearnset.learnset[moveID];
 						//console.log(pokemon + " knows " + moveID + " with means " + pokeLearnsMove);
 						if(pokeLearnsMove == "8D"){
 							isHidden = true;

@@ -908,7 +908,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			for (s in target.storedStats) {
 				if (target.storedStats[s] < worstStat) {
 					statName = s;
-					bestStat = target.storedStats[s];
+					worstStat = target.storedStats[s];
 				}
 			}
 			this.boost({[statName]: 2}, target);
@@ -4074,25 +4074,42 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		},
 		desc: "Causes the target's Ability to become the same as the user's. Fails if the target's Ability is Alchemy, Disguise, Gulp Missile, Ice Face, Multitype, Power Construct, Rage Mode, RKS System, Schooling, Shields Down, Stance Change, Truant, or Zen Mode, or the same Ability as the user, or if the user's Ability is Alchemy, Disguise, Flower Gift, Forecast, Gulp Missile, Hunger Switch, Ice Face, Illusion, Imposter, Multitype, Neutralizing Gas, Power Construct, Rage Mode, Receiver, RKS System, Schooling, Shields Down, Stance Change, Trace, Wonder Guard, or Zen Mode.",
 	},
-	/*fellstinger: {
-		num: 565,
-		accuracy: 100,
-		basePower: 50,
-		category: "Physical",
-		name: "Fell Stinger",
-		pp: 25,
-		priority: 0,
-		flags: {contact: 1, protect: 1, mirror: 1},
-		onSourceAfterFaint(length, target, source, effect) {
-			if (effect && effect === 'fellstinger' && source === this.effectData.target) {
-				this.boost({atk: 3}, source);
+	fling: {
+		inherit: true,
+		onPrepareHit(target, source, move) {
+			if (source.ignoringItem()) return false;
+			const item = source.getItem();
+			if (!this.singleEvent('TakeItem', item, source.itemData, source, source, move, item)) return false;
+			if (!item.fling) return false;
+			move.basePower = item.fling.basePower;
+			if (item.isBerry) {
+				move.onHit = function (foe) {
+					if (this.singleEvent('Eat', item, null, foe, null, null)) {
+						this.runEvent('EatItem', foe, null, null, item);
+						if (item.id === 'leppaberry') foe.staleness = 'external';
+					}
+					if (item.onEat) foe.ateBerry = true;
+				};
+			} else if (item.fling.effect) {
+				move.onHit = item.fling.effect;
+			} else {
+				if (!move.secondaries) move.secondaries = [];
+				if (item.fling.status) {
+					move.secondaries.push({status: item.fling.status});
+				} else if (item.fling.volatileStatus) {
+					move.secondaries.push({volatileStatus: item.fling.volatileStatus});
+				}
+				if (item.fling.boosts) {
+					move.secondaries.push({boosts: item.fling.boosts});
+					move.secondaries.push({chance: 100});
+				}
 			}
+			if(item.fling.flags){
+				move.flags = move.flags.join(item.fling.flags);
+			}
+			source.addVolatile('fling');
 		},
-		secondary: null,
-		target: "normal",
-		type: "Bug",
-		contestType: "Cool",
-	},*/
+	},
 	mirrormove: {
 		inherit: true,
 		onTryHit(target, pokemon) {

@@ -1170,7 +1170,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		immune: "  [POKEMON]'s mannerisms couldn't be acquired!"
 	},
 	pastelveil: {
-		inherit: true,
 		onUpdate(pokemon) {
 			if (['psn', 'tox'].includes(pokemon.status)) {
 				this.add('-activate', pokemon, 'ability: Pastel Veil');

@@ -165,15 +165,8 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		spritenum: 51,
 		fling: {
 			basePower: 0,
-			onHit(pokemon){
-				if(!this.dex.getImmunity('powder', pokemon)) {
-					this.debug('natural powder immunity');
-					this.add('-immune', target);
-					this.hint('Flung powders count as powder moves');
-				} else {
-					this.boost({accuracy: -2}, pokemon, null, true);
-				}
-			},
+			boosts: {accuracy: -2},
+			flags: {powder: 1},
 		},
 		onFoeTryMove(target, source, move) {
 			console.log(source + " using " + move + " on " + target);
@@ -234,15 +227,8 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		name: "Metal Powder",
 		fling: {
 			basePower: 0,
-			onHit(pokemon){
-				if(!this.dex.getImmunity('powder', pokemon)) {
-					this.debug('natural powder immunity');
-					this.add('-immune', target);
-					this.hint('Flung powders count as powder moves');
-				} else {
-					this.boost({def: 1, spd: 1}, pokemon, null, true);
-				}
-			},
+			boosts: {def: 1, spd: 1},
+			flags: {powder: 1},
 		},
 		spritenum: 287,
 		num: 257,
@@ -270,15 +256,8 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		spritenum: 374,
 		fling: {
 			basePower: 0,
-			onHit(pokemon){
-				if(!this.dex.getImmunity('powder', pokemon)) {
-					this.debug('natural powder immunity');
-					this.add('-immune', target);
-					this.hint('Flung powders count as powder moves');
-				} else {
-					this.boost({speed: 1}, pokemon, null, true);
-				}
-			},
+			boost: {speed: 1},
+			flags: {powder: 1},
 		},
 		num: 274,
 		gen: 4,
@@ -336,15 +315,8 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		inherit: true,
 		fling: {
 			basePower: 0,
-			onHit(pokemon){
-				if(!this.dex.getImmunity('powder', pokemon)) {
-					this.debug('natural powder immunity');
-					this.add('-immune', target);
-					this.hint('Flung powders count as powder moves');
-				} else {
-					pokemon.addVolatile('powder');
-				}
-			},
+			flags: {powder: 1},
+			volatileStatus: 'powder',
 		},
 		desc: "When Flung, applies Powder to the target. Fails if target is immune to powder.",
 	},
@@ -357,7 +329,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			for (s in pokemon.storedStats) {
 				if (pokemon.storedStats[s] < worstStat) {
 					statName = s;
-					bestStat = pokemon.storedStats[s];
+					worstStat = pokemon.storedStats[s];
 				}
 			}
 			this.boost({[statName]: 2}, pokemon);
