@@ -15,8 +15,8 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			basePower: 100,
 			type: "Steel",
 		},
-		onBeforeMovePriority: 10,
-		onBeforeMove(pokemon) {
+		//onBeforeMovePriority: 10,
+		onOverrideAction(pokemon) { //only event that happens before BeforeMove, which flinch has to be stopped before.
 			if (pokemon.volatiles['flinch'] && pokemon.eatItem()) {
 				pokemon.removeVolatile('flinch');
 			}

@@ -205,7 +205,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	supermassive: {
 		onStart(source) {
-			this.add('-ability', source, 'Supermassive');
+			this.add('-activate', source, 'Supermassive');
 			this.field.addPseudoWeather('gravity');
 		},
 		name: "Supermassive",
@@ -214,7 +214,23 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		num: 1012,
 	},
 	tactician: {
-		//Implemented in scripts.ts as edits to battle.validTargetLoc() and battle.modifyDamage()
+		onStart(pokemon){
+			for(const ally in pokemon.side.active){
+				ally.tacticianBoosted = true;
+			}
+		}
+		//Actual effects implemented in scripts.ts as edits to pokemon.getMoves(), actions.runMove(), the various battle.targetting functions, and battle.modifyDamage()
+		onAllySwitchIn(pokemon){
+			pokemon.tacticianBoosted = true;
+		}
+		onAllySwitchOut(pokemon){
+			delete pokemon.tacticianBoosted;
+		}
+		onEnd(pokemon){
+			for(const ally in pokemon.side.active){
+				delete ally.tacticianBoosted;
+			}
+		}
 		name: "Tactician",
 		desc: "All single-target moves used by this Pokemon and its allies can target non-adjacent Pokemon. When this Pokemon or its ally uses a move that hits multiple targets, the move does not have the 25% damage reduction.",
 		shortDesc: "This Pokemon and its allies ignore spread damage drops and can target anyone.",
@@ -224,7 +240,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	tireless: {
 		onChargeMove(pokemon, target, move) {
 			this.debug('tireless - remove charge turn for ' + move.id);
-			this.add('activate', pokemon, 'ability: Tireless');
+			this.add('-activate', pokemon, 'ability: Tireless');
 			this.attrLastMove('[still]');
 			this.addMove('-anim', pokemon, move.name, target);
 			return false; // skip charge turn
@@ -233,6 +249,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if (pokemon.volatiles['mustrecharge']) {
 				pokemon.removeVolatile('mustrecharge');
 				this.debug('tireless - remove recharge');
+				this.add('-activate', pokemon, 'ability: Tireless');
 			}
 		},
 		onBeforeMovePriority: 11,
@@ -245,7 +262,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		name: "Tireless",
 		desc: "When this Pokemon uses a move that must spend a turn charging, it executes on the first turn, after any effects are applied from the charge. When it uses a move that must spend a turn recharging, it does not need to recharge.",
 		shortDesc: "This Pokemon's attacks skip charging and recharging turns.",
-		activate: "  [POKEMON] became ready immediately!",
+		activate: "  [POKEMON] became energized immediately!",
 		rating: 2,
 		num: 1014,
 	},

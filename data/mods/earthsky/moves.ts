@@ -1628,6 +1628,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		onTryHitPriority: 4,
 		onTryHit(target, source, move){ //Checks for protection to explode on the shield
 			if(!move.flags['protect']) return; //Don't check if it ignores the effect. Only applies if boosted by Mind Reader
+			console.log("Flame Burst checking for shields");
 			let blocked = false;
 			for (const effectid of ['bunkerdown', 'kingsshield', 'obstruct', 'protect', 'slipaway', 'spikyshield']) {
 				if (target.volatiles[effectid]){
@@ -1635,7 +1636,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					break;
 				}
 			}
+			console.log("Flame Burst does " + (blocked) ? "" : "not" + " see a shield");
 			if(blocked && target.side.active.length > 1){
+				console.log("Flame Burst exploding on shield");
 				for (const ally of target.side.active) {
 					if (ally && this.isAdjacent(target, ally)) {
 						let allyBlock = false;
@@ -1648,6 +1651,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 							this.add('-activate', ally, 'move: Protect');
 							continue;
 						}
+						console.log("Dealing damage");
 						const damage = this.getDamage(source, ally, 60, 'Fire', 'Special');
 						const activeMove = {name: 'Burst', effectType: 'Move', type: 'Fire'};
 						this.damage(damage, ally, source, activeMove as ActiveMove);
@@ -4105,7 +4109,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 			}
 			if(item.fling.flags){
-				move.flags = move.flags.join(item.fling.flags);
+				for(const flag of item.fling.flags){
+					move.flags[flag] = item.fling.flags[flag];
+				}
 			}
 			source.addVolatile('fling');
 		},

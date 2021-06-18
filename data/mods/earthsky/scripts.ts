@@ -10,6 +10,79 @@ export const Scripts: ModdedBattleScriptsData = {
 	},
 	/* sim edits */
 	pokemon: {
+		getMoves(lockedMove?: string | null, restrictData?: boolean): {
+			move: string, id: string, disabled?: string | boolean, disabledSource?: string,
+			target?: string, pp?: number, maxpp?: number,
+		}[] {
+			if (lockedMove) {
+				lockedMove = toID(lockedMove);
+				this.trapped = true;
+				if (lockedMove === 'recharge') {
+					return [{
+						move: 'Recharge',
+						id: 'recharge',
+					}];
+				}
+				for (const moveSlot of this.moveSlots) {
+					if (moveSlot.id !== lockedMove) continue;
+					return [{
+						move: moveSlot.move,
+						id: moveSlot.id,
+					}];
+				}
+				// does this happen?
+				return [{
+					move: this.battle.dex.getMove(lockedMove).name,
+					id: lockedMove,
+				}];
+			}
+			const moves = [];
+			let hasValidMove = false;
+			for (const moveSlot of this.moveSlots) {
+				let moveName = moveSlot.move;
+				if (moveSlot.id === 'hiddenpower') {
+					moveName = 'Hidden Power ' + this.hpType;
+					if (this.battle.gen < 6) moveName += ' ' + this.hpPower;
+				} else if (moveSlot.id === 'return' || moveSlot.id === 'frustration') {
+					const basePowerCallback = this.battle.dex.getMove(moveSlot.id).basePowerCallback as (pokemon: Pokemon) => number;
+					moveName += ' ' + basePowerCallback(this);
+				}
+				let target = moveSlot.target;
+				if (moveSlot.id === 'curse') {
+					if (!this.hasType('Ghost')) {
+						target = this.battle.dex.getMove('curse').nonGhostTarget || moveSlot.target;
+					}
+				}
+				if(pokemon.tacticianBoosted && target === 'normal'){
+					target = 'any';
+				}
+				let disabled = moveSlot.disabled;
+				if (this.volatiles['dynamax']) {
+					disabled = this.maxMoveDisabled(this.battle.dex.getMove(moveSlot.id));
+				} else if (
+					(moveSlot.pp <= 0 && !this.volatiles['partialtrappinglock']) || disabled &&
+					this.side.active.length >= 2 && this.battle.targetTypeChoices(target!)
+				) {
+					disabled = true;
+				}
+
+				if (!disabled) {
+					hasValidMove = true;
+				} else if (disabled === 'hidden' && restrictData) {
+					disabled = false;
+				}
+
+				moves.push({
+					move: moveName,
+					id: moveSlot.id,
+					pp: moveSlot.pp,
+					maxpp: moveSlot.maxpp,
+					target,
+					disabled,
+				});
+			}
+			return hasValidMove ? moves : [];
+		},
 		getTypes(excludeAdded?: boolean): string[] { //Roost allows complete typelessness. Also, added types no longer exist.
 			const types = this.battle.runEvent('Type', this, null, null, this.types);
 			if (types.length) return types;
@@ -182,7 +255,7 @@ export const Scripts: ModdedBattleScriptsData = {
 		}
 	},
 	battle: {
-		validTargetLoc(targetLoc: number, source: Pokemon, targetType: string, canTargetAny?: boolean) { //Tactician and Play Dead
+		validTargetLoc(targetLoc: number, source: Pokemon, targetType: string) { //Tactician and Play Dead
 			if (targetLoc === 0) return true;
 			const numSlots = source.side.active.length;
 			if (Math.abs(targetLoc) > numSlots) return false;
@@ -194,6 +267,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				Math.abs(acrossFromTargetLoc - sourceLoc) <= 1 :
 				Math.abs(targetLoc - sourceLoc) === 1);
 			const isSelf = (sourceLoc === targetLoc);
+			const canTargetAny = source.tacticianBoosted;
 
 			switch (targetType) {
 			case 'randomNormal':
@@ -211,7 +285,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 			return false;
 		},
-		getTarget(pokemon: Pokemon, move: string | Move, targetLoc: number, originalTarget?: Pokemon, canTargetAny?: boolean) { //Tactician and Play Dead
+		getTarget(pokemon: Pokemon, move: string | Move, targetLoc: number, originalTarget?: Pokemon) { //Tactician and Play Dead
 			move = this.dex.getMove(move);
 
 			let tracksTarget = move.tracksTarget;
@@ -232,7 +306,7 @@ export const Scripts: ModdedBattleScriptsData = {
 					!pokemon.volatiles['twoturnmove'] && !pokemon.volatiles['rollout']) {
 				return move.isFutureMove ? pokemon : null;
 			}
-			if (move.target !== 'randomNormal' && this.validTargetLoc(targetLoc, pokemon, move.target, canTargetAny)) {
+			if (move.target !== 'randomNormal' && this.validTargetLoc(targetLoc, pokemon, move.target)) {
 				const target = this.getAtLoc(pokemon, targetLoc);
 				if (target?.fainted && target.side === pokemon.side) {
 					// Target is a fainted ally: attack shouldn't retarget
@@ -246,9 +320,9 @@ export const Scripts: ModdedBattleScriptsData = {
 				// Chosen target not valid,
 				// retarget randomly with getRandomTarget
 			}
-			return this.getRandomTarget(pokemon, move, canTargetAny);
+			return this.getRandomTarget(pokemon, move);
 		},
-		getRandomTarget(pokemon: Pokemon, move: string | Move, canTargetAny?: boolean) { //Tactician and Play Dead
+		getRandomTarget(pokemon: Pokemon, move: string | Move) { //Tactician and Play Dead
 			// A move was used without a chosen target
 
 			// For instance: Metronome chooses Ice Beam. Since the user didn't
@@ -271,7 +345,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				return pokemon;
 			}
 			if (pokemon.side.active.length > 2) {
-				if (!canTargetAny && (move.target === 'adjacentFoe' || move.target === 'normal' || move.target === 'randomNormal')) {
+				if (!pokemon.tacticianBoosted && (move.target === 'adjacentFoe' || move.target === 'normal' || move.target === 'randomNormal')) {
 					// even if a move can target an ally, auto-resolution will never make it target an ally
 					// i.e. if both your opponents faint before you use Flamethrower, it will fail instead of targeting your all
 					const foeActives = pokemon.side.foe.active;
@@ -836,15 +910,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			pokemon.activeMoveActions++;
 
 			// Tactician allows targeting non-adjacents in any case
-			let canTargetAny = false;
-			for(const ally of pokemon.side.active){
-				if (ally.hasAbility('tactician')){ 
-					canTargetAny = true;
-					break;
-				}
-			}
-			
-			let target = this.getTarget(pokemon, maxMove || zMove || moveOrMoveName, targetLoc, originalTarget, canTargetAny);
+			let target = this.getTarget(pokemon, maxMove || zMove || moveOrMoveName, targetLoc, originalTarget);
 			let baseMove = this.dex.getActiveMove(moveOrMoveName);
 			const pranksterBoosted = baseMove.pranksterBoosted;
 			if (baseMove.id !== 'struggle' && !zMove && !maxMove && !externalMove) {
@@ -852,7 +918,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				if (changedMove && changedMove !== true) {
 					baseMove = this.dex.getActiveMove(changedMove);
 					if (pranksterBoosted) baseMove.pranksterBoosted = pranksterBoosted;
-					target = this.getRandomTarget(pokemon, baseMove, canTargetAny);
+					target = this.getRandomTarget(pokemon, baseMove);
 				}
 			}
 			let move = baseMove;
