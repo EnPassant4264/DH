@@ -2349,6 +2349,31 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		desc: "Any ally with the Ability Induction has its Attack, Defense, Special Attack, and Special Defense raised by 1 stage.",
 		shortDesc: "Raises non-Speed stats of allies with Induction by 1.",
 	},
+	meanlook: {
+		num: 212,
+		accuracy: true,
+		basePower: 0,
+		category: "Status",
+		name: "Mean Look",
+		pp: 5,
+		priority: 0,
+		flags: {reflectable: 1, mirror: 1},
+		volatileStatus: 'meanlook',
+		condition: {
+			onStart(target, source, move) {
+				this.add('-activate', target, 'trapped');
+			},
+			onTrapPokemonPriority: 100,
+			onTrapPokemon(pokemon) {
+				pokemon.trapped = true;
+			},
+		},
+		secondary: null,
+		target: "normal",
+		type: "Normal",
+		zMove: {boost: {spd: 1}},
+		contestType: "Beautiful",
+	},
 	meditate: {
 		inherit: true,
 		boosts: {atk: 1, spd: 1},
@@ -3281,6 +3306,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		condition: {
 			duration: 4,
 			onStart(target) {
+				if(!target.addVolatile('trapped', source, move, 'trapper')) return false;
 				this.add('-activate', target, 'trapped');
 			},
 			onTrapPokemon(pokemon) {

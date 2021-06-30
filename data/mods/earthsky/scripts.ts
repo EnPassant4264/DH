@@ -11,7 +11,7 @@ export const Scripts: ModdedBattleScriptsData = {
 	},
 	/* sim edits */
 	pokemon: {
-		getMoves(lockedMove?: string | null, restrictData?: boolean): {
+		/*getMoves(lockedMove?: string | null, restrictData?: boolean): {
 			move: string, id: string, disabled?: string | boolean, disabledSource?: string,
 			target?: string, pp?: number, maxpp?: number,
 		}[] {
@@ -83,7 +83,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				});
 			}
 			return hasValidMove ? moves : [];
-		},
+		},*/
 		getTypes(excludeAdded?: boolean): string[] { //Roost allows complete typelessness. Also, added types no longer exist.
 			const types = this.battle.runEvent('Type', this, null, null, this.types);
 			if (types.length) return types;
@@ -686,7 +686,7 @@ export const Scripts: ModdedBattleScriptsData = {
 					// it's changed; call it off
 					continue;
 				}
-				if (effect.effectType === 'Ability' && (['teravolt','turboblaze'].includes((effectHolder as Pokemon).ability.id) || !effect.isUnbreakable) &&
+				if (effect.effectType === 'Ability' && ((effectSource && ['teravolt','turboblaze'].includes(effectSource.getAbility().id)) || !effect.isUnbreakable) &&
 						this.suppressingAttackEvents(effectHolder as Pokemon)) {
 					// ignore attacking events
 					const AttackingEvents = {
