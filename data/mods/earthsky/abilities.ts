@@ -687,7 +687,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const strongWeathers = ['desolateland', 'primordialsea', 'deltastream'];
-			if (!strongWeathers.includes(weather.id)) return false;
+			if (!strongWeathers.includes(weather.id)){
+				this.add('-activate', this.effectData.target, 'ability: Air Lock');
+				return false;
+			}
 		},
 		suppressWeather: true,
 		name: "Air Lock",
@@ -798,7 +801,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			this.add('-ability', pokemon, 'ability: Cloud Nine');
 		},
 		onAnySetWeather(target, source, weather) {
-			this.add('-ability', pokemon, 'ability: Cloud Nine');
+			this.add('-activate', this.effectData.target, 'ability: Cloud Nine');
 			return false;
 		},
 		onEnd(pokemon) {

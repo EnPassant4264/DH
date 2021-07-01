@@ -1665,7 +1665,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			}
 			for (const ally of target.side.active) {
 				if (ally && this.isAdjacent(target, ally)) {
-					let allyBlock = false;
+					/*let allyBlock = false;
 					for (const effectid of ['bunkerdown', 'kingsshield', 'obstruct', 'protect', 'slipaway', 'spikyshield']) {
 						if (ally.volatiles[effectid]){
 							allyBlock = true;
@@ -1674,10 +1674,20 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					if(allyBlock){
 						this.add('-activate', ally, 'move: Protect');
 						continue;
-					}
-					const damage = this.getDamage(source, ally, 60, 'Fire', 'Special');
+					}*/
+					const burstData: Partial<ActiveMove> = {
+						name: "Burst",
+						power: 60,
+						accuracy: true,
+						category: "Special",
+						flags: {protect: 1},
+						effectType: 'Move',
+						type: 'Fire',
+					};
+					this.tryMoveHit(ally, source, burstData as ActiveMove);
+					/*const damage = this.getDamage(source, ally, 60, 'Fire', 'Special');
 					const activeMove = {name: 'Burst', effectType: 'Move', type: 'Fire'};
-					this.damage(damage, ally, source, activeMove as ActiveMove);
+					this.damage(damage, ally, source, activeMove as ActiveMove);*/
 				}
 			}
 		},
@@ -1928,21 +1938,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			return didSomething;
 		},
 		shortDesc: "Raises ally Steel-types' Attack, Sp. Atk by 1.",
-	},
-	geomancy: {
-		inherit: true,
-		onTryMove(attacker, defender, move) {
-			if (attacker.removeVolatile(move.id)) {
-				return;
-			}
-			this.add('-prepare', attacker, move.name);
-			if (!this.runEvent('ChargeMove', attacker, defender, move)) {
-				return;
-			}
-			attacker.addVolatile('twoturnmove', defender);
-			move.flags['snatch'] = 1;
-			return null;
-		},
 	},
 	glaciate: {
 		inherit: true,
@@ -3269,6 +3264,33 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		accuracy: 100,
 	},
+	snatch: {
+		inherit: true,
+		condition: {
+			duration: 1,
+			onStart(pokemon) {
+				this.add('-singleturn', pokemon, 'Snatch');
+			},
+			onAnyTryMovePriority: 2,
+			onAnyTryMove(source, target, move) {
+				const snatchUser = this.effectData.source;
+				if (snatchUser.isSkyDropped()) return;
+				if (!move || move.isZ || move.isMax || !move.flags['snatch'] || move.sourceEffect === 'snatch') {
+					return;
+				}
+				if(move.id === 'geomancy'){ //First turn, do nothing. Second turn, steal and properly resolve charging turn.
+					if(source.volatiles['twoturnmove'] || !this.runEvent('ChargeMove', source, target, move)){
+						snatchUser.addVolatile('twoturnmove', source); //This flags it so the snatchUser will execute Geomancy instead of charging itself
+						source.removeVolatile(move.id);
+					} else return;
+				}
+				snatchUser.removeVolatile('snatch');
+				this.add('-activate', snatchUser, 'move: Snatch', '[of] ' + source);
+				this.useMove(move.id, snatchUser);
+				return null;
+			},
+		},
+	},
 	snore: {
 		inherit: true,
 		basePower: 80,
@@ -4165,6 +4187,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 			},
 		},
+	},
+	geomancy: {
+		inherit: true,
+		flags: {charge: 1, nonsky: 1, snatch: 1},
+		//Stealing only on the execution turn implemented in Snatch itself.
 	},
 	mirrormove: {
 		inherit: true,
