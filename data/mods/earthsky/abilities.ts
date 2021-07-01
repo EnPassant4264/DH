@@ -806,7 +806,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onEnd(pokemon) {
 			let returningWeather = '';
-			for (const target of this.speedSort(this.getAllActive())) {
+			for (const target of this.speedSort(this.getAllActive(), (a, b) => b.speed - a.speed)) {
 				if (target.hasAbility('desolateland')) {
 					returningWeather = 'desolateland';
 				} else if (target.hasAbility('primordialsea')) {

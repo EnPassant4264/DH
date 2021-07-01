@@ -3279,8 +3279,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					return;
 				}
 				if(move.id === 'geomancy'){ //First turn, do nothing. Second turn, steal and properly resolve charging turn.
-					if(source.volatiles['twoturnmove'] || !this.runEvent('ChargeMove', source, target, move)){
-						snatchUser.addVolatile('twoturnmove', source); //This flags it so the snatchUser will execute Geomancy instead of charging itself
+					if(source.volatiles['twoturnmove'] || !this.singleEvent('ChargeMove', source, target, move)){
+						snatchUser.addVolatile('geomancy', source); //This flags it so the snatchUser will execute Geomancy instead of charging itself
 						source.removeVolatile(move.id);
 					} else return;
 				}
