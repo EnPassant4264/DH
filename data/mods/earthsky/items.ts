@@ -174,11 +174,12 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 				return;
 			}
 			console.log("Move priority is " + move.priority);
-			if (move.priority > 0.1	&& this.dex.getImmunity('powder', source) && target.useItem())
+			if (move.priority > 0.1 && target.useItem())
 			{
-				this.attrLastMove('[still]');
 				this.add('activate', target, 'item: BrightPowder');
-				this.add('cant', target, 'item: BrightPowder', move, '[of] ' + source);
+				if(this.dex.getImmunity('powder', source)) return;
+				this.attrLastMove('[still]');
+				this.add('cant', source, 'item: BrightPowder', move);
 				return false;
 			}
 		},
@@ -444,6 +445,63 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		},
 		desc: "Restores 12.5% max HP at 1/4 max HP or less. If -Def Nature, restores 50% instead, but confuses. Single use.",
 	},
+	/* Items edited as part of other elements */
+	absorbbulb: {
+		inherit: true,
+		onDamagingHit(damage, target, source, move) {
+			if (move.type === 'Water' || (move.twoType && move.twoType === 'Water')) {
+				target.useItem();
+			}
+		},
+	},
+	blueorb: {
+		inherit: true,
+		onSwitchIn(pokemon) {
+			if (pokemon.isActive && pokemon.baseSpecies.name === 'Kyogre' && !('magicroom' in this.field.pseudoWeather)) {
+				this.queue.insertChoice({choice: 'runPrimal', pokemon: pokemon});
+			}
+		},
+	},
+	cellbattery: {
+		inherit: true,
+		onDamagingHit(damage, target, source, move) {
+			if (move.type === 'Electric' || (move.twoType && move.twoType === 'Electric')) {
+				target.useItem();
+			}
+		},
+	},
+	luminousmoss: {
+		inherit: true,
+		onDamagingHit(damage, target, source, move) {
+			if (move.type === 'Water' || (move.twoType && move.twoType === 'Water')) {
+				target.useItem();
+			}
+		},
+	},
+	redorb: {
+		inherit: true,
+		onSwitchIn(pokemon) {
+			if (pokemon.isActive && pokemon.baseSpecies.name === 'Groudon' && !('magicroom' in this.field.pseudoWeather)) {
+				this.queue.insertChoice({choice: 'runPrimal', pokemon: pokemon});
+			}
+		},
+	},
+	shedshell: {
+		inherit: true,
+		onTrapPokemon(pokemon) {
+			if(!pokemon.volatiles['meanlooked']){
+				pokemon.trapped = pokemon.maybeTrapped = false;
+			}
+		},
+	},
+	snowball: {
+		inherit: true,
+		onDamagingHit(damage, target, source, move) {
+			if (move.type === 'Ice' || (move.twoType && move.twoType === 'Ice')) {
+				target.useItem();
+			}
+		},
+	},
 	/* Misc. changes related to other elements */
 	airballoon: {
 		inherit: true,
@@ -503,55 +561,6 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 	powerweight: {
 		inherit: true,
 		ignoreKlutz: false,
-	},
-	/* Items edited as part of other elements */
-	absorbbulb: {
-		inherit: true,
-		onDamagingHit(damage, target, source, move) {
-			if (move.type === 'Water' || (move.twoType && move.twoType === 'Water')) {
-				target.useItem();
-			}
-		},
-	},
-	blueorb: {
-		inherit: true,
-		onSwitchIn(pokemon) {
-			if (pokemon.isActive && pokemon.baseSpecies.name === 'Kyogre' && !('magicroom' in this.field.pseudoWeather)) {
-				this.queue.insertChoice({choice: 'runPrimal', pokemon: pokemon});
-			}
-		},
-	},
-	cellbattery: {
-		inherit: true,
-		onDamagingHit(damage, target, source, move) {
-			if (move.type === 'Electric' || (move.twoType && move.twoType === 'Electric')) {
-				target.useItem();
-			}
-		},
-	},
-	luminousmoss: {
-		inherit: true,
-		onDamagingHit(damage, target, source, move) {
-			if (move.type === 'Water' || (move.twoType && move.twoType === 'Water')) {
-				target.useItem();
-			}
-		},
-	},
-	redorb: {
-		inherit: true,
-		onSwitchIn(pokemon) {
-			if (pokemon.isActive && pokemon.baseSpecies.name === 'Groudon' && !('magicroom' in this.field.pseudoWeather)) {
-				this.queue.insertChoice({choice: 'runPrimal', pokemon: pokemon});
-			}
-		},
-	},
-	snowball: {
-		inherit: true,
-		onDamagingHit(damage, target, source, move) {
-			if (move.type === 'Ice' || (move.twoType && move.twoType === 'Ice')) {
-				target.useItem();
-			}
-		},
 	},
 	/* Natural Gift adjustments (also type-reduction edits for dual-type moves) */
 	cheriberry: {

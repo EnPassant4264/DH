@@ -4179,10 +4179,10 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			}
 			if(item.fling.flags){
 				console.log(item.fling.flags);
-				const itemFlags = item.fling.flags as Map<string, int>;
+				const itemFlags: Map<string, int> = (item.fling.flags as Map<string, int>);
 				console.log(itemFlags);
 				console.log(itemFlags.keys);
-				itemFlags.forEach((value, key) => move.flags[key] = value);
+				itemFlags.forEach((value, key) => {move.flags[key] = value});
 				/*for(const flagNum in item.fling.flags.keys()){
 					const flag = item.fling.flags.keys[flag];
 					console.log(flag);

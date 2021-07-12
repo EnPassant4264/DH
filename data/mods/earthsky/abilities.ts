@@ -1308,7 +1308,9 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	runaway: {
 		onTrapPokemonPriority: -10,
 		onTrapPokemon(pokemon) {
-			pokemon.trapped = pokemon.maybeTrapped = false;
+			if(!pokemon.volatiles['meanlooked']){
+				pokemon.trapped = pokemon.maybeTrapped = false;
+			}
 		},
 		name: "Run Away",
 		desc: "Holder may switch out even when trapped by another Pokemon.",

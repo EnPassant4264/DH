@@ -209,7 +209,7 @@ export const Conditions: {[k: string]: ModdedConditionData} = {
 		},
 		onTrapPokemonPriority: 100,
 		onTrapPokemon(pokemon) {
-			pokemon.trapped = true;
+			pokemon.trapped = pokemon.maybeTrapped = true;
 		},
 	},
 	choicelock: {
