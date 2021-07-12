@@ -211,7 +211,7 @@ export const Conditions: {[k: string]: ModdedConditionData} = {
 		onTrapPokemon(pokemon) {
 			pokemon.trapped = true;
 		},
-	}
+	},
 	choicelock: {
 		name: 'choicelock',
 		noCopy: true,
