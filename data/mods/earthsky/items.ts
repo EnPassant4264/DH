@@ -160,6 +160,15 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		num: 1012,
 	},
 	//Edited items
+	adamantorb: {
+		inherit: true,
+		fling: {
+			basePower: 60,
+			flags: {bullet: 1},
+		},
+		desc: "If held by a Dialga, its Steel- and Dragon-type attacks have 1.2x power. When Flung, counts as a projectile move.",
+		shortDesc: "If held by a Dialga, its Steel- and Dragon-type attacks have 1.2x power.",
+	},
 	brightpowder: {
 		name: "Bright Powder",
 		spritenum: 51,
@@ -187,6 +196,16 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		shortDesc: "Protects from a priority move. When Flung, -2 accuracy.",
 		block: '#damp',
 	},
+	flameorb: {
+		inherit: true,
+		fling: {
+			basePower: 30,
+			status: 'brn',
+			flags: {bullet: 1},
+		},
+		desc: "At the end of every turn, this item attempts to burn the holder. When Flung, burns the target and counts as a projectile move.",
+		shortDesc: "At the end of every turn, this item attempts to burn the holder.",
+	},
 	fullincense: {
 		name: "Full Incense",
 		spritenum: 155,
@@ -200,6 +219,15 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		gen: 4,
 		desc: "Halves all allies' speed.",
 	},
+	griseousorb: {
+		inherit: true,
+		fling: {
+			basePower: 60,
+			flags: {bullet: 1},
+		},
+		desc: "If held by a Giratina, its Ghost- and Dragon-type attacks have 1.2x power, and it becomes its Origin Forme. When Flung, counts as a projectile move.",
+		shortDesc: "If held by a Giratina, its Ghost- and Dragon-type attacks have 1.2x power.",
+	},
 	ironball: {
 		inherit: true,
 		onStart(pokemon){
@@ -210,8 +238,9 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		fling: {
 			basePower: 130,
 			volatileStatus: 'smackdown',
+			flags: {bullet: 1},
 		},
-		desc: "The holder is grounded and cannot be made to float. The holder's Speed is halved. When Flung, grounds the target.",
+		desc: "The holder is grounded and cannot be made to float. The holder's Speed is halved. When Flung, grounds the target and counts as a projectile move.",
 		shortDesc: "Holder is grounded, Speed halved. If Flying type, takes neutral Ground damage.",
 	},
 	laxincense: {
@@ -223,6 +252,34 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		num: 255,
 		gen: 3,
 		desc: "No competitive use.",
+	},
+	lifeorb: {
+		inherit: true,
+		fling: {
+			basePower: 30,
+			flags: {bullet: 1},
+		},
+		desc: "Holder's attacks have their power boosted by 1.3x, but it loses 10% its max HP after each attack. When Flung, counts as a projectile move.",
+		shortDesc: "Holder's attacks do 1.3x damage, and it loses 1/10 its max HP after the attack.",
+	},
+	lightball: {
+		inherit: true,
+		fling: {
+			basePower: 30,
+			status: 'par',
+			flags: {bullet: 1},
+		},
+		desc: "If held by a Pikachu, its Attack and Sp. Attack stats are doubled. When Flung, paralyzes the target and counts as a projectile move.",
+		shortDesc: "If held by a Pikachu, its Attack and Sp. Atk are doubled.",
+	},
+	lustrousorb: {
+		inherit: true,
+		fling: {
+			basePower: 60,
+			flags: {bullet: 1},
+		},
+		desc: "If held by a Palkia, its Water- and Dragon-type attacks have 1.2x power. When Flung, counts as a projectile move.",
+		shortDesc: "If held by a Palkia, its Water- and Dragon-type attacks have 1.2x power.",
 	},
 	metalpowder: {
 		name: "Metal Powder",
@@ -335,6 +392,16 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			}
 			this.boost({[statName]: 2}, pokemon);
 		},
+	},
+	toxicorb: {
+		inherit: true,
+		fling: {
+			basePower: 30,
+			status: 'tox',
+			flags: {bullet: 1},
+		},
+		desc: "At the end of every turn, this item attempts to badly poison the holder. When Flung, badly poisons the target and counts as a projectile move.",
+		shortDesc: "At the end of every turn, this item attempts to badly poison the holder.",
 	},
 	ultranecroziumz: {
 		name: "Ultranecrozium Z",
@@ -454,6 +521,10 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 	},
 	blueorb: {
 		inherit: true,
+		fling: {
+			basePower: 60,
+			flags: {bullet: 1},
+		},
 		onSwitchIn(pokemon) {
 			if (pokemon.isActive && pokemon.baseSpecies.name === 'Kyogre' && !('magicroom' in this.field.pseudoWeather)) {
 				this.queue.insertChoice({choice: 'runPrimal', pokemon: pokemon});
@@ -478,6 +549,10 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 	},
 	redorb: {
 		inherit: true,
+		fling: {
+			basePower: 60,
+			flags: {bullet: 1},
+		},
 		onSwitchIn(pokemon) {
 			if (pokemon.isActive && pokemon.baseSpecies.name === 'Groudon' && !('magicroom' in this.field.pseudoWeather)) {
 				this.queue.insertChoice({choice: 'runPrimal', pokemon: pokemon});

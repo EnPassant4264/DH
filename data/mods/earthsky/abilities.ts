@@ -1736,6 +1736,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					this.add('-activate', pokemon, 'ability: Trace');
 					this.add('-immune', target, '[from] ability: Own Tempo');
 					this.hint('Own Tempo blocks effects that steal or copy its attributes');
+					this.effectData.gaveUp = true;
 					return;
 				}
 				const ability = target.getAbility();
@@ -1751,6 +1752,9 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				pokemon.setAbility(ability);
 				return;
 			}
+		},
+		onEnd(pokemon){
+			if(this.effectData.gaveUp) delete this.effectData.gaveUp;
 		},
 	},
 	whitesmoke: {

@@ -3294,7 +3294,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onStart(pokemon) {
 				this.add('-singleturn', pokemon, 'Snatch');
 			},
-			onAnyTryMovePriority: 2,
 			onAnyTryMove(source, target, move) {
 				const snatchUser = this.effectData.source;
 				if (snatchUser.isSkyDropped()) return;
@@ -3306,14 +3305,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					this.hint('Own Tempo blocks effects that steal or copy its moves');
 					return;
 				}
-				if(move.id === 'geomancy'){ //First turn, do nothing. Second turn, steal and resolve target's charging turn.
-					if(source.volatiles['twoturnmove'] || !this.runEvent('ChargeMove', source, target, move)) {
-						snatchUser.addVolatile('geomancy', source); //IDK why, but this seems to trigger stealing Herbed Geomancy
+				/*if(move.id === 'geomancy'){ //First turn, do nothing. Second turn, steal and resolve target's charging turn.
+					if(source.volatiles['twoturnmove'] || !this.singleEvent('ChargeMove', source, target, move)) {
 						source.removeVolatile(move.id);
 					} else {
 						return;
 					}
-				}
+				}*/
 				snatchUser.removeVolatile('snatch');
 				this.add('-activate', snatchUser, 'move: Snatch', '[of] ' + source);
 				this.useMove(move.id, snatchUser);
