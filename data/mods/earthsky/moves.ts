@@ -1611,8 +1611,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 			onResidualOrder: 5,
 			onResidualSubOrder: 1,
-			onResidual(side) {
-				for (const pokemon of side.active) {
+			onResidual(targetSide) {
+				for (const pokemon of targetSide.active) {
 					if (pokemon && pokemon.isGrounded() && !pokemon.hasType('Fire') && !('safeguard' in targetSide.sideConditions)) {
 						this.damage(pokemon.baseMaxhp / 8, pokemon);
 					}
@@ -4181,8 +4181,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				console.log(item.fling.flags);
 				const itemFlags = item.fling.flags as Map<string, int>;
 				console.log(itemFlags);
-				console.log(itemFlags.keys());
-				itemFlags.forEach((key, value) => move.flags[key] = value);
+				console.log(itemFlags.keys);
+				itemFlags.forEach((value, key) => move.flags[key] = value);
 				/*for(const flagNum in item.fling.flags.keys()){
 					const flag = item.fling.flags.keys[flag];
 					console.log(flag);

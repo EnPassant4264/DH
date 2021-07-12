@@ -168,7 +168,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			boosts: {accuracy: -2},
 			flags: {powder: 1},
 		},
-		onFoeTryMove(target, source, move) {
+		onFoeTryMove(source, target, move) {
 			console.log(source + " using " + move + " on " + target);
 			if (move.target === 'foeSide' || (move.target === 'all' && move.id !== 'perishsong')) {
 				return;
@@ -178,6 +178,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			{
 				this.attrLastMove('[still]');
 				this.add('activate', target, 'item: BrightPowder');
+				this.add('cant', target, 'item: BrightPowder', move, '[of] ' + source);
 				return false;
 			}
 		},
@@ -185,6 +186,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		gen: 2,
 		desc: "Causes a priority move that targets the holder to fail, which consumes the item. The effect fails if the attacker is immune to powder moves, but the item is still consumed. When Flung, the target's accuracy is lowered 2 stages.",
 		shortDesc: "Protects from a priority move. When Flung, -2 accuracy.",
+		block: '#damp',
 	},
 	fullincense: {
 		name: "Full Incense",
@@ -514,7 +516,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 	blueorb: {
 		inherit: true,
 		onSwitchIn(pokemon) {
-			if (pokemon.isActive && pokemon.baseSpecies.name === 'Kyogre' && !('magicroom' in this.battle.field.pseudoWeather)) {
+			if (pokemon.isActive && pokemon.baseSpecies.name === 'Kyogre' && !('magicroom' in this.field.pseudoWeather)) {
 				this.queue.insertChoice({choice: 'runPrimal', pokemon: pokemon});
 			}
 		},
@@ -538,7 +540,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 	redorb: {
 		inherit: true,
 		onSwitchIn(pokemon) {
-			if (pokemon.isActive && pokemon.baseSpecies.name === 'Groudon' && !('magicroom' in this.battle.field.pseudoWeather)) {
+			if (pokemon.isActive && pokemon.baseSpecies.name === 'Groudon' && !('magicroom' in this.field.pseudoWeather)) {
 				this.queue.insertChoice({choice: 'runPrimal', pokemon: pokemon});
 			}
 		},

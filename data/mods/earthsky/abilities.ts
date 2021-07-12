@@ -2206,16 +2206,15 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	/* Abiltiies edited as part of another element's edit */
 	dazzling: {
-		onFoeTryMove(target, source, move) {
-			const targetAllExceptions = ['perishsong'];
-			if (move.target === 'foeSide' || (move.target === 'all' && !targetAllExceptions.includes(move.id))) {
+		onFoeTryMove(source, target, move) {
+			if (move.target === 'foeSide' || (move.target === 'all' &&  move.id !== 'perishsong')) {
 				return;
 			}
 
 			const dazzlingHolder = this.effectData.target;
-			if ((source.side === dazzlingHolder.side || move.target === 'all') && move.priority > 0.1) {
+			if ((target.side === dazzlingHolder.side || move.target === 'all') && move.priority > 0.1) {
 				this.attrLastMove('[still]');
-				this.add('cant', dazzlingHolder, 'ability: Dazzling', move, '[of] ' + target);
+				this.add('cant', dazzlingHolder, 'ability: Dazzling', move, '[of] ' + source);
 				return false;
 			}
 		},
@@ -2290,16 +2289,15 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		isNonstandard: "Past",
 	},
 	majesty: {
-		onFoeTryMove(target, source, move) {
-			const targetAllExceptions = ['perishsong'];
-			if (move.target === 'foeSide' || (move.target === 'all' && !targetAllExceptions.includes(move.id))) {
+		onFoeTryMove(source, target, move) {
+			if (move.target === 'foeSide' || (move.target === 'all' &&  move.id !== 'perishsong')) {
 				return;
 			}
 
 			const dazzlingHolder = this.effectData.target;
-			if ((source.side === dazzlingHolder.side || move.target === 'all') && move.priority > 0.1) {
+			if ((target.side === dazzlingHolder.side || move.target === 'all') && move.priority > 0.1) {
 				this.attrLastMove('[still]');
-				this.add('cant', dazzlingHolder, 'ability: Majesty', move, '[of] ' + target);
+				this.add('cant', dazzlingHolder, 'ability: Majesty', move, '[of] ' + source);
 				return false;
 			}
 		},
