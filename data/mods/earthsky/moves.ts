@@ -2383,18 +2383,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		priority: 0,
 		flags: {reflectable: 1, mirror: 1},
 		onHit(target, source, move) {
-			return target.addVolatile('meanlook', source, move, 'trapper');
+			return target.addVolatile('meanlooked', source, move, 'trapper');
 		},
-		condition: {
-			noCopy: true,
-			onStart(target, source, move) {
-				this.add('-activate', target, 'trapped');
-			},
-			onTrapPokemonPriority: 100,
-			onTrapPokemon(pokemon) {
-				pokemon.trapped = true;
-			},
-		},
+		//Condition implemented in conditions.ts because otherwise addVolatile crashes for them having the same name.
 		secondary: null,
 		target: "normal",
 		type: "Normal",
@@ -4188,8 +4179,10 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			}
 			if(item.fling.flags){
 				console.log(item.fling.flags);
-				console.log(item.fling.flags.keys());
-				item.fling.flags.forEach((key, value) => move.flags[key] = value);
+				const itemFlags = item.fling.flags as Map<string, int>;
+				console.log(itemFlags);
+				console.log(itemFlags.keys());
+				itemFlags.forEach((key, value) => move.flags[key] = value);
 				/*for(const flagNum in item.fling.flags.keys()){
 					const flag = item.fling.flags.keys[flag];
 					console.log(flag);

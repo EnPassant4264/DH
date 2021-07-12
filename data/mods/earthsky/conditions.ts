@@ -201,6 +201,17 @@ export const Conditions: {[k: string]: ModdedConditionData} = {
 			return false;
 		},
 	},
+	meanlooked: {
+		name: 'meanlooked',
+		noCopy: true,
+		onStart(target, source, move) {
+			this.add('-activate', target, 'trapped');
+		},
+		onTrapPokemonPriority: 100,
+		onTrapPokemon(pokemon) {
+			pokemon.trapped = true;
+		},
+	}
 	choicelock: {
 		name: 'choicelock',
 		noCopy: true,

@@ -170,8 +170,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		},
 		onFoeTryMove(target, source, move) {
 			console.log(source + " using " + move + " on " + target);
-			console.log(this.effectData.target);
-			if (move.target === 'foeSide' || (move.target === 'all' && move.id !== 'perishsong') || target !== this.effectData.target) {
+			if (move.target === 'foeSide' || (move.target === 'all' && move.id !== 'perishsong')) {
 				return;
 			}
 			console.log("Move priority is " + move.priority);
