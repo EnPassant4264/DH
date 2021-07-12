@@ -3307,7 +3307,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					return;
 				}
 				if(move.id === 'geomancy'){ //First turn, do nothing. Second turn, steal and resolve target's charging turn.
-					if(source.volatiles['twoturnmove'] || !this.singleEvent('ChargeMove', source, target, move)) {
+					if(source.volatiles['twoturnmove'] || !this.runEvent('ChargeMove', source, target, move)) {
+						snatchUser.addVolatile('geomancy', source); //IDK why, but this seems to trigger stealing Herbed Geomancy
 						source.removeVolatile(move.id);
 					} else {
 						return;
