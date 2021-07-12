@@ -3307,10 +3307,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					return;
 				}
 				if(move.id === 'geomancy'){ //First turn, do nothing. Second turn, steal and resolve target's charging turn.
-					if(source.volatiles['twoturnmove'] || !this.singleEvent('ChargeMove', source, target, move))
+					if(source.volatiles['twoturnmove'] || !this.singleEvent('ChargeMove', source, target, move)) {
 						source.removeVolatile(move.id);
-					else
+					} else {
 						return;
+					}
 				}
 				snatchUser.removeVolatile('snatch');
 				this.add('-activate', snatchUser, 'move: Snatch', '[of] ' + source);
@@ -4158,7 +4159,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			if(source.ignoringItem()) return; //Will properly return false later
 			const item = source.getItem();
 			if(item.fling && item.fling.flags){
-				console.log(item.fling.flags);
 				Object.keys(item.fling.flags).forEach(key => {move.flags[key] = item.fling.flags[key]});
 				/*for(const flagNum in item.fling.flags.keys()){
 					const flag = item.fling.flags.keys[flag];

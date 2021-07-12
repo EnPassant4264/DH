@@ -1733,8 +1733,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				if (possibleTargets.length > 1) rand = this.random(possibleTargets.length);
 				const target = possibleTargets[rand];
 				if(target.ability === 'owntempo'){ //Own Tempo isn't exempt from copying, it causes it to fail
+					this.add('-activate', pokemon, '[from] ability: Trace');
 					this.add('-immune', target, '[from] ability: Own Tempo');
 					this.hint('Own Tempo blocks effects that steal or copy its attributes');
+					this.effectData.gaveUp = true;
 					return;
 				}
 				const ability = target.getAbility();
