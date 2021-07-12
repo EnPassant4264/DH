@@ -2328,7 +2328,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			// Item suppression implemented in Pokemon.ignoringItem() within sim/pokemon.js
 			onPrimal(pokemon){
 				return false;
-			}
+			},
 			onResidualOrder: 25,
 			onEnd() {
 				this.add('-fieldend', 'move: Magic Room', '[of] ' + this.effectData.source);
