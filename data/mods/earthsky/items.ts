@@ -170,6 +170,7 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		},
 		onFoeTryMove(target, source, move) {
 			console.log(source + " using " + move + " on " + target);
+			console.log(this.effectData.target);
 			if (move.target === 'foeSide' || (move.target === 'all' && move.id !== 'perishsong') || target !== this.effectData.target) {
 				return;
 			}
@@ -511,6 +512,14 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			}
 		},
 	},
+	blueorb: {
+		inherit: true,
+		onSwitchIn(pokemon) {
+			if (pokemon.isActive && pokemon.baseSpecies.name === 'Kyogre' && !('magicroom' in this.battle.field.pseudoWeather)) {
+				this.queue.insertChoice({choice: 'runPrimal', pokemon: pokemon});
+			}
+		},
+	},
 	cellbattery: {
 		inherit: true,
 		onDamagingHit(damage, target, source, move) {
@@ -524,6 +533,14 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		onDamagingHit(damage, target, source, move) {
 			if (move.type === 'Water' || (move.twoType && move.twoType === 'Water')) {
 				target.useItem();
+			}
+		},
+	},
+	redorb: {
+		inherit: true,
+		onSwitchIn(pokemon) {
+			if (pokemon.isActive && pokemon.baseSpecies.name === 'Groudon' && !('magicroom' in this.battle.field.pseudoWeather)) {
+				this.queue.insertChoice({choice: 'runPrimal', pokemon: pokemon});
 			}
 		},
 	},

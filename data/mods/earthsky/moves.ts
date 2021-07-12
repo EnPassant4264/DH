@@ -1059,22 +1059,24 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		pp: 5,
 		priority: 0,
 		flags: {reflectable: 1, mirror: 1},
-		volatileStatus: 'block',
+		onHit(target, source, move) {
+			return target.addVolatile('block', source, move, 'trapper');
+		},
 		condition: {
 			onTrapPokemon(pokemon) {
 				pokemon.tryTrap();
 			},
 			onTryMove(damage, target, source, move) {
-				if(!source?.hasItem('shedshell')) delete move.selfSwitch;
+				if(move.selfSwitch && !(source?.hasItem('shedshell'))) delete move.selfSwitch;
 			},
 			onAfterMoveSecondaryPriority: 3,
 			onAfterMoveSecondary(target, source, move) {
-				if(target === this.effectData.target && !target?.hasItem('shedshell')){
+				if(!(source?.hasItem('shedshell'))){
 					target.switchFlag = false;
 				}
 			},
 			onEmergencyExit(target) {
-				if(target === this.effectData.target && !target?.hasItem('shedshell')){
+				if(!(target?.hasItem('shedshell'))){
 					target.switchFlag = false;
 					return false;
 				}
@@ -1601,7 +1603,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 			onEnd(targetSide) {
 				for (const pokemon of targetSide.active) {
-					if (pokemon && pokemon.isGrounded() && !pokemon.hasType('Fire')) {
+					if (pokemon && pokemon.isGrounded() && !pokemon.hasType('Fire') && !('safeguard' in targetSide.sideConditions)) {
 						this.damage(pokemon.baseMaxhp / 8, pokemon);
 					}
 				}
@@ -1611,7 +1613,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			onResidualSubOrder: 1,
 			onResidual(side) {
 				for (const pokemon of side.active) {
-					if (pokemon && pokemon.isGrounded() && !pokemon.hasType('Fire')) {
+					if (pokemon && pokemon.isGrounded() && !pokemon.hasType('Fire') && !('safeguard' in targetSide.sideConditions)) {
 						this.damage(pokemon.baseMaxhp / 8, pokemon);
 					}
 				}
@@ -2305,7 +2307,34 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		shortDesc: "Changes the target's secondary typing to Psychic.",
 		contestType: "Cute",
 	},
-	//Magic Room changes implemented in other moves.
+	magicroom: {
+		inherit: true,
+		//Handles Primal Reversion change only, because it's run through an event. Item-eating moves and Mega/Ultra are implemented in their source locations.
+		condition: {
+			duration: 5,
+			durationCallback(source, effect) {
+				if (source?.hasAbility('persistent')) {
+					this.add('-activate', source, 'ability: Persistent', effect);
+					return 7;
+				}
+				return 5;
+			},
+			onStart(target, source) {
+				this.add('-fieldstart', 'move: Magic Room', '[of] ' + source);
+			},
+			onRestart(target, source) {
+				this.field.removePseudoWeather('magicroom');
+			},
+			// Item suppression implemented in Pokemon.ignoringItem() within sim/pokemon.js
+			onPrimal(pokemon){
+				return false;
+			}
+			onResidualOrder: 25,
+			onEnd() {
+				this.add('-fieldend', 'move: Magic Room', '[of] ' + this.effectData.source);
+			},
+		},
+	},
 	magnetrise: {
 		inherit: true,
 		volatileStatus: 'magnetrise',
@@ -2353,8 +2382,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		pp: 5,
 		priority: 0,
 		flags: {reflectable: 1, mirror: 1},
-		volatileStatus: 'meanlook',
+		onHit(target, source, move) {
+			return target.addVolatile('meanlook', source, move, 'trapper');
+		},
 		condition: {
+			noCopy: true,
 			onStart(target, source, move) {
 				this.add('-activate', target, 'trapped');
 			},
@@ -4156,12 +4188,13 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			}
 			if(item.fling.flags){
 				console.log(item.fling.flags);
-				console.log(item.fling.flags.keys);
-				for(const flagNum in item.fling.flags.keys){
+				console.log(item.fling.flags.keys());
+				item.fling.flags.forEach((key, value) => move.flags[key] = value);
+				/*for(const flagNum in item.fling.flags.keys()){
 					const flag = item.fling.flags.keys[flag];
 					console.log(flag);
 					move.flags[flag] = item.fling.flags[flag];
-				}
+				}*/
 			}
 			source.addVolatile('fling');
 		},

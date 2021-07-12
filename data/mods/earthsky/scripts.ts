@@ -607,7 +607,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			// ...but 16-bit truncation happens even later, and can truncate to 0
 			return tr(baseDamage, 16);
 		},
-		runEvent( //I have to copy this whole big function just to add a few lines :(
+		runEvent( //Adding weather and terrain suppressors
 		eventid: string, target?: Pokemon | Pokemon[] | Side | Battle | null, source?: string | Pokemon | false | null,
 		sourceEffect?: Effect | null, relayVar?: any, onEffect?: boolean, fastExit?: boolean
 		) {
@@ -783,7 +783,7 @@ export const Scripts: ModdedBattleScriptsData = {
 
 			return Array.isArray(target) ? targetRelayVars : relayVar;
 		},
-		singleEvent( //Same here :((
+		singleEvent( //Same here
 			eventid: string, effect: Effect, effectData: AnyObject | null,
 			target: string | Pokemon | Side | Field | Battle | null, source?: string | Pokemon | Effect | false | null,
 			sourceEffect?: Effect | string | null, relayVar?: any
@@ -1406,7 +1406,6 @@ export const Scripts: ModdedBattleScriptsData = {
 				let accuracy = move.accuracy;
 				if (move.ohko) { // bypasses accuracy modifiers
 					if (!target.isSemiInvulnerable()) {
-						accuracy = 30;
 						//MODDED: Removed Sheer Cold's accuracy drop
 						if (!target.volatiles['dynamax'] && pokemon.level >= target.level &&
 							(move.ohko === true || !target.hasType(move.ohko))) {
