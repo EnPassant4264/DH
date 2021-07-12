@@ -169,15 +169,13 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 			flags: {powder: 1},
 		},
 		onFoeTryMove(source, target, move) {
-			console.log(source + " using " + move + " on " + target);
 			if (move.target === 'foeSide' || (move.target === 'all' && move.id !== 'perishsong')) {
 				return;
 			}
-			console.log("Move priority is " + move.priority);
 			if (move.priority > 0.1 && target.useItem())
 			{
 				this.add('activate', target, 'item: BrightPowder');
-				if(this.dex.getImmunity('powder', source)) return;
+				if(!this.dex.getImmunity('powder', source)) return;
 				this.attrLastMove('[still]');
 				this.add('cant', source, 'item: BrightPowder', move);
 				return false;

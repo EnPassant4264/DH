@@ -4149,6 +4149,19 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	fling: {
 		inherit: true,
+		onTryMove(target, source, move){ //Needs to add flags before Fling is used, so the target can check for immunity to the item
+			if(source.ignoringItem()) return; //Will properly return false later
+			const item = source.getItem();
+			if(item.fling && item.fling.flags){
+				console.log(item.fling.flags);
+				Object.keys(item.fling.flags).forEach(key => {move.flags[key] = item.fling.flags[key]});
+				/*for(const flagNum in item.fling.flags.keys()){
+					const flag = item.fling.flags.keys[flag];
+					console.log(flag);
+					move.flags[flag] = item.fling.flags[flag];
+				}*/
+			}
+		},
 		onPrepareHit(target, source, move) {
 			if (source.ignoringItem()) return false;
 			const item = source.getItem();
@@ -4176,18 +4189,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					move.secondaries.push({boosts: item.fling.boosts});
 					move.secondaries.push({chance: 100});
 				}
-			}
-			if(item.fling.flags){
-				console.log(item.fling.flags);
-				const itemFlags: Map<string, int> = (item.fling.flags as Map<string, int>);
-				console.log(itemFlags);
-				console.log(itemFlags.keys);
-				itemFlags.forEach((value, key) => {move.flags[key] = value});
-				/*for(const flagNum in item.fling.flags.keys()){
-					const flag = item.fling.flags.keys[flag];
-					console.log(flag);
-					move.flags[flag] = item.fling.flags[flag];
-				}*/
 			}
 			source.addVolatile('fling');
 		},
