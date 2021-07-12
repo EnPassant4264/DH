@@ -1480,7 +1480,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				}
 				if (stolen) {
 					if(target.hasAbility('owntempo')){
-						this.add('-activate', pokemon, '[from] ability: Own Tempo');
+						this.add('-activate', target, 'ability: Own Tempo');
 						this.hint('Own Tempo blocks effects that steal, copy, or overwrite its attributes');
 						return;
 					}

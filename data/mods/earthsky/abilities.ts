@@ -1706,7 +1706,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			const target = pokemon.side.foe.active[pokemon.side.foe.active.length - 1 - pokemon.position];
 			if (target) {
 				if(target.hasAbility('owntempo')){
-					this.add('-immune', pokemon, '[from] ability: Own Tempo');
+					this.add('-immune', target, '[from] ability: Own Tempo');
 					this.hint('Own Tempo blocks effects that steal or copy its attributes');
 					return;
 				}
@@ -1741,8 +1741,8 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					possibleTargets.splice(rand, 1);
 					continue;
 				}
-				if(ability = 'owntempo'){ //Own Tempo isn't exempt from copying, it causes it to fail
-					this.add('-immune', pokemon, '[from] ability: Own Tempo');
+				if(ability === 'owntempo'){ //Own Tempo isn't exempt from copying, it causes it to fail
+					this.add('-immune', target, '[from] ability: Own Tempo');
 					this.hint('Own Tempo blocks effects that steal or copy its attributes');
 					return;
 				}

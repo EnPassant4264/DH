@@ -4149,7 +4149,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	fling: {
 		inherit: true,
-		onTryMove(target, source, move){ //Needs to add flags before Fling is used, so the target can check for immunity to the item
+		onTryMove(source, target, move){ //Needs to add flags before Fling is used, so the target can check for immunity to the item
 			if(source.ignoringItem()) return; //Will properly return false later
 			const item = source.getItem();
 			if(item.fling && item.fling.flags){
@@ -4222,17 +4222,17 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	mirrormove: {
 		inherit: true,
-		onTryHit(target, pokemon) {
+		onTryHit(target, source) {
 			if(target.hasAbility('owntempo')){
-				this.add('-immune', pokemon, '[from] ability: Own Tempo');
+				this.add('-immune', target, '[from] ability: Own Tempo');
 				this.hint('Own Tempo blocks effects that steal or copy its moves');
-				return false;
+				return null;
 			}
 			const move = target.lastMove;
 			if (!move || !move.flags['mirror'] || move.isZ || move.isMax) {
 				return false;
 			}
-			this.useMove(move.id, pokemon, target);
+			this.useMove(move.id, source, target);
 			return null;
 		},
 		desc: "The user uses the last move used by the target. The copied move is used against that target, if possible. Fails if the target has not made a move, if it has the Ability Own Tempo, or if the last move used cannot be copied by this move.",
@@ -4371,11 +4371,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	psychup: {
 		inherit: true,
-		onTryHit(target, pokemon) {
+		onTryHit(target, source) {
 			if(target.hasAbility('owntempo')){
 				this.add('-immune', target, '[from] ability: Own Tempo');
-				this.hint('Own Tempo blocks effects that steal or copy its attributes');
-				return false;
+				this.hint('Own Tempo blocks effects that steal or copy its moves');
+				return null;
 			}
 		},
 		desc: "The user copies all of the target's current stat stage changes. This move fails if the target has the Ability Own Tempo.",
@@ -4403,11 +4403,11 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	reflecttype: {
 		inherit: true,
-		onTryHit(target, pokemon) {
+		onTryHit(target, source) {
 			if(target.hasAbility('owntempo')){
 				this.add('-immune', target, '[from] ability: Own Tempo');
-				this.hint('Own Tempo blocks effects that steal or copy its attributes');
-				return false;
+				this.hint('Own Tempo blocks effects that steal or copy its moves');
+				return null;
 			}
 		},
 		onHit(target, source) {
@@ -4425,8 +4425,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			if (target.ability === source.ability) return false;
 			if(target.hasAbility('owntempo')){
 				this.add('-immune', target, '[from] ability: Own Tempo');
-				this.hint('Own Tempo blocks effects that steal or copy its attributes');
-				return false;
+				this.hint('Own Tempo blocks effects that steal or copy its moves');
+				return null;
 			}
 
 			const additionalBannedTargetAbilities = [
@@ -4443,7 +4443,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	sketch: {
 		inherit: true,
-		onTryHit(target, pokemon) {
+		onTryHit(target, source) {
 			if(target.hasAbility('owntempo')){
 				this.add('-immune', target, '[from] ability: Own Tempo');
 				this.hint('Own Tempo blocks effects that steal or copy its moves');
@@ -4466,9 +4466,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 					return;
 				}
 				if(source.hasAbility('owntempo')){
-					this.add('-immune', source, '[from] ability: Own Tempo');
+					this.add('-activate', source, 'ability: Own Tempo');
 					this.hint('Own Tempo blocks effects that steal or copy its moves');
-					return false;
+					return;
 				}
 				snatchUser.removeVolatile('snatch');
 				this.add('-activate', snatchUser, 'move: Snatch', '[of] ' + source);
@@ -4538,9 +4538,9 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	transform: {
 		inherit: true,
-		onTryHit(target, pokemon) {
+		onTryHit(target, source) {
 			if(target.hasAbility('owntempo')){
-				this.add('-immune', pokemon, '[from] ability: Own Tempo');
+				this.add('-immune', target, '[from] ability: Own Tempo');
 				this.hint('Own Tempo blocks effects that steal or copy its attributes');
 				return false;
 			}
@@ -4741,14 +4741,14 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 	},
 	mefirst: {
 		inherit: true,
-		onTryHit(target, pokemon) {
+		onTryHit(target, source) {
 			const action = this.queue.willMove(target);
 			if (!action) return false;
 
 			if(target.hasAbility('owntempo')){
-				this.add('-immune', pokemon, '[from] ability: Own Tempo');
+				this.add('-immune', target, '[from] ability: Own Tempo');
 				this.hint('Own Tempo blocks effects that steal or copy its moves');
-				return false;
+				return null;
 			}
 			const noMeFirst = [
 				'beakblast', 'chatter', 'counter', 'covet', 'focuspunch', 'mefirst', 'metalburst', 'mirrorcoat', 'rebound', 'shelltrap', 'struggle', 'thief',
@@ -4757,8 +4757,8 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			if (action.zmove || move.isZ || move.isMax) return false;
 			if (move.category === 'Status' || noMeFirst.includes(move.id)) return false;
 
-			pokemon.addVolatile('mefirst');
-			this.useMove(move, pokemon, target);
+			source.addVolatile('mefirst');
+			this.useMove(move, source, target);
 			return null;
 		},
 		desc: "The user uses the move the target chose for use this turn against it, if possible, with its power multiplied by 1.5. The move must be a damaging move other than Beak Blast, Chatter, Counter, Covet, Focus Punch, Me First, Metal Burst, Mirror Coat, Rebound, Shell Trap, Struggle, or Thief. Fails if the target moves before the user, or if the target has the Ability Own Tempo. Ignores the target's substitute for the purpose of copying the move.",
@@ -4775,7 +4775,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		onHit(target, source) {
 			const disallowedMoves = ['mimic', 'sketch', 'struggle', 'transform'];
 			if(target.hasAbility('owntempo')){
-				this.add('-immune', pokemon, '[from] ability: Own Tempo');
+				this.add('-immune', target, '[from] ability: Own Tempo');
 				this.hint('Own Tempo blocks effects that steal or copy its moves');
 				return false;
 			}
