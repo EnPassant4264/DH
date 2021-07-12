@@ -1732,6 +1732,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				let rand = 0;
 				if (possibleTargets.length > 1) rand = this.random(possibleTargets.length);
 				const target = possibleTargets[rand];
+				if(target.ability === 'owntempo'){ //Own Tempo isn't exempt from copying, it causes it to fail
+					this.add('-immune', target, '[from] ability: Own Tempo');
+					this.hint('Own Tempo blocks effects that steal or copy its attributes');
+					return;
+				}
 				const ability = target.getAbility();
 				const additionalBannedAbilities = [
 					// Zen Mode included here for compatability with Gen 5-6
@@ -1740,11 +1745,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				if (target.getAbility().isPermanent || additionalBannedAbilities.includes(target.ability)) {
 					possibleTargets.splice(rand, 1);
 					continue;
-				}
-				if(ability === 'owntempo'){ //Own Tempo isn't exempt from copying, it causes it to fail
-					this.add('-immune', target, '[from] ability: Own Tempo');
-					this.hint('Own Tempo blocks effects that steal or copy its attributes');
-					return;
 				}
 				this.add('-ability', pokemon, ability, '[from] ability: Trace', '[of] ' + target);
 				pokemon.setAbility(ability);

@@ -3301,11 +3301,16 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				if (!move || move.isZ || move.isMax || !move.flags['snatch'] || move.sourceEffect === 'snatch') {
 					return;
 				}
-				if(move.id === 'geomancy'){ //First turn, do nothing. Second turn, steal and properly resolve charging turn.
-					if(source.volatiles['twoturnmove'] || !this.singleEvent('ChargeMove', source, target, move)){
-						snatchUser.addVolatile('geomancy', source); //This flags it so the snatchUser will execute Geomancy instead of charging itself
+				if(source.hasAbility('owntempo')){
+					this.add('-activate', source, 'ability: Own Tempo');
+					this.hint('Own Tempo blocks effects that steal or copy its moves');
+					return;
+				}
+				if(move.id === 'geomancy'){ //First turn, do nothing. Second turn, steal and resolve target's charging turn.
+					if(source.volatiles['twoturnmove'] || !this.singleEvent('ChargeMove', source, target, move))
 						source.removeVolatile(move.id);
-					} else return;
+					else
+						return;
 				}
 				snatchUser.removeVolatile('snatch');
 				this.add('-activate', snatchUser, 'move: Snatch', '[of] ' + source);
@@ -4219,6 +4224,17 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 		inherit: true,
 		flags: {charge: 1, nonsky: 1, snatch: 1},
 		//Stealing only on the execution turn implemented in Snatch itself.
+		onTryMove(attacker, defender, move) {
+			if (attacker.removeVolatile(move.id) || move.sourceEffect === 'snatch') { //Since it can only be Snatched on the execution turn, execute when Snatched.
+				return;
+			}
+			this.add('-prepare', attacker, move.name);
+			if (!this.runEvent('ChargeMove', attacker, defender, move)) {
+				return;
+			}
+			attacker.addVolatile('twoturnmove', defender);
+			return null;
+		},
 	},
 	mirrormove: {
 		inherit: true,
@@ -4451,31 +4467,6 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			}
 		},
 		desc: "This move is permanently replaced by the last move used by the target. The copied move has the maximum PP for that move. Fails if the target has not made a move, if the target has the Ability Own Tempo, if the user has Transformed, or if the move is Sketch, Struggle, or any move the user knows.",
-	},
-	snatch: {
-		inherit: true,
-		condition: {
-			duration: 1,
-			onStart(pokemon) {
-				this.add('-singleturn', pokemon, 'Snatch');
-			},
-			onAnyTryMove(source, target, move) {
-				const snatchUser = this.effectData.source;
-				if (snatchUser.isSkyDropped()) return;
-				if (!move || move.isZ || move.isMax || !move.flags['snatch'] || move.sourceEffect === 'snatch') {
-					return;
-				}
-				if(source.hasAbility('owntempo')){
-					this.add('-activate', source, 'ability: Own Tempo');
-					this.hint('Own Tempo blocks effects that steal or copy its moves');
-					return;
-				}
-				snatchUser.removeVolatile('snatch');
-				this.add('-activate', snatchUser, 'move: Snatch', '[of] ' + source);
-				this.useMove(move.id, snatchUser);
-				return null;
-			},
-		},
 	},
 	spectralthief: {
 		inherit: true,
