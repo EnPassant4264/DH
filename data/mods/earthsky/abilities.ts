@@ -299,7 +299,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		num: 1016,
 	},
 	glyphicspell: {
-		formeDecided: false,
 		onSwitchIn(pokemon) {
 			if(pokemon.species.baseSpecies === 'unown'){
 				if(!pokemon.abilityData.formeDecided){//Determines forme if it hasn't already.
