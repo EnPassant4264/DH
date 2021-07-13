@@ -301,10 +301,21 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	glyphicspell: {
 		onSwitchIn(pokemon) {
 			if(pokemon.species.baseSpecies === 'Unown'){
+				if(pokemon.abilityData.unownType === 'C') //Copy: Only trigger once
+					pokemon.abilityData.switchingIn = true;
+				if(pokemon.abilityData.unownType === 'H'){ //Heal: Full Restore
+					//this.add('-h', pokemon, 'ability: Glyphic Spell');
+					pokemon.heal(pokemon.baseMaxhp);
+					pokemon.cureStatus();
+				}
+			}
+		},
+		onPreStart(pokemon) {
+			if(pokemon.species.baseSpecies === 'Unown'){
 				if(!pokemon.abilityData.formeDecided){//Determines forme if it hasn't already.
-					console.log("Determining Unown type for " + pokemon.name);
+					console.log("Determining Unown type for " + pokemon.name + pokemon.species.forme);
 					pokemon.abilityData.unownType = pokemon.species.forme;
-					while(pokemon.abilityData.unownType === '?'){ //?????: Randomly picks another form each time.
+					while(pokemon.abilityData.unownType === 'Question'){ //?????: Randomly picks another form each time.
 						pokemon.abilityData.unownType = this.sample(pokemon.species.formeOrder).forme;
 					}
 					if(pokemon.abilityData.unownType === pokemon.species.forme){ //Non-? formes only need to determine once.
@@ -312,32 +323,28 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					}
 					if(pokemon.abilityData.unownType === '') pokemon.abilityData.unownType = 'A'; //A is the default, this is purely for code legibility
 				}
-				console.log("Assigning Unown type " + pokemon.abilityData.unownType + " to " + pokemon.name);
-				if(pokemon.abilityData.unownType === 'C') pokemon.abilityData.switchingIn = true;
-			}
-		},
-		onPreStart(pokemon) {
-			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'N'){ //Negate: Neutralizing Gas
-				//Main implementation is in scripts.ts as an edit to ignoringAbility()
-				this.add('-n', pokemon, 'ability: Glyphic Spell');
-				pokemon.abilityData.ending = false;
-				for (const target of this.getAllActive()) {
-					if (target.illusion) {
-						this.singleEvent('End', this.dex.getAbility('Illusion'), target.abilityData, target, pokemon, 'neutralizinggas');
+				console.log("Assigning Unown type " + pokemon.abilityData.unownType + " to " + pokemon.name + pokemon.species.forme);
+				if(pokemon.abilityData.unownType === 'N'){ //Negate: Neutralizing Gas
+					//Main implementation is in scripts.ts as an edit to ignoringAbility()
+					this.add('-n', pokemon, 'ability: Glyphic Spell');
+					pokemon.abilityData.ending = false;
+					for (const target of this.getAllActive()) {
+						if (target.illusion) {
+							this.singleEvent('End', this.dex.getAbility('Illusion'), target.abilityData, target, pokemon, 'neutralizinggas');
+						}
 					}
 				}
 			}
 		},
 		onStart(pokemon){
-			//Opposite's not needed for most of them but the code considers it being defined in one case to apply to all cases, might as well put it here
 			if(pokemon.species.baseSpecies === 'Unown'){
 				console.log("Running start-up for " + pokemon.abilityData.unownType);
+				//Opposite's not needed for most of them but the code considers it being defined in one case to apply to all cases, might as well put it here
 				const oppositeFoe = pokemon.side.foe.active[pokemon.side.foe.active.length - 1 - pokemon.position];
 				console.log("Direct opponent: " + oppositeFoe.name);
 				switch(pokemon.abilityData.unownType){
 					case 'A': //Adapt: Conversion
-						const type = this.dex.getMove(pokemon.moveSlots[0].id).type;
-						pokemon.setType(type);
+						pokemon.setType(pokemon.hpType);
 						this.add('-start', pokemon, 'typechange', type);
 						break;
 					case 'B': //Block: Ally protection
@@ -355,13 +362,15 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 								this.hint('Own Tempo blocks effects that steal or copy its attributes');
 								return;
 							}
-							pokemon.transformInto(oppositeFoe, this.dex.getAbility('imposter'));
+							pokemon.transformInto(oppositeFoe, this.dex.getAbility('glyphicspell'));
 						}
 						break;
 					case 'D': //Dry: Desolate Land
 						this.field.setWeather('desolateland');
+						console.log(this.field.weatherData.source);
 						break;
 					case 'F': //Fear: Attack/Sp. Attack/Sp. Defense -1 on foes
+						let activated = false;
 						for (const target of pokemon.side.foe.active) {
 							if (!target) continue;
 							if (!activated) {
@@ -376,11 +385,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						break;
 					case 'G': //Grow: All stats +1
 						this.boost({atk: 1, def: 1, spa: 1, spd: 1, spe: 1}, pokemon);
-						break;
-					case 'H': //Heal: Full heal + status cure
-						this.add('-h', pokemon, 'ability: Glyphic Spell');
-						pokemon.heal(pokemon.baseMaxhp);
-						pokemon.setStatus('');
 						break;
 					case 'I': //Ignore: Haze
 						for (const foe of pokemon.side.foe.active) {
@@ -408,10 +412,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						break;
 					case 'K': //Klepto: Embargo (new)
 						for (const foe of pokemon.side.foe.active) {
-							if (!target || !this.isAdjacent(target, pokemon)) continue;
+							if (!foe || !this.isAdjacent(foe, pokemon)) continue;
 							const item = foe.takeItem();
 							if (item) {
-								this.add('-enditem', foe, item.name, '[from] ability: Glyphic Spell', '[of] ' + source);
+								this.add('-enditem', foe, item.name, '[from] ability: Glyphic Spell', '[of] ' + pokemon);
 							}
 						}
 						break;
@@ -482,11 +486,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					case 'Z': //Zero-G: Floating status on everyone
 						for (const target of pokemon.side.active) {
 							if (!target || target.fainted) continue;
-							pokemon.addVolatile('risingchorus');
+							target.addVolatile('risingchorus');
 						}
 						for (const target of pokemon.side.foe.active) {
 							if (!target || target.fainted) continue;
-							pokemon.addVolatile('risingchorus');
+							target.addVolatile('risingchorus');
 						}
 						break;
 					case '!': //!!!!! Primes itself for Explosion
@@ -527,7 +531,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onModifyPriority(priority, source, target, move) {
 			if(source.species.baseSpecies === 'Unown' && source.abilityData.unownType === 'E'){ //Engage: +4 priority to first move
-				if(source.activeMoveActions === 1 && move.priority < 4){
+				if(source.activeMoveActions === 1 && priority < 4){
 					return 4;
 				}
 			}
@@ -586,7 +590,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onHit(pokemon, source, move) {
-			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === '!' && move.category !== "Status"){ //!!!!!: Blows up if it gets hit
+			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Exclamation' && move.category !== "Status"){ //!!!!!: Blows up if it gets hit
 				const kaboom = this.dex.getMove('explosion');
 				kaboom.willCrit = true;
 				kaboom.ignoreImmunities['Normal'] = true;
@@ -600,7 +604,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onResidual(pokemon){
-			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === '!'){ //!!!!!: Blows up at the end of the turn
+			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Exclamation'){ //!!!!!: Blows up at the end of the turn
 				const kaboom = this.dex.getMove('explosion');
 				kaboom.willCrit = true;
 				kaboom.ignoreImmunities['Normal'] = true;
@@ -963,9 +967,9 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						if(!this.dex.getImmunity(move.type, pokemon) || (move.twoType && !this.dex.getImmunity(move.twoType, pokemon))) bp = 0;
 						if (bp >= warnBp) {
 							if(!warnPokeMove) {
-								warnPokeMove = [[move, target]];
+								warnPokeMove = [[this.dex.getMove(moveSlot.move), pokemon.side.foe.active[i]]];
 							} else {
-								warnPokeMove.push = [move, target];
+								warnPokeMove.push = [this.dex.getMove(moveSlot.move), pokemon.side.foe.active[i]];
 							}
 							warnBp = bp;
 						}
