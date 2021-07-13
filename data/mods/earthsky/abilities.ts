@@ -312,8 +312,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				}
 				if(pokemon.abilityData.unownType === "Unown-C") pokemon.abilityData.switchingIn = true;
 				console.log("Assigning Unown type " + pokemon.abilityData.unownType);
-			} else {
-				pokemon.ignoringAbility = true;
 			}
 		},
 		onPreStart(pokemon) {

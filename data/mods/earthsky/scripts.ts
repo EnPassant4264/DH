@@ -206,7 +206,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 			return true;
 		},
-		/*ignoringAbility() { //Added Glyphic Spell's Negate to this.
+		ignoringAbility() { //Added Glyphic Spell's Negate to this.
 			// Check if any active pokemon have the ability Neutralizing Gas (MODDED: or Glyphic Spell's Negate
 			let neutralizinggas = false;
 			for (const pokemon of this.battle.getAllActive()) {
@@ -224,7 +224,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				!this.getAbility().isPermanent
 				)
 			);
-		},*/
+		},
 	},
 	field: {
 		suppressingWeather() {
