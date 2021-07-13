@@ -3,7 +3,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 		effectType: 'ValidatorRule',
 		name: 'Earth & Sky',
 		desc: 'The standard ruleset for all Earth & Sky tiers',
-		ruleset: [ 'Hidden Move Limit', 'Obtainable', 'Gen 8 Sketch', /*'Species Clause'*/, 'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', /*'OHKO Clause', */'Z-Move Clause', 'Dynamax Clause',
+		ruleset: [ 'Hidden Move Limit', 'Obtainable', 'Gen 8 Sketch', /*'Species Clause', */'Sleep Clause Mod', 'Endless Battle Clause', 'Baton Pass Clause', /*'OHKO Clause', */'Z-Move Clause', 'Dynamax Clause',
 			'Team Preview', 'Cancel Mod', 'Data Mod', 'Mega Data Mod',],
 	},
 	egelaspokedex: {
