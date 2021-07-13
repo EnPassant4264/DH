@@ -312,6 +312,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					}
 				}
 				if(pokemon.abilityData.unownType === "Unown-C") pokemon.abilityData.switchingIn = true;
+				console.log("Assigning Unown type " + pokemon.abilityData.unownType);
 			} else {
 				pokemon.ignoringAbility = true;
 			}
@@ -330,8 +331,10 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onStart(pokemon){
 			//Opposite's not needed for most of them but the code considers it being defined in one case to apply to all cases, might as well put it here
-			const oppositeFoe = pokemon.side.foe.active[pokemon.side.foe.active.length - 1 - pokemon.position];
 			if(pokemon.species.baseSpecies === 'unown'){
+				console.log("Running start-up for " + pokemon.abilityData.unownType);
+				const oppositeFoe = pokemon.side.foe.active[pokemon.side.foe.active.length - 1 - pokemon.position];
+				console.log("Direct opponent: " + oppositeFoe.name);
 				switch(pokemon.abilityData.unownType){
 					case 'Unown': //Adapt: Conversion
 						const type = this.dex.getMove(pokemon.moveSlots[0].id).type;
@@ -349,7 +352,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						if (!pokemon.abilityData.switchingIn) return;
 						if (oppositeFoe) {
 							if(oppositeFoe.hasAbility('owntempo')){
-								this.add('-immune', pokemon, '[from] ability: Own Tempo');
+								this.add('-immune', oppositeFoe, '[from] ability: Own Tempo');
 								this.hint('Own Tempo blocks effects that steal or copy its attributes');
 								return;
 							}

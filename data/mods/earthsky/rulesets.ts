@@ -33,10 +33,8 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 					const prevo = (pokemon.prevo) ? this.dex.getSpecies(pokemon.prevo) : undefined;
 					let isHidden = false;
 					for (const moveID of set.moves) {
-						console.log("ID: " + pokemon.id);
 						let pokeLearnset = this.dex.getLearnsetData(pokemon.id);
 						if(!pokeLearnset.learnset){
-							console.log("Base species: " + pokemon.baseSpecies);
 							pokeLearnset = this.dex.getLearnsetData(this.dex.getSpecies(pokemon.baseSpecies).id);
 						}
 						const pokeLearnsMove = pokeLearnset.learnset[moveID];
