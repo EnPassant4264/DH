@@ -300,10 +300,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	glyphicspell: {
 		onSwitchIn(pokemon) {
-			console.log(pokemon.species);
-			console.log(pokemon.baseSpecies);
-			console.log(pokemon.species.baseSpecies);
-			if(pokemon.species.baseSpecies === 'unown'){
+			if(pokemon.species.baseSpecies === 'Unown'){
 				if(!pokemon.abilityData.formeDecided){//Determines forme if it hasn't already.
 					pokemon.abilityData.unownType = this.dex.getSpecies(pokemon).forme;
 					while(pokemon.abilityData.unownType === "Unown-?"){ //?????: Randomly picks another form each time.
@@ -318,7 +315,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onPreStart(pokemon) {
-			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-N'){ //Negate: Neutralizing Gas
+			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Unown-N'){ //Negate: Neutralizing Gas
 				//Main implementation is in scripts.ts as an edit to ignoringAbility()
 				this.add('-n', pokemon, 'ability: Glyphic Spell');
 				pokemon.abilityData.ending = false;
@@ -331,7 +328,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onStart(pokemon){
 			//Opposite's not needed for most of them but the code considers it being defined in one case to apply to all cases, might as well put it here
-			if(pokemon.species.baseSpecies === 'unown'){
+			if(pokemon.species.baseSpecies === 'Unown'){
 				console.log("Running start-up for " + pokemon.abilityData.unownType);
 				const oppositeFoe = pokemon.side.foe.active[pokemon.side.foe.active.length - 1 - pokemon.position];
 				console.log("Direct opponent: " + oppositeFoe.name);
@@ -557,7 +554,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAnyModifyBoost(boosts, pokemon) {
-			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-I'){ //Ignore: Unaware
+			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Unown-I'){ //Ignore: Unaware
 				const unawareUser = pokemon.abilityData.target;
 				if (unawareUser === pokemon) return;
 				if (unawareUser === this.activePokemon && pokemon === this.activeTarget) {
@@ -575,7 +572,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onAnySetWeather(target, source, weather) {
 			const pokemon = this.effectData.target;
-			if(pokemon.species.baseSpecies === 'unown'){
+			if(pokemon.species.baseSpecies === 'Unown'){
 				if(pokemon.abilityData.unownType === 'Unown-D'){
 					const strongWeathers = ['desolateland', 'primordialsea', 'deltastream'];
 					if (this.field.getWeather().id === 'desolateland' && !strongWeathers.includes(weather.id)) return false;
@@ -587,7 +584,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onHit(pokemon, source, move) {
-			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-!' && move.category !== "Status"){ //!!!!!: Blows up if it gets hit
+			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Unown-!' && move.category !== "Status"){ //!!!!!: Blows up if it gets hit
 				const kaboom = this.dex.getMove('explosion');
 				kaboom.willCrit = true;
 				kaboom.ignoreImmunities['Normal'] = true;
@@ -601,7 +598,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onResidual(pokemon){
-			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-!'){ //!!!!!: Blows up at the end of the turn
+			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Unown-!'){ //!!!!!: Blows up at the end of the turn
 				const kaboom = this.dex.getMove('explosion');
 				kaboom.willCrit = true;
 				kaboom.ignoreImmunities['Normal'] = true;
@@ -610,22 +607,22 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			pokemon.abilityData.warnMoves = [];
 		},
 		onEnd(pokemon) {
-			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-D'){
+			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Unown-D'){
 				if (this.field.weatherData.source !== pokemon) return;
 				for (const target of this.getAllActive()) {
 					if (target === pokemon) continue;
-					if (target.hasAbility('desolateland') || (pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-D' && pokemon.hasAbility('glyphicspell'))) {
+					if (target.hasAbility('desolateland') || (pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Unown-D' && pokemon.hasAbility('glyphicspell'))) {
 						this.field.weatherData.source = target;
 						return;
 					}
 				}
 				this.field.clearWeather();
 			}
-			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-S'){
+			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Unown-S'){
 				if (this.field.weatherData.source !== pokemon) return;
 				for (const target of this.getAllActive()) {
 					if (target === pokemon) continue;
-					if (target.hasAbility('primordialsea') || (pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-S' && pokemon.hasAbility('glyphicspell'))) {
+					if (target.hasAbility('primordialsea') || (pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Unown-S' && pokemon.hasAbility('glyphicspell'))) {
 						this.field.weatherData.source = target;
 						return;
 					}
