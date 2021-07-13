@@ -300,6 +300,9 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	glyphicspell: {
 		onSwitchIn(pokemon) {
+			console.log(pokemon.species);
+			console.log(pokemon.baseSpecies);
+			console.log(pokemon.species.baseSpecies);
 			if(pokemon.species.baseSpecies === 'unown'){
 				if(!pokemon.abilityData.formeDecided){//Determines forme if it hasn't already.
 					pokemon.abilityData.unownType = this.dex.getSpecies(pokemon).forme;
@@ -523,15 +526,15 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				return null;
 			}
 		},
-		onModifyPriority(priority, pokemon, target, move) {
-			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-E'){ //Engage: +4 priority to first move
+		onModifyPriority(priority, source, target, move) {
+			if(source.species.baseSpecies === 'unown' && source.abilityData.unownType === 'Unown-E'){ //Engage: +4 priority to first move
 				if(source.activeMoveActions === 1 && move.priority < 4){
 					return 4;
 				}
 			}
 		},
 		onModifyMove(move, source, target) {
-			if(pokemon.species.baseSpecies === 'unown'){
+			if(source.species.baseSpecies === 'unown'){
 				if(source.abilityData.unownType === 'Unown'){ //Adapt: Adaptability
 					move.stab = 2;
 				}
@@ -592,7 +595,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onSourceAfterFaint(length, target, source, effect) {
-			if(pokemon.species.baseSpecies === 'unown' && pokemon.abilityData.unownType === 'Unown-G') //Grow: Stats up on KO
+			if(source.species.baseSpecies === 'unown' && source.abilityData.unownType === 'Unown-G') //Grow: Stats up on KO
 			if (effect && effect.effectType === 'Move') {
 				this.boost({atk: length, def: length, spa: length, spd: length, spe: length}, source);
 			}
