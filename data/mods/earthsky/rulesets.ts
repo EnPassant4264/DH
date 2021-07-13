@@ -36,7 +36,7 @@ export const Formats: {[k: string]: ModdedFormatData} = {
 						console.log("ID: " + pokemon.id);
 						const pokeLearnset = this.dex.getLearnsetData(pokemon.id);
 						console.log("Learnset: " + pokeLearnset);
-						if(!pokeLearnset){
+						if(!pokeLearnset.learnset){
 							console.log("Base species: " + pokemon.baseSpecies);
 							console.log("Base ID: " + this.dex.getSpecies(pokemon.baseSpecies).id);
 							pokeLearnset = this.dex.getLearnsetData(this.dex.getSpecies(pokemon.baseSpecies).id);
