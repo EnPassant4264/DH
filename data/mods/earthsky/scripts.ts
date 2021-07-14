@@ -220,7 +220,7 @@ export const Scripts: ModdedBattleScriptsData = {
 
 			return !!(
 				(this.battle.gen >= 5 && !this.isActive) ||
-				((this.volatiles['gastroacid'] || (neutralizinggas && this.ability !== ('neutralizinggas' as ID) && (this.ability === ('glyphicspell' as ID) && this.abilityData.unownType === 'N'))) &&
+				((this.volatiles['gastroacid'] || (neutralizinggas && this.ability !== ('neutralizinggas' as ID) && !(this.ability === ('glyphicspell' as ID) && this.abilityData.unownType === 'N'))) &&
 				!this.getAbility().isPermanent
 				)
 			);

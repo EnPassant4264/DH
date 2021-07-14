@@ -380,10 +380,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						break;
 					case 'H': //Heal: Full Restore
 						this.add('-h', pokemon, 'ability: Glyphic Spell');
-						pokemon.heal(pokemon.baseMaxhp);
+						this.heal(pokemon.baseMaxhp, pokemon);
 						pokemon.cureStatus();
 						break;
 					case 'I': //Ignore: Haze
+						this.add('-ability', pokemon, 'Glyphic Spell');
 						for (const foe of pokemon.side.foe.active) {
 							foe.clearBoosts();
 							this.add('-clearboost', foe);
@@ -476,10 +477,14 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						pokemon.addVolatile('destinybond');
 						break;
 					case 'Y': //Yield: Quashes foes
-						if (pokemon.side.active.length < 2) return false; // fails in singles
+						if (pokemon.side.active.length < 2) return; // fails in singles
 						for (const target of pokemon.side.foe.active) {
 							const action = this.queue.willMove(target);
 							if (!action) return false;
+							if (!activated) {
+								this.add('-ability', pokemon, 'Glyphic Spell');
+								activated = true;
+							}
 							action.order = 201;
 							this.add('-activate', target, 'Quash');
 						}
@@ -532,10 +537,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onModifyPriority(priority, source, target, move) {
 			if(source.species.baseSpecies === 'Unown' && source.abilityData.unownType === 'E'){ //Engage: +4 priority to first move
-				console.log("Engaging " + move);
-				console.log("Priority: " + priority + "/" + move.priority);
-				console.log("Unown turns out: " + source.activeMoveActions);
-				if(source.activeMoveActions === 1 && priority < 4){
+				if(source.activeMoveActions === 0 && priority < 4){
 					return 4;
 				}
 			}
@@ -636,7 +638,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				const kaboom = this.dex.getMove('explosion');
 				kaboom.willCrit = true;
 				kaboom.ignoreImmunity = {};
-				kaboom.ignoreImmunities['Normal'] = true;
+				kaboom.ignoreImmunity['Normal'] = true;
 				this.useMove(kaboom, pokemon);
 			}
 			pokemon.abilityData.warnMoves = [];
