@@ -379,12 +379,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					case 'G': //Grow: All stats +1
 						this.boost({atk: 1, def: 1, spa: 1, spd: 1, spe: 1}, pokemon);
 						break;
-					case('H'){ //Heal: Full Restore
+					case('H'): //Heal: Full Restore
 						this.add('-h', pokemon, 'ability: Glyphic Spell');
 						pokemon.heal(pokemon.baseMaxhp);
 						pokemon.cureStatus();
 						break;
-					}
 					case 'I': //Ignore: Haze
 						for (const foe of pokemon.side.foe.active) {
 							foe.clearBoosts();
