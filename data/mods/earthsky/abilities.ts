@@ -331,20 +331,21 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		onStart(pokemon){
 			if(pokemon.species.baseSpecies === 'Unown'){
 				console.log("Running start-up for " + pokemon.abilityData.unownType);
-				//Opposite's not needed for most of them but the code considers it being defined in one case to apply to all cases, might as well put it here
+				//These variables are not needed for most of them, but the code considers one being defined in one case to apply to all cases, might as well put them here
 				const oppositeFoe = pokemon.side.foe.active[pokemon.side.foe.active.length - 1 - pokemon.position];
 				console.log("Direct opponent: " + oppositeFoe.name);
+				let activated = false;
 				switch(pokemon.abilityData.unownType){
 					case 'A': //Adapt: Conversion
 						pokemon.setType(pokemon.hpType);
 						this.add('-start', pokemon, 'typechange', pokemon.hpType);
 						break;
 					case 'B': //Block: Ally protection
+						this.add('-ability', pokemon, 'Glyphic Spell');
 						for (const ally of pokemon.allies()) {
 							ally.addVolatile('protect');
 							ally.addVolatile('stall');
 						}
-						this.add('-b', pokemon.side, 'ability: Glyphic Spell');
 						break;
 					case 'C': //Copy: Imposter
 						if (!pokemon.abilityData.switchingIn) return;
@@ -359,10 +360,8 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						break;
 					case 'D': //Dry: Desolate Land
 						this.field.setWeather('desolateland');
-						console.log(this.field.weatherData.source.getDetails());
 						break;
 					case 'F': //Fear: Attack/Sp. Attack/Sp. Defense -1 on foes
-						let activated = false;
 						for (const target of pokemon.side.foe.active) {
 							if (!target) continue;
 							if (!activated) {
@@ -379,7 +378,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					case 'G': //Grow: All stats +1
 						this.boost({atk: 1, def: 1, spa: 1, spd: 1, spe: 1}, pokemon);
 						break;
-					case('H'): //Heal: Full Restore
+					case 'H': //Heal: Full Restore
 						this.add('-h', pokemon, 'ability: Glyphic Spell');
 						pokemon.heal(pokemon.baseMaxhp);
 						pokemon.cureStatus();
@@ -413,7 +412,11 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 							if (!foe || !this.isAdjacent(foe, pokemon)) continue;
 							const item = foe.takeItem();
 							if (item) {
-								this.add('-enditem', foe, item.name, '[from] ability: Glyphic Spell', '[of] ' + pokemon);
+								if (!activated) {
+									this.add('-ability', pokemon, 'Glyphic Spell');
+									activated = true;
+								}
+								this.add('-enditem', foe, item.name);
 							}
 						}
 						break;
@@ -529,6 +532,9 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onModifyPriority(priority, source, target, move) {
 			if(source.species.baseSpecies === 'Unown' && source.abilityData.unownType === 'E'){ //Engage: +4 priority to first move
+				console.log("Engaging " + move);
+				console.log("Priority: " + priority + "/" + move.priority);
+				console.log("Unown turns out: " + source.activeMoveActions);
 				if(source.activeMoveActions === 1 && priority < 4){
 					return 4;
 				}
@@ -536,7 +542,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		},
 		onModifyMove(move, source, target) {
 			if(source.species.baseSpecies === 'Unown'){
-				if(source.abilityData.unownType === ''){ //Adapt: Adaptability
+				if(source.abilityData.unownType === 'A'){ //Adapt: Adaptability
 					move.stab = 2;
 				}
 				if(source.abilityData.unownType === 'E'){ //Engage: Lots of boosts to first move
@@ -550,7 +556,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onModifyDamage(damage, source, target, move) {
-			if(source.species.baseSpecies === 'Unown' && source.abilityData.unownType === ''){ //Adapt: Tinted Lens
+			if(source.species.baseSpecies === 'Unown' && source.abilityData.unownType === 'A'){ //Adapt: Tinted Lens
 				if (target.getMoveHitData(move).typeMod < 0) {
 					this.debug('Glyphic Spell: Tinted Lens boost');
 					return this.chainModify(2);
@@ -558,8 +564,9 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			}
 		},
 		onAnyModifyBoost(boosts, pokemon) {
-			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'I'){ //Ignore: Unaware
-				const unawareUser = pokemon.abilityData.target;
+			//Ignore: Unaware
+			const unawareUser = this.effectData.target;
+			if(unawareUser.species.baseSpecies === 'Unown' && unawareUser.abilityData.unownType === 'I'){ 
 				if (unawareUser === pokemon) return;
 				if (unawareUser === this.activePokemon && pokemon === this.activeTarget) {
 					boosts['def'] = 0;
@@ -596,6 +603,28 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				this.useMove(kaboom, pokemon);
 			}
 		},
+		onDamage(damage, target, source, effect) {
+			if(target.species.baseSpecies === 'Unown' && target.abilityData.unownType === 'U'){ //Undo: Ignores hazard damage before clearing
+				if (effect && ['spikes','stealthrock'].includes(effect.id)) {
+					return null;
+				}
+			}
+		},
+		onBoost(boost, target, source, effect) {
+			if (source && target === source) return;
+			if(target.species.baseSpecies === 'Unown' && target.abilityData.unownType === 'U'){ //Undo: Ignores Sticky Web before clearing
+				if (effect && ['stickyweb'].includes(effect.id)) {
+					return null;
+				}
+			}
+		},
+		onSetStatus(status, target, source, effect) {
+			if(target.species.baseSpecies === 'Unown' && target.abilityData.unownType === 'U'){ //Undo: Ignores Toxic Spikes before clearing
+				if (effect && ['toxicspikes'].includes(effect.id)) {
+					return null;
+				}
+			}
+		},
 		onSourceAfterFaint(length, target, source, effect) {
 			if(source.species.baseSpecies === 'Unown' && source.abilityData.unownType === 'G') //Grow: Stats up on KO
 			if (effect && effect.effectType === 'Move') {
@@ -606,6 +635,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Exclamation'){ //!!!!!: Blows up at the end of the turn
 				const kaboom = this.dex.getMove('explosion');
 				kaboom.willCrit = true;
+				kaboom.ignoreImmunity = {};
 				kaboom.ignoreImmunities['Normal'] = true;
 				this.useMove(kaboom, pokemon);
 			}
@@ -616,7 +646,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				if (this.field.weatherData.source !== pokemon) return;
 				for (const target of this.getAllActive()) {
 					if (target === pokemon) continue;
-					if (target.hasAbility('desolateland') || (pokemon.species.baseSpecies === 'Unown' && pokemon.hasAbility('glyphicspell') && pokemon.abilityData.unownType === 'D')) {
+					if (target.hasAbility('desolateland') || (target.species.baseSpecies === 'Unown' && target.hasAbility('glyphicspell') && target.abilityData.unownType === 'D')) {
 						this.field.weatherData.source = target;
 						return;
 					}
@@ -627,7 +657,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				if (this.field.weatherData.source !== pokemon) return;
 				for (const target of this.getAllActive()) {
 					if (target === pokemon) continue;
-					if (target.hasAbility('primordialsea') || (pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'S' && pokemon.hasAbility('glyphicspell'))) {
+					if (target.hasAbility('primordialsea') || (target.species.baseSpecies === 'Unown' && target.abilityData.unownType === 'S' && target.hasAbility('glyphicspell'))) {
 						this.field.weatherData.source = target;
 						return;
 					}
@@ -668,7 +698,6 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		! - !!!!!:		Unown primes itself. If it takes damage, or at the end of the turn if it doesn't, it uses Explosion with a 100% chance to score a critical hit.
 		Glyphic Spell cannot be copied, swapped, suppressed, or overridden, and will not have any effect if hacked onto another Pokemon.`,
 		shortDesc: "Has a special effect depending on Unown's letter.",
-		b: "  [POKEMON] and its allies are protected!",
 		fitem: "  [POKEMON] observed [TARGET]'s [ITEM]!",
 		fmove: "  [TARGET]'s [MOVE] was observed!",
 		h: "  [POKEMON] was healed!",
