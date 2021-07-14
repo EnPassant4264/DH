@@ -300,15 +300,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	glyphicspell: {
 		onSwitchIn(pokemon) {
-			if(pokemon.species.baseSpecies === 'Unown'){
-				if(pokemon.abilityData.unownType === 'C') //Copy: Only trigger once
-					pokemon.abilityData.switchingIn = true;
-				if(pokemon.abilityData.unownType === 'H'){ //Heal: Full Restore
-					//this.add('-h', pokemon, 'ability: Glyphic Spell');
-					pokemon.heal(pokemon.baseMaxhp);
-					pokemon.cureStatus();
-				}
-			}
+			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'C') pokemon.abilityData.switchingIn = true;
 		},
 		onPreStart(pokemon) {
 			if(pokemon.species.baseSpecies === 'Unown'){
@@ -316,7 +308,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					console.log("Determining Unown type for " + pokemon.name + pokemon.species.forme);
 					pokemon.abilityData.unownType = pokemon.species.forme;
 					while(pokemon.abilityData.unownType === 'Question'){ //?????: Randomly picks another form each time.
-						pokemon.abilityData.unownType = this.sample(pokemon.species.formeOrder).forme;
+						pokemon.abilityData.unownType = this.dex.getSpecies(this.sample(pokemon.species.formeOrder)).forme;
 					}
 					if(pokemon.abilityData.unownType === pokemon.species.forme){ //Non-? formes only need to determine once.
 						pokemon.abilityData.formeDecided = true;
@@ -345,7 +337,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				switch(pokemon.abilityData.unownType){
 					case 'A': //Adapt: Conversion
 						pokemon.setType(pokemon.hpType);
-						this.add('-start', pokemon, 'typechange', type);
+						this.add('-start', pokemon, 'typechange', pokemon.hpType);
 						break;
 					case 'B': //Block: Ally protection
 						for (const ally of pokemon.allies()) {
@@ -367,13 +359,14 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						break;
 					case 'D': //Dry: Desolate Land
 						this.field.setWeather('desolateland');
-						console.log(this.field.weatherData.source);
+						console.log(this.field.weatherData.source.getDetails());
 						break;
 					case 'F': //Fear: Attack/Sp. Attack/Sp. Defense -1 on foes
 						let activated = false;
 						for (const target of pokemon.side.foe.active) {
 							if (!target) continue;
 							if (!activated) {
+								this.add('-ability', pokemon, 'Glyphic Spell');
 								activated = true;
 							}
 							if (target.volatiles['substitute']) {
@@ -386,6 +379,12 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 					case 'G': //Grow: All stats +1
 						this.boost({atk: 1, def: 1, spa: 1, spd: 1, spe: 1}, pokemon);
 						break;
+					case('H'){ //Heal: Full Restore
+						this.add('-h', pokemon, 'ability: Glyphic Spell');
+						pokemon.heal(pokemon.baseMaxhp);
+						pokemon.cureStatus();
+						break;
+					}
 					case 'I': //Ignore: Haze
 						for (const foe of pokemon.side.foe.active) {
 							foe.clearBoosts();
@@ -593,7 +592,8 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 			if(pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'Exclamation' && move.category !== "Status"){ //!!!!!: Blows up if it gets hit
 				const kaboom = this.dex.getMove('explosion');
 				kaboom.willCrit = true;
-				kaboom.ignoreImmunities['Normal'] = true;
+				kaboom.ignoreImmunity = {};
+				kaboom.ignoreImmunity['Normal'] = true;
 				this.useMove(kaboom, pokemon);
 			}
 		},
@@ -617,7 +617,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				if (this.field.weatherData.source !== pokemon) return;
 				for (const target of this.getAllActive()) {
 					if (target === pokemon) continue;
-					if (target.hasAbility('desolateland') || (pokemon.species.baseSpecies === 'Unown' && pokemon.abilityData.unownType === 'D' && pokemon.hasAbility('glyphicspell'))) {
+					if (target.hasAbility('desolateland') || (pokemon.species.baseSpecies === 'Unown' && pokemon.hasAbility('glyphicspell') && pokemon.abilityData.unownType === 'D')) {
 						this.field.weatherData.source = target;
 						return;
 					}
@@ -649,7 +649,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 		H - Heal:		Fully restores Unown's HP and cures its status conditions.
 		I - Ignore:		All foes' stat changes are reset to 0, and further stat changes are ignored in damage calculations involving Unown.
 		J - Join:		The stats of Unown and its direct opponent are added up and then split evenly between them.
-		K - Klepto:		Removes all adjacent opponents' items.
+		K - Klepto:		Removes all adjacent foes' items.
 		L - Loop:		All adjacent foes are inflicted with an Encore.
 		M - Mirror:		Grants Unown the effects of Magic Bounce.
 		N - Negate:		Grants Unown the effects of Neutralizing Gas.

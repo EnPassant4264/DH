@@ -211,7 +211,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			let neutralizinggas = false;
 			for (const pokemon of this.battle.getAllActive()) {
 				// can't use hasAbility because it would lead to infinite recursion
-				if ((pokemon.ability === ('neutralizinggas' as ID) || (pokemon.ability === ('glyphicspell' as ID) && pokemon.abilityData.unownType === "Unown-N")) && !pokemon.volatiles['gastroacid'] &&
+				if ((pokemon.ability === ('neutralizinggas' as ID) || (pokemon.ability === ('glyphicspell' as ID) && pokemon.abilityData.unownType === 'N')) && !pokemon.volatiles['gastroacid'] &&
 					!pokemon.abilityData.ending) {
 					neutralizinggas = true;
 					break;
@@ -220,7 +220,7 @@ export const Scripts: ModdedBattleScriptsData = {
 
 			return !!(
 				(this.battle.gen >= 5 && !this.isActive) ||
-				((this.volatiles['gastroacid'] || (neutralizinggas && this.ability !== ('neutralizinggas' as ID))) &&
+				((this.volatiles['gastroacid'] || (neutralizinggas && this.ability !== ('neutralizinggas' as ID) && (this.ability === ('glyphicspell' as ID) && this.abilityData.unownType === 'N'))) &&
 				!this.getAbility().isPermanent
 				)
 			);
@@ -1683,7 +1683,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				delete this.modData('FormatsData', pokemonID).isNonstandard;
 				if(!pokemon.battleOnly){ //Restore tier, but in-battle forms don't have their own tier
 					if(pokemon.evos){
-						this.modData('FormatsData', pokemonID).tier = pokemon. prevo ? "NFE" : "LC";
+						this.modData('FormatsData', pokemonID).tier = pokemon.prevo ? "NFE" : "LC";
 					} else this.modData('FormatsData', pokemonID).tier = "OU";
 				}
 			}
