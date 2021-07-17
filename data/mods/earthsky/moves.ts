@@ -3015,9 +3015,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				}
 			},
 			onDamage(damage, target, source, effect){
-				console.log("Safeguard examining " + effect);
-				console.log(effect.effectType);
-				if(effect === 'firepledge') return false;
+				if(effect && ['spikes','stealthrock', 'firepledge'].includes(effect.id)) return false;
 			},
 			onImmunity(type, pokemon) {
 				if (['sandstorm', 'hail'].includes(type)) return false;
@@ -3385,7 +3383,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 			onSwitchIn(pokemon) {
 				if (!pokemon.isGrounded()) return;
-				if (pokemon.side.sideConditions['safeguard'] || pokemon.hasItem('heavydutyboots') || pokemon.hasAbility('limber')) return;
+				//if (pokemon.side.sideConditions['safeguard'] || pokemon.hasItem('heavydutyboots') || pokemon.hasAbility('limber')) return;
 				const damageAmounts = [0, 15, 20, 24]; // 1/8, 1/6, 1/5
 				this.damage(damageAmounts[this.effectData.layers] * pokemon.maxhp / 120);
 			},
@@ -3428,8 +3426,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				this.add('-sidestart', side, 'move: Stealth Rock');
 			},
 			onSwitchIn(pokemon) {
-				if (pokemon.hasType('Rock') || pokemon.side.sideConditions['safeguard'] || 
-					pokemon.hasItem('heavydutyboots') || pokemon.hasAbility('limber')) return;
+				if (pokemon.hasType('Rock')) return;
 				const typeMod = this.clampIntRange(pokemon.runEffectiveness(this.dex.getActiveMove('stealthrock')), -6, 6);
 				this.damage(pokemon.maxhp * Math.pow(2, typeMod) / 8);
 			},
@@ -3460,7 +3457,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 			},
 			onSwitchIn(pokemon) {
 				if (!pokemon.isGrounded()) return;
-				if (pokemon.hasItem('heavydutyboots') || pokemon.hasAbility('limber')) return;
+				//if (pokemon.hasItem('heavydutyboots') || pokemon.hasAbility('limber')) return;
 				this.add('-activate', pokemon, 'move: Sticky Web');
 				this.boost({spe: -1}, pokemon, this.effectData.source, this.dex.getActiveMove('stickyweb'));
 			},
@@ -3683,7 +3680,7 @@ export const Moves: {[moveid: string]: ModdedMoveData} = {
 				if (pokemon.hasType('Poison')) {
 					this.add('-sideend', pokemon.side, 'move: Toxic Spikes', '[of] ' + pokemon);
 					pokemon.side.removeSideCondition('toxicspikes');
-				} else if (pokemon.hasType('Steel') || pokemon.hasItem('heavydutyboots') || pokemon.hasAbility('limber')) {
+				} else if (pokemon.hasType('Steel')) {
 					return;
 				} else if (this.effectData.layers >= 2) {
 					pokemon.trySetStatus('tox', pokemon.side.foe.active[0]);

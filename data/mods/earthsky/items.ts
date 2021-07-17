@@ -598,6 +598,24 @@ export const Items: {[itemid: string]: ModdedItemData} = {
 		num: 541,
 		gen: 5,
 	},
+	heavydutyboots: {
+		inherit: true,
+		onDamage(damage, target, source, effect) {
+			if (effect && ['spikes','stealthrock'].includes(effect.id)) {
+				return null;
+			}
+		},
+		onBoost(boost, target, source, effect) {
+			if (effect && effect.id === 'stickyweb') {
+				return null;
+			}
+		},
+		onSetStatus(status, target, source, effect) {
+			if (effect && effect.id === 'toxicspikes') {
+				return null;
+			}
+		},
+	},
 	leek: {
 		inherit: true,
 		onModifyCritRatio(critRatio, user) {

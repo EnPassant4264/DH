@@ -337,6 +337,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 				let activated = false;
 				switch(pokemon.abilityData.unownType){
 					case 'A': //Adapt: Conversion
+						this.add('-ability', pokemon, 'Glyphic Spell');
 						pokemon.setType(pokemon.hpType);
 						this.add('-start', pokemon, 'typechange', pokemon.hpType);
 						break;
@@ -422,6 +423,7 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						}
 						break;
 					case 'L': //Loop: Encores foes
+						this.add('-ability', pokemon, 'Glyphic Spell');
 						for (const target of pokemon.side.foe.active) {
 							if (!target) continue;
 							target.addVolatile('encore');
@@ -468,19 +470,21 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						this.field.clearTerrain();
 						break;
 					case 'V': //Vanish: Forces out opposite foe
+						this.add('-ability', pokemon, 'Glyphic Spell');
 						oppositeFoe.forceSwitchFlag = true;
 						break;
 					case 'W': //Weird; Psychic Surge
 						this.field.setTerrain('psychicterrain');
 						break;
 					case 'X': //X-Out: Destiny Bond
+						this.add('-ability', pokemon, 'Glyphic Spell');
 						pokemon.addVolatile('destinybond');
 						break;
 					case 'Y': //Yield: Quashes foes
 						if (pokemon.side.active.length < 2) return; // fails in singles
 						for (const target of pokemon.side.foe.active) {
 							const action = this.queue.willMove(target);
-							if (!action) return false;
+							if (!action) continue;
 							if (!activated) {
 								this.add('-ability', pokemon, 'Glyphic Spell');
 								activated = true;
@@ -490,12 +494,12 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 						}
 						break;
 					case 'Z': //Zero-G: Floating status on everyone
-						for (const target of pokemon.side.active) {
-							if (!target || target.fainted) continue;
-							target.addVolatile('risingchorus');
-						}
-						for (const target of pokemon.side.foe.active) {
-							if (!target || target.fainted) continue;
+						for (const target of his.getAllActive()) {
+							if (!target || target.fainted || !target.canFloat()) continue;
+							if (!activated) {
+								this.add('-ability', pokemon, 'Glyphic Spell');
+								activated = true;
+							}
 							target.addVolatile('risingchorus');
 						}
 						break;
@@ -1137,7 +1141,27 @@ export const Abilities: {[abilityid: string]: ModdedAbilityData} = {
 	},
 	limber: {
 		inherit: true,
-		//Hazard immunity implemented in moves.ts in the hazards themselves.
+		onDamage(damage, target, source, effect) {
+			if (effect && ['spikes','stealthrock'].includes(effect.id)) {
+				return null;
+			}
+		},
+		onBoost(boost, target, source, effect) {
+			if (effect && effect.id === 'stickyweb') {
+				return null;
+			}
+		},
+		onSetStatus(status, target, source, effect) {
+			if (status.id === 'par'){
+				if ((effect as Move)?.status) {
+					this.add('-immune', target, '[from] ability: Limber');
+				}
+				return false;
+			}
+			if (effect && effect.id === 'toxicspikes') {
+				return null;
+			}
+		},
 		shortDesc: "This Pokemon cannot be paralyzed. When switching in, it is unaffected by hazards.",
 	},
 	magicguard: {
