@@ -255,7 +255,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			return this.battle.sample(actives);
 		}
 	},
-	battle: {
+	//battle: {
 		validTargetLoc(targetLoc: number, source: Pokemon, targetType: string) { //Tactician and Play Dead
 			if (targetLoc === 0) return true;
 			const numSlots = source.side.active.length;
@@ -905,7 +905,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				if (this.ended) return;
 			}
 		},
-	},
+	//},
 	//actions: {
 		runMove(moveOrMoveName, pokemon, targetLoc, sourceEffect, zMove, externalMove, maxMove, originalTarget) { //Tactician, Full Collide on 0 PP
 			pokemon.activeMoveActions++;
